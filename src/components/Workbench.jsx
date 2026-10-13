@@ -16,7 +16,7 @@ function FileInput({ input, file, onChange, disabled, error }) {
       <input id={`file_${input.name}`} type="file" accept={input.accept.join(',')} disabled={disabled} onChange={event => { const selected = event.target.files[0]; if (selected) onChange(selected); event.target.value = ''; }} />
       {file ? <CheckCircle2 size={24} /> : <Upload size={28} />}<div><strong>{file ? file.name : `点击选择${kindLabels[input.kind]}文件`}</strong><span>{file ? '点击重新选择文件' : `${input.accept.join(' / ')} · 文件仅在点击运行后交给算法`}</span></div><ArrowUpRight size={20} />
     </label>
-    {file && <button className="text_button" disabled={disabled} onClick={() => onChange(null)}><X size={14} />移除此素材</button>}
+    {file && <button type="button" className="text_button" disabled={disabled} onClick={() => onChange(null)}><X size={14} />移除此素材</button>}
     {error && <p className="field_error" role="alert">{error}</p>}
   </div>;
 }
@@ -122,7 +122,7 @@ export default function Workbench({ method, example }) {
           {method.parameters.length ? method.parameters.map(parameter => <ParameterField key={parameter.name} parameter={parameter} value={values[parameter.name]} error={errors[parameter.name]} disabled={processing || loadingSample} onChange={value => { clearResult(); setValues(previous => ({ ...previous, [parameter.name]: value })); }} />) : <p className="empty_parameters">此方法无需额外参数，选择素材即可开始。</p>}
         </div>
       </div>
-      <div className="run_bar"><div><strong>{processing ? '算法正在处理素材' : status === 'completed' ? '处理已完成，可下载结果' : '准备好后，即可开始'}</strong><span>{processing ? `已等待 ${elapsed.toFixed(1)} 秒 · ${method.runtime || '独立算法服务'}` : `${method.title} · v${method.version}`}</span></div><div className="actions"><button className="button quiet" type="button" onClick={reset} disabled={processing || loadingSample}><RotateCcw size={17} />清空本页</button>{processing ? <button className="button secondary" type="button" onClick={() => controller.current?.abort()}>取消等待</button> : <button className="button primary" type="submit" disabled={loadingSample}>开始处理<ArrowUpRight size={18} /></button>}</div></div>
+      <div className="run_bar"><div><strong>{processing ? '算法正在处理素材' : status === 'completed' ? '处理已完成，可下载结果' : '准备好后，即可开始'}</strong><span>{processing ? `已等待 ${elapsed.toFixed(1)} 秒 · ${method.runtime || '独立算法服务'}` : `${method.title} · v${method.version}`}</span></div><div className="actions"><button className="button quiet" type="button" onClick={reset} disabled={processing || loadingSample}><RotateCcw size={17} />清空本页</button>{processing ? <button key="cancel" className="button secondary" type="button" onClick={event => { event.preventDefault(); controller.current?.abort(); }}>取消等待</button> : <button key="submit" className="button primary" type="submit" disabled={loadingSample}>开始处理<ArrowUpRight size={18} /></button>}</div></div>
     </form>
     {error && <div className="notice error" role="alert">{error}</div>}
     {processing && <div className="processing" role="status"><Loader2 size={25} className="spin" /><div><strong>{method.adapter.type === 'browser' ? '正在读取并处理文件…' : '文件已提交请求，正在等待算法返回…'}</strong><p>此处显示真实等待状态，完成时间由素材和算法决定。</p><div className="indeterminate"><i /></div></div></div>}
