@@ -1,0 +1,8 @@
+# Table 1 ID 1: kNN-VC, one random VoxCeleb target per utterance (submitted system)
+suffix: _knn1
+k: 4
+n_targets: 1
+length_range: null
+noise: null
+loudness_lufs: -16.0
+prematched: true

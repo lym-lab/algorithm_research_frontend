@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: a082
+Version: 0.1.0
+Summary: Reproduction of the HLTCOE JHU submission to the VoicePrivacy Challenge 2024
+Requires-Python: >=3.10

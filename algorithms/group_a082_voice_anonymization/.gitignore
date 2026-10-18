@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+/cache/
+/work/
+/checkpoints/
+*.wav
+*.flac
+*.pt
+*.onnx
+.pytest_cache/
