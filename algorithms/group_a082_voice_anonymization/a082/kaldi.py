@@ -74,6 +74,30 @@ def finalize_output_dir(src_dir: str | Path, out_dir: str | Path) -> None:
     write_kaldi(dur, out_dir / "utt2dur")  # lengths change in systems 2-4; the copied utt2dur would be stale
 
 
+UTT_KEYED = ("wav.scp", "utt2spk", "text", "utt2dur", "utt2emo", "text_no_norm")
+SPK_KEYED = ("spk2gender", "spk2fold")
+
+
+def subset_dir(src_dir: str | Path, out_dir: str | Path, keep: set[str]) -> int:
+    """Copy a Kaldi directory keeping only the utterances in `keep`; speaker files follow.
+    Returns the number of utterances kept."""
+    src_dir, out_dir = Path(src_dir), Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    utt2spk = {u: s for u, s in read_kaldi(src_dir / "utt2spk").items() if u in keep}
+    speakers = set(utt2spk.values())
+    for name in UTT_KEYED:
+        if (src_dir / name).exists():
+            write_kaldi({u: v for u, v in read_kaldi(src_dir / name).items() if u in keep}, out_dir / name)
+    for name in SPK_KEYED:
+        if (src_dir / name).exists():
+            write_kaldi({s: v for s, v in read_kaldi(src_dir / name).items() if s in speakers}, out_dir / name)
+    spk2utt: dict[str, list[str]] = {}
+    for u, s in sorted(utt2spk.items()):
+        spk2utt.setdefault(s, []).append(u)
+    write_kaldi({s: " ".join(us) for s, us in spk2utt.items()}, out_dir / "spk2utt")
+    return len(utt2spk)
+
+
 def link_output_dir(src_dir: str | Path, out_dir: str | Path, choose: dict[str, Path]) -> None:
     """Build `out_dir` from existing outputs without re-anonymizing: `choose[utt]` is the wav to use.
     Used by the admixture systems. Links are absolute symlinks (copies where symlinks are unavailable)."""

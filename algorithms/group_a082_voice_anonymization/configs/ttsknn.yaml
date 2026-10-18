@@ -1,0 +1,10 @@
+# Bonus "improvement" candidate: kNN-VC applied to the cascade's output (run with --source-suffix _tts).
+# Both admixture components then pass through the same vocoder, so the attacker's system classifier
+# should find them harder to separate. Admix with: python -m a082.admix --knn-suffix _knn1 --tts-suffix _ttsknn ...
+suffix: _ttsknn
+k: 4
+n_targets: 1
+length_range: null
+noise: null
+loudness_lufs: -16.0
+prematched: true

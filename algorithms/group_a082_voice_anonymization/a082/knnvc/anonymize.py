@@ -94,7 +94,8 @@ def main(argv=None) -> None:
 
     runner.anonymize_sets(args.vpc_root, runner.resolve_sets(args.sets), cfg["suffix"],
                           convert=None if system is None else (lambda u, w: system.convert(u, w, plans.get(u))),
-                          order=order, shard=runner.parse_shard(args.shard), finalize_only=args.finalize_only)
+                          order=order, shard=runner.parse_shard(args.shard), finalize_only=args.finalize_only,
+                          source_suffix=args.source_suffix)
 
 
 if __name__ == "__main__":
