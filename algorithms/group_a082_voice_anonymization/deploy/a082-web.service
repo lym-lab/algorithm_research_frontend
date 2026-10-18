@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 User=a082
 WorkingDirectory=@DEST@/code
-Environment=TORCH_HOME=@DEST@/assets/torch HF_HOME=@DEST@/assets/hf OMP_NUM_THREADS=4
+Environment=TORCH_HOME=@DEST@/assets/torch HF_HOME=@DEST@/assets/hf XDG_CACHE_HOME=@DEST@/assets/cache OMP_NUM_THREADS=4
 ExecStart=@DEST@/venv/bin/python webapp/server.py --config @DEST@/config.yaml --host 0.0.0.0 --port 8000
 Restart=on-failure
 RestartSec=5
