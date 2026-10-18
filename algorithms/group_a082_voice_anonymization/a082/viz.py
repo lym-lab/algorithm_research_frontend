@@ -37,3 +37,23 @@ def compare_figure(orig: torch.Tensor, anon: torch.Tensor, sr: int = SR,
     ax[0, 0].set_ylabel("amplitude")
     ax[1, 0].set_ylabel("mel bin")
     return fig
+
+
+def spectrogram_png(wav: torch.Tensor, vmin: float, vmax: float, sr: int = SR,
+                    width_px: int = 640, height_px: int = 200) -> bytes:
+    """Log-mel spectrogram as a bare PNG (no axes) on a fixed colour scale, for the web page."""
+    import io
+    spec = log_mel(wav, sr)
+    fig = plt.figure(figsize=(width_px / 100, height_px / 100), dpi=100)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.imshow(spec, origin="lower", aspect="auto", vmin=vmin, vmax=vmax, cmap="magma")
+    ax.set_axis_off()
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png")
+    plt.close(fig)
+    return buf.getvalue()
+
+
+def shared_scale(*wavs: torch.Tensor, sr: int = SR) -> tuple[float, float]:
+    specs = [log_mel(w, sr) for w in wavs]
+    return float(min(s.min() for s in specs)), float(max(s.max() for s in specs))

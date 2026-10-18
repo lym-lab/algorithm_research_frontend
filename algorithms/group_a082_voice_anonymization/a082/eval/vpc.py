@@ -133,18 +133,31 @@ def judge(row: str, m: dict, base5: dict | None = None) -> dict:
     return verdict
 
 
-def report(vpc_root: Path) -> str:
-    lines = ["| row | suffix | EER avg (paper) | UAR avg (paper) | WER avg (paper) | verdict |",
-             "|---|---|---|---|---|---|"]
-    base5 = None
+def report_rows(vpc_root: Path) -> list[dict]:
+    """Every Table 1 row with the paper's averages, ours (None where not measured) and the verdict."""
+    rows, base5 = [], None
     for row, (suffix, eer, uar, wer) in targets.TABLE1.items():
         m = collect(vpc_root, suffix, row)
         if row == "5":
             base5 = m
-        v = judge(row, m, base5)
-        fmt = lambda x, p: f"{x if x is not None else '—'} ({p})"
-        lines.append(f"| {row} | `{suffix}` | {fmt(m['EER_avg'], eer)} | {fmt(m['UAR_avg'], uar)} | "
-                     f"{fmt(m['WER_avg'], wer)} | {'; '.join(f'{k}: {s}' for k, s in v.items())} |")
+        ours = {k: m[f"{k}_avg"] for k in ("EER", "UAR", "WER")}
+        measured = any(v is not None for v in ours.values())
+        rows.append({"row": row, "suffix": suffix, "name": targets.NAMES_ZH[row],
+                     "paper": {"EER": eer, "UAR": uar, "WER": wer},
+                     "ours": ours if measured else None,
+                     "subsets": {k: m[k] for k in ("EER", "UAR", "WER")},
+                     "verdict": judge(row, m, base5) if measured else None})
+    return rows
+
+
+def report(vpc_root: Path) -> str:
+    lines = ["| row | suffix | EER avg (paper) | UAR avg (paper) | WER avg (paper) | verdict |",
+             "|---|---|---|---|---|---|"]
+    for r in report_rows(vpc_root):
+        o = r["ours"] or {}
+        fmt = lambda k: f"{o.get(k) if o.get(k) is not None else '—'} ({r['paper'][k]})"
+        v = "; ".join(f"{k}: {s}" for k, s in (r["verdict"] or {}).items()) or "not measured"
+        lines.append(f"| {r['row']} | `{r['suffix']}` | {fmt('EER')} | {fmt('UAR')} | {fmt('WER')} | {v} |")
     return "\n".join(lines) + "\n"
 
 
@@ -162,6 +175,7 @@ def main(argv=None) -> None:
     sub.choices["collect"].add_argument("--row")
     sub.choices["collect"].add_argument("--json", type=Path)
     sub.choices["report"].add_argument("--out", type=Path)
+    sub.choices["report"].add_argument("--json", type=Path, help="rows for the web page's results view")
     args = ap.parse_args(argv)
 
     if args.cmd == "identity":
@@ -183,6 +197,9 @@ def main(argv=None) -> None:
         if args.out:
             args.out.parent.mkdir(parents=True, exist_ok=True)
             args.out.write_text(text, encoding="utf-8")
+        if args.json:
+            args.json.parent.mkdir(parents=True, exist_ok=True)
+            args.json.write_text(json.dumps(report_rows(args.vpc_root), ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":

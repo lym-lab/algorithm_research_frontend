@@ -21,6 +21,12 @@ TABLE1 = {
     "8": ("_wc8", 13.88, 43.50, 10.83),
 }
 
+NAMES_ZH = {
+    "0": "原始语音", "1": "kNN-VC", "2": "+ 长度扰动", "3": "+ 长度扰动 + 特征加噪", "4": "Whisper → Piper 级联",
+    "mix0.2": "混合 p = 0.2", "mix0.325": "混合 p = 0.325", "mix0.4": "混合 p = 0.4",
+    "5": "WavLM 转换（基础）", "6": "+ 说话人对抗", "7": "+ 离散目标", "8": "+ 两者",
+}
+
 # Subset values available for row 0 (from the evaluation plan, tables 9-11, identical to Table 1).
 ROW0_SUBSETS = {
     "EER": {"dev_f": 10.511, "dev_m": 0.931, "test_f": 8.761, "test_m": 0.418},

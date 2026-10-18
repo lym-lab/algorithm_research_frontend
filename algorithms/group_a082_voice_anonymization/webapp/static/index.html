@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>在线演示 · 说话人匿名化</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="bar">
+  <div class="brand"><b>说话人匿名化</b><span>VoicePrivacy 2024 · HLTCOE JHU 方案复现</span></div>
+  <nav aria-label="页面">
+    <a href="index.html" aria-current="page">在线演示</a>
+    <a href="results.html">复现结果</a>
+    <a href="method.html">方法与系统</a>
+  </nav>
+</div></header>
+
+<main>
+  <section class="intro">
+    <h1>把一段语音换成"另一个人"说，内容不变</h1>
+    <p>上传或录一段英文语音，选论文表 1 中的一个系统，对比原声与匿名化结果。说话人相似度越低，说话人识别模型越难认出是同一个人。</p>
+  </section>
+
+  <div class="row">
+    <section class="panel" aria-labelledby="in-title" style="flex: 1 1 400px">
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <h2 id="in-title" class="step">① 输入语音</h2>
+        <label id="drop" class="drop" for="file">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1F5FA8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+          <strong>拖入音频文件，或点击选择</strong>
+          <span>WAV / FLAC / MP3 等，30 秒以内，自动转成 16 kHz 单声道</span>
+          <input id="file" class="visually-hidden" type="file" accept="audio/*">
+        </label>
+        <div id="sources" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <button id="rec" type="button" class="btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="#B42318"/></svg>
+            <span>录音</span>
+          </button>
+        </div>
+        <div id="input-track" hidden></div>
+      </div>
+
+      <fieldset class="systems" id="systems"><legend>② 选择系统</legend></fieldset>
+
+      <div id="mixbox" class="mixbox" hidden>
+        <label for="p"><span>用级联（TTS）的概率 p</span><span id="ptext" class="mono">0.400</span></label>
+        <input id="p" type="range" min="0" max="1" step="0.025" value="0.4">
+        <span>论文提交了 p = 0.2、0.325、0.4 三个混合系统。每句话按 p 随机决定用哪个系统，结果里会显示这句抽到了哪个。</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end">
+        <div class="field">
+          <label for="seed">随机种子（可选，填同一个值得到同一结果）</label>
+          <input id="seed" type="text" placeholder="随机" autocomplete="off">
+        </div>
+        <button id="go" type="button" class="btn primary">匿名化</button>
+      </div>
+      <label class="check"><input id="sim" type="checkbox" checked> 计算说话人相似度</label>
+    </section>
+
+    <section class="panel" aria-labelledby="out-title" style="flex: 1.35 1 520px" aria-live="polite">
+      <h2 id="out-title" class="step">③ 结果对比</h2>
+      <div id="error" class="error" hidden></div>
+      <div id="empty" class="empty">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#9AA8B6" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2"/><path d="M7 8v8"/><path d="M11 5v14"/><path d="M15 9v6"/><path d="M19 11v2"/></svg>
+        <span>输入语音并选好系统后，点"匿名化"</span>
+        <span style="font-size: 13px">级联系统要先跑语音识别，比其他系统慢</span>
+      </div>
+      <div id="out" hidden style="display: flex; flex-direction: column; gap: 24px">
+        <div id="tracks" style="display: flex; flex-direction: column; gap: 24px"></div>
+        <div class="grid2">
+          <div class="card" id="simcard">
+            <span class="label">说话人相似度（ECAPA 嵌入余弦）</span>
+            <span class="big" id="simval">—</span>
+            <div class="meter" aria-hidden="true"><span class="fill" id="simfill"></span><span class="mark" id="simmark"></span></div>
+            <span class="note" id="simnote"></span>
+          </div>
+          <div class="card">
+            <span class="label">本次处理</span>
+            <div id="details" style="display: flex; flex-direction: column; gap: 8px"></div>
+          </div>
+        </div>
+        <div class="grid2">
+          <figure class="spec"><img id="spec-orig" alt="原声的 log-mel 频谱图"><figcaption>原声 · log-mel 频谱</figcaption></figure>
+          <figure class="spec"><img id="spec-anon" alt="匿名化语音的 log-mel 频谱图"><figcaption>匿名化 · 同一色标，便于对比共振峰与音高</figcaption></figure>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot">演示用的目标说话人取自 LibriTTS-R（CC BY 4.0）。复现论文：Li Xinyuan et al., HLTCOE JHU Submission to the Voice Privacy Challenge 2024, SPSC 2024。</footer>
+</main>
+<script src="audio.js"></script>
+<script src="demo.js"></script>
+</body>
+</html>
