@@ -17,9 +17,8 @@ from pathlib import Path
 import numpy as np
 import torch
 import yaml
-from tqdm import tqdm
 
-from .. import audio, kaldi, seeding
+from .. import audio, runner, seeding
 from ..models import load_hifigan, load_wavlm, vocode, wavlm_features
 from .core import knn_pooled, stretch, stretched_frames, uniform_noise
 from .pool import Pool
@@ -72,56 +71,30 @@ class KnnSystem:
         return audio.loudness_normalize(out, target_lufs=c.get("loudness_lufs", -16.0))
 
 
-def resolve_sets(spec: str) -> list[str]:
-    if spec == "all":
-        return kaldi.ALL_SETS
-    if spec == "eval":
-        return kaldi.EVAL_SETS
-    return spec.split(",")
-
-
-def run(cfg: dict, vpc_root: Path, pool_dir: Path, sets: list[str], shard=(0, 1), device="cuda",
-        finalize_only=False, wavlm_path=None, hifigan_path=None) -> None:
-    data = vpc_root / "data"
-    suffix = cfg["suffix"]
-    if not finalize_only:
-        pool = Pool(pool_dir, device=device)
-        system = KnnSystem(cfg, pool, load_wavlm(device, wavlm_path),
-                           load_hifigan(device, cfg.get("prematched", True), hifigan_path), device)
-        for name in sets:
-            src, out = data / name, data / f"{name}{suffix}"
-            kaldi.prepare_output_dir(src, out)
-            scp = kaldi.read_kaldi(src / "wav.scp")
-            utts = sorted(scp)[shard[0]::shard[1]]
-            plans = {u: system.plan(u) for u in utts}
-            utts.sort(key=lambda u: (plans[u]["targets"], u))  # consecutive utterances share matching sets
-            for u in tqdm(utts, desc=f"{name}{suffix} [{shard[0]}/{shard[1]}]"):
-                dst = kaldi.wav_path(out, u)
-                if dst.exists():
-                    continue
-                wav, sr = audio.load_scp_entry(scp[u], root=vpc_root)
-                wav = audio.resample(wav, sr)
-                audio.save_wav16(dst, system.convert(u, wav, plans[u]))
-    if finalize_only or shard[1] == 1:
-        for name in sets:
-            kaldi.finalize_output_dir(data / name, data / f"{name}{suffix}")
+def build(cfg: dict, pool_dir: Path, device="cuda", wavlm_path=None, hifigan_path=None) -> KnnSystem:
+    pool = Pool(pool_dir, device=device)
+    return KnnSystem(cfg, pool, load_wavlm(device, wavlm_path),
+                     load_hifigan(device, cfg.get("prematched", True), hifigan_path), device)
 
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--config", required=True)
-    ap.add_argument("--vpc-root", required=True, type=Path)
     ap.add_argument("--pool", type=Path, help="matching-set cache built by a082.knnvc.pool")
-    ap.add_argument("--sets", default="all")
-    ap.add_argument("--shard", default="0/1")
-    ap.add_argument("--device", default="cuda")
-    ap.add_argument("--finalize-only", action="store_true")
     ap.add_argument("--wavlm"); ap.add_argument("--hifigan")
+    runner.add_common_args(ap)
     args = ap.parse_args(argv)
     cfg = yaml.safe_load(Path(args.config).read_text())
-    i, n = map(int, args.shard.split("/"))
-    run(cfg, args.vpc_root, args.pool, resolve_sets(args.sets), (i, n), args.device,
-        args.finalize_only, args.wavlm, args.hifigan)
+    system = None if args.finalize_only else build(cfg, args.pool, args.device, args.wavlm, args.hifigan)
+    plans: dict[str, dict] = {}
+
+    def order(utts):  # consecutive utterances share matching sets
+        plans.update({u: system.plan(u) for u in utts})
+        return sorted(utts, key=lambda u: (plans[u]["targets"], u))
+
+    runner.anonymize_sets(args.vpc_root, runner.resolve_sets(args.sets), cfg["suffix"],
+                          convert=None if system is None else (lambda u, w: system.convert(u, w, plans.get(u))),
+                          order=order, shard=runner.parse_shard(args.shard), finalize_only=args.finalize_only)
 
 
 if __name__ == "__main__":

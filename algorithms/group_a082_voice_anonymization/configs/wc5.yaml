@@ -1,0 +1,10 @@
+# Table 1 row 5: WavLM conversion, base (L1+L2 to kNN-VC targets + target reconstruction)
+name: wc5
+steps: 100000
+crop_s: 10.0
+batch: 16
+warmup: 4000
+grad_clip: 1.0
+target_recon: 0.2
+valid_utts: 200
+model: {feat_dim: 1024, d: 512, enc_layers: 4, dec_layers: 6, heads: 2, filt: 1024, dropout: 0.2}
