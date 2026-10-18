@@ -40,6 +40,9 @@ def make_identity(vpc_root: Path, sets: list[str]) -> None:
     """data/<set>_orig with links to the original files, so row 0 runs through the same pipeline."""
     data = vpc_root / "data"
     for name in sets:
+        if not kaldi.audio_available(data / name, vpc_root):
+            print(f"skipping {name}: audio not available")
+            continue
         scp = kaldi.read_kaldi(data / name / "wav.scp")
         choose = {}
         for u, entry in scp.items():

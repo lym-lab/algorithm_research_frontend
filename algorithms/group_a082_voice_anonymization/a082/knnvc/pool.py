@@ -70,36 +70,41 @@ def build_matching_set(wavlm, files: list[str], spk: str, max_frames: int = MAX_
 
 def build(manifest: dict[str, list[str]], cache: str | Path, device="cuda", shard=(0, 1),
           wavlm_path=None) -> None:
+    """Write <cache>/<spk>.pt and its frame count <cache>/<spk>.frames. Each file is written once,
+    atomically, by the shard that owns the speaker, so shards never touch a shared file."""
     cache = Path(cache)
     cache.mkdir(parents=True, exist_ok=True)
-    (cache / "frames.json").unlink(missing_ok=True)  # Pool rebuilds the index from the final cache
     wavlm = load_wavlm(device, wavlm_path)
     speakers = sorted(manifest)[shard[0]::shard[1]]
     for spk in tqdm(speakers, desc="matching sets"):
-        out = cache / f"{spk}.pt"
-        if out.exists():
+        out, count = cache / f"{spk}.pt", cache / f"{spk}.frames"
+        if out.exists() and count.exists():
             continue
         s = build_matching_set(wavlm, manifest[spk], spk)
         tmp = out.with_suffix(".tmp")
         torch.save(s, tmp)
         tmp.replace(out)
+        count.with_suffix(".ftmp").write_text(str(s.shape[0]))
+        count.with_suffix(".ftmp").replace(count)
 
 
 class Pool:
-    """Cached matching sets with a small in-memory LRU (each set is about 60 MB in float16)."""
+    """Cached matching sets. Two LRU tiers: float16 copies in host memory (`keep_cpu`, ~60 MB each),
+    float32 on the device (`keep`, ~120 MB each). The host tier matters for 1M, where consecutive
+    utterances rarely share their second target: without it nearly every utterance reads a set from disk."""
 
-    def __init__(self, cache: str | Path, device="cuda", min_frames: int = MIN_FRAMES, keep: int = 8):
+    def __init__(self, cache: str | Path, device="cuda", min_frames: int = MIN_FRAMES, keep: int = 8,
+                 keep_cpu: int = 256):
         self.cache = Path(cache)
-        self.device = device
-        self.keep = keep
-        self._lru: OrderedDict[str, torch.Tensor] = OrderedDict()
-        index = self.cache / "frames.json"
-        if index.exists():
-            frames = json.loads(index.read_text())
-        else:
-            frames = {p.stem: int(torch.load(p, map_location="cpu").shape[0])
-                      for p in sorted(self.cache.glob("*.pt"))}
-            index.write_text(json.dumps(frames, indent=0))
+        self.device, self.keep, self.keep_cpu = device, keep, keep_cpu
+        self._dev: OrderedDict[str, torch.Tensor] = OrderedDict()
+        self._cpu: OrderedDict[str, torch.Tensor] = OrderedDict()
+        pts = sorted(self.cache.glob("*.pt"))
+        missing = [p.stem for p in pts if not p.with_suffix(".frames").exists()]
+        if missing:
+            raise RuntimeError(f"{len(missing)} matching sets in {self.cache} have no .frames file "
+                               f"(build still running or interrupted?), e.g. {missing[:3]}")
+        frames = {p.stem: int(p.with_suffix(".frames").read_text()) for p in pts}
         self.speakers = sorted(s for s, n in frames.items() if n >= min_frames)
         if not self.speakers:
             raise RuntimeError(f"no speaker in {self.cache} has >= {min_frames} frames")
@@ -107,14 +112,23 @@ class Pool:
     def __len__(self) -> int:
         return len(self.speakers)
 
+    @staticmethod
+    def _touch(lru: OrderedDict, key, value, limit):
+        lru[key] = value
+        lru.move_to_end(key)
+        while len(lru) > limit:
+            lru.popitem(last=False)
+
     def get(self, spk: str) -> torch.Tensor:
-        if spk in self._lru:
-            self._lru.move_to_end(spk)
-            return self._lru[spk]
-        s = torch.load(self.cache / f"{spk}.pt", map_location="cpu").to(self.device).float()
-        self._lru[spk] = s
-        if len(self._lru) > self.keep:
-            self._lru.popitem(last=False)
+        if spk in self._dev:
+            self._dev.move_to_end(spk)
+            return self._dev[spk]
+        host = self._cpu.get(spk)
+        if host is None:
+            host = torch.load(self.cache / f"{spk}.pt", map_location="cpu").half()
+        self._touch(self._cpu, spk, host, self.keep_cpu)
+        s = host.to(self.device).float()
+        self._touch(self._dev, spk, s, self.keep)
         return s
 
 

@@ -51,6 +51,8 @@ def qualitative(row: str, m: dict, base: dict | None) -> str | None:
     """Checks for rows 6-8 relative to our row 5 (`base`); None if not applicable."""
     if row not in ("6", "7", "8") or base is None:
         return None
+    if None in (m["EER_avg"], m["WER_avg"], base["EER_avg"], base["WER_avg"]):
+        return None  # not all averages measured yet
     eer, wer = m["EER_avg"], m["WER_avg"]
     checks = {"6": [eer > base["EER_avg"], wer > base["WER_avg"]],
               "7": [eer > base["EER_avg"], wer >= 6.0],

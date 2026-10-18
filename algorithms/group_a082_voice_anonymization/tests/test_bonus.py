@@ -85,3 +85,19 @@ def test_analyse_with_synthetic_scores(tmp_path):
                          {m: root / "exp" / m for m in ("single", "knn", "tts")})
     assert set(rep["average"]) == {"single", "knn", "tts", "routed"}
     assert rep["average"]["single"]["all"] < 20
+
+
+def test_missing_iemocap_is_skipped_without_creating_folders(tmp_path):
+    from a082 import runner
+    root = tmp_path / "vpc"
+    make_vpc(root)
+    d = root / "data" / "IEMOCAP_dev"
+    d.mkdir(parents=True)
+    kaldi.write_kaldi({"Ses01F_impro01_F000": "data/IEMOCAP/wav/Session1/x.wav"}, d / "wav.scp")
+    kaldi.write_kaldi({"Ses01F_impro01_F000": "Ses01F"}, d / "utt2spk")
+    calls = []
+    runner.anonymize_sets(root, ["libri_dev_enrolls", "IEMOCAP_dev"], "_t", lambda u, w: (calls.append(u), w)[1])
+    assert len(calls) == 2
+    assert not (root / "data" / "IEMOCAP_dev_t").exists()
+    assert kaldi.audio_available(root / "data" / "libri_dev_enrolls", root)
+    assert runner.resolve_sets("libri") == kaldi.LIBRI_SETS and kaldi.ALL_SETS[-2:] == ["IEMOCAP_dev", "IEMOCAP_test"]

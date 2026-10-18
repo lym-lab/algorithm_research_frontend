@@ -65,12 +65,15 @@ class FileSet(Dataset):
 
     def __init__(self, files: list[str], crop_s: float):
         self.files, self.crop = files, int(crop_s * audio.SR)
+        self._trimmed: dict[int, torch.Tensor] = {}  # VAD is slow on CPU: trim each file once per worker
 
     def __len__(self):
         return len(self.files)
 
     def __getitem__(self, i):
-        wav = audio.vad_trim(audio.load_audio(self.files[i]))[0]
+        if i not in self._trimmed:
+            self._trimmed[i] = audio.vad_trim(audio.load_audio(self.files[i]))[0]
+        wav = self._trimmed[i]
         if wav.shape[0] > self.crop:
             start = random.randrange(wav.shape[0] - self.crop)
             wav = wav[start:start + self.crop]

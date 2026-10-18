@@ -19,11 +19,22 @@ log = logging.getLogger(__name__)
 
 
 def resolve_sets(spec: str) -> list[str]:
-    if spec == "all":
-        return kaldi.ALL_SETS
-    if spec == "eval":
-        return kaldi.EVAL_SETS
-    return spec.split(",")
+    """all | eval | libri (the six LibriSpeech evaluation sets) | comma-separated names."""
+    presets = {"all": kaldi.ALL_SETS, "eval": kaldi.EVAL_SETS, "libri": kaldi.LIBRI_SETS}
+    return list(presets[spec]) if spec in presets else spec.split(",")
+
+
+def available_sets(vpc_root: Path, sets: Iterable[str], source_suffix: str = "") -> list[str]:
+    """Drop sets whose source audio is not present (with a warning), e.g. IEMOCAP before its licence."""
+    data = Path(vpc_root) / "data"
+    keep = []
+    for name in sets:
+        if kaldi.audio_available(data / f"{name}{source_suffix}", vpc_root):
+            keep.append(name)
+        else:
+            log.warning("skipping %s: its audio is not available", name)
+            print(f"skipping {name}{source_suffix}: audio not available")
+    return keep
 
 
 def parse_shard(spec: str) -> tuple[int, int]:
@@ -40,7 +51,7 @@ def anonymize_sets(vpc_root: Path, sets: Iterable[str], suffix: str,
     """`source_suffix` reads the input audio from data/<set><source_suffix> instead of the original set
     (chaining two systems, e.g. kNN-VC on the cascade's output); metadata always come from the original."""
     data = Path(vpc_root) / "data"
-    sets = list(sets)
+    sets = available_sets(vpc_root, sets, source_suffix)
     if not finalize_only:
         for name in sets:
             src, out = data / name, data / f"{name}{suffix}"
@@ -61,7 +72,8 @@ def anonymize_sets(vpc_root: Path, sets: Iterable[str], suffix: str,
 
 def add_common_args(ap) -> None:
     ap.add_argument("--vpc-root", required=True, type=Path)
-    ap.add_argument("--sets", default="all", help="all | eval | comma-separated set names")
+    ap.add_argument("--sets", default="all", help="all | eval | libri | comma-separated set names; "
+                    "sets without audio (IEMOCAP before its licence) are skipped")
     ap.add_argument("--shard", default="0/1", help="i/n: this process handles every n-th utterance from i")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--source-suffix", default="", help="read input audio from data/<set><suffix> (system chaining)")

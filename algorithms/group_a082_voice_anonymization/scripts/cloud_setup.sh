@@ -6,6 +6,7 @@
 # Needs: git, curl, unzip, flac; ~600 GB free under the work dir; HF_TOKEN in the environment for
 # VoxCeleb (a read-only token of an account that accepted the ProgramComputer/voxceleb terms).
 # IEMOCAP is linked later by hand (licence; see docs/REPRODUCE.md).
+# env.sh (micromamba activation) may read unset variables, so nounset is lifted around each `source`.
 set -euo pipefail
 
 WORK=${1:?usage: cloud_setup.sh <work dir>}
@@ -25,7 +26,7 @@ fi
 
 # 2. our code and its extra dependencies, in the framework's environment
 (
-  cd "$VPC" && source env.sh
+  cd "$VPC" && set +u; source env.sh; set -u
   pip install -e "$CODE"
   pip install "openai-whisper @ git+https://github.com/openai/whisper@86098128c0b4f24f0e2aa2994de830614b474227" \
               piper-tts==1.8.0 fastapi uvicorn python-multipart matplotlib huggingface_hub
@@ -40,7 +41,7 @@ for part in dev-clean test-clean; do
     curl -sSL "https://www.openslr.org/resources/12/$part.tar.gz" | tar -xz -C "$WORK/corpora"
   fi
 done
-(cd "$VPC" && source env.sh && python "$CODE/scripts/rebuild_libri.py" --vpc-root "$VPC" --librispeech "$WORK/corpora/LibriSpeech")
+(cd "$VPC" && set +u; source env.sh; set -u && python "$CODE/scripts/rebuild_libri.py" --vpc-root "$VPC" --librispeech "$WORK/corpora/LibriSpeech")
 
 # 4. train-clean-360 and the pretrained evaluation models via the framework's script.
 #    It ends with an error while IEMOCAP is missing; everything before that is done by then.
@@ -50,7 +51,7 @@ test -d "$VPC/exp/asv_orig" && test -d "$VPC/exp/asr" && test -d "$VPC/corpora/L
 # 5. kNN-VC target pool: VoxCeleb1 dev + test from the Hugging Face mirror
 if [ ! -d "$WORK/corpora/voxceleb1/wav" ]; then
   : "${HF_TOKEN:?set HF_TOKEN for the VoxCeleb mirror}"
-  (cd "$VPC" && source env.sh && python - "$WORK/corpora/voxceleb1" <<'PY'
+  (cd "$VPC" && set +u; source env.sh; set -u && python - "$WORK/corpora/voxceleb1" <<'PY'
 import sys
 from huggingface_hub import hf_hub_download
 out = sys.argv[1]

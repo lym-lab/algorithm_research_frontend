@@ -59,6 +59,9 @@ def run(vpc_root: Path, suffix: str, codec: str, sets: list[str], workers: int =
     data = vpc_root / "data"
     for name in sets:
         src, out = data / f"{name}{suffix}", data / f"{name}{suffix}_{codec}"
+        if not (src / "wav.scp").exists():
+            print(f"skipping {name}: {src.name} not found")
+            continue
         kaldi.prepare_output_dir(src, out)
         scp = kaldi.read_kaldi(src / "wav.scp")
         todo = [u for u in scp if not kaldi.wav_path(out, u).exists()]
@@ -74,12 +77,15 @@ def evaluate(vpc_root: Path, suffix: str, codec: str, no_iemocap: bool = False) 
     data = vpc_root / "data"
     # the framework insists that data/train-clean-360<suffix> exists; point it at the clean anonymized
     # training set (training itself is skipped: retrain = false and the model exists)
-    link = data / f"{kaldi.TRAIN_SET}{sc}"
-    if not link.exists():
-        link.symlink_to((data / f"{kaldi.TRAIN_SET}{suffix}").resolve(), target_is_directory=True)
+    if suffix == "_orig":  # reference: original-original through the codec; there is no attacker model
+        vpc.run(vpc_root, sc, stages=("pre",), no_iemocap=no_iemocap)
+        return
     trained = f"exp/asv_anon{suffix}"
     if not (vpc_root / trained).exists():
         raise SystemExit(f"{trained} missing: run eval_post for {suffix} first")
+    link = data / f"{kaldi.TRAIN_SET}{sc}"
+    if not (link.is_symlink() or link.exists()):
+        link.symlink_to((data / f"{kaldi.TRAIN_SET}{suffix}").resolve(), target_is_directory=True)
     post = {"anon_data_suffix": sc, "results_summary_path": f"exp/results_summary/eval_anon{sc}/results_anon.txt",
             "privacy": {"asv": {"training": {"model_dir": trained, "retrain": False},
                                 "evaluation": {"model_dir": trained, "results_dir": f"exp/asv_anon{sc}"}}}}

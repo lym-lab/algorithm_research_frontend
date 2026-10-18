@@ -32,6 +32,9 @@ def build(vpc_root: Path, knn_suffix: str, tts_suffix: str, p: float, sets: list
     out_suffix = out_suffix or (suffix_for(p) + ("spk" if level == "spk" else ""))
     frac = {}
     for name in sets:
+        if not all((data / f"{name}{sfx}" / "wav.scp").exists() for sfx in (knn_suffix, tts_suffix)):
+            print(f"skipping {name}: no finished {knn_suffix} / {tts_suffix} output")
+            continue
         utts = list(kaldi.read_kaldi(data / name / "wav.scp"))
         u2s = kaldi.read_kaldi(data / name / "utt2spk")
         key = (lambda u: u2s[u]) if level == "spk" else (lambda u: u)

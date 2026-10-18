@@ -18,7 +18,23 @@ EVAL_SETS = [
     "IEMOCAP_dev", "IEMOCAP_test",
 ]
 TRAIN_SET = "train-clean-360"
-ALL_SETS = EVAL_SETS + [TRAIN_SET]
+LIBRI_SETS = [n for n in EVAL_SETS if n.startswith("libri")]
+ALL_SETS = LIBRI_SETS + [TRAIN_SET, "IEMOCAP_dev", "IEMOCAP_test"]  # IEMOCAP last: it may be missing
+
+
+def audio_available(set_dir: str | Path, vpc_root: str | Path) -> bool:
+    """True if the set's wav.scp exists and its first entry can be read (a file, or a pipe whose
+    input file exists). IEMOCAP is absent until its licence arrives; creating an output folder for it
+    anyway would make the framework's format check exit (it inspects every folder with the suffix)."""
+    scp = Path(set_dir) / "wav.scp"
+    if not scp.exists():
+        return False
+    first = next(iter(read_kaldi(scp).values()), None)
+    if first is None:
+        return False
+    token = first.split()[-2] if first.endswith("|") else first  # `flac -c -d -s <file> |`
+    path = Path(token)
+    return (path if path.is_absolute() else Path(vpc_root) / path).exists()
 
 
 def read_kaldi(path: str | Path) -> dict[str, str]:

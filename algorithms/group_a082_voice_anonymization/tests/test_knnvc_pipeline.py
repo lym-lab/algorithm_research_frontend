@@ -22,8 +22,7 @@ def test_knn_systems_and_admixture(tmp_path, monkeypatch):
     manifest = {f"id{i}": tgt_files for i in range(3)}
     cache = tmp_path / "pool"
     pool_mod.build(manifest, cache, device="cpu")
-    monkeypatch.setattr(pool_mod, "MIN_FRAMES", 10)
-    monkeypatch.setattr(pool_mod.Pool.__init__, "__defaults__", ("cuda", 10, 8))
+    monkeypatch.setattr(pool_mod.Pool.__init__, "__defaults__", ("cuda", 10, 8, 256))
 
     for name, extra in (("knn1", {}), ("knn3", {"length_range": [0.8, 1.2], "noise": {"where": "matching", "delta": 32.0}})):
         cfg = {"suffix": f"_{name}", "k": 4, "n_targets": 1, "length_range": None, "noise": None, **extra}

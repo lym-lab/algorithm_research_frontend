@@ -103,7 +103,7 @@ def cmd_eval(args) -> None:
     model = torch.load(args.model)
     wavlm = load_wavlm(args.device)
     report = {}
-    for name in runner.resolve_sets(args.sets):
+    for name in runner.available_sets(args.vpc_root, runner.resolve_sets(args.sets)):
         utts = list(kaldi.read_kaldi(data / name / "wav.scp"))
         res = {}
         for label, truth in (("knn", 0), ("tts", 1)):
@@ -112,6 +112,7 @@ def cmd_eval(args) -> None:
         report[name] = res
         print(f"{name}: accuracy on kNN-VC {res['knn']:.4f}, on cascade {res['tts']:.4f}")
     if args.json:
+        Path(args.json).parent.mkdir(parents=True, exist_ok=True)
         Path(args.json).write_text(json.dumps(report, indent=1))
 
 
@@ -122,7 +123,7 @@ def cmd_split(args) -> None:
     out_labels = Path(args.labels_dir) / args.mix_suffix.lstrip("_")
     out_labels.mkdir(parents=True, exist_ok=True)
     summary = {}
-    for name in runner.resolve_sets(args.sets):
+    for name in runner.available_sets(args.vpc_root, runner.resolve_sets(args.sets), args.mix_suffix):
         d = data / f"{name}{args.mix_suffix}"
         utts = sorted(kaldi.read_kaldi(d / "wav.scp"))
         prob = predict(model, embed_dir(wavlm, d, utts, model["crop"], args.vpc_root)).tolist()
