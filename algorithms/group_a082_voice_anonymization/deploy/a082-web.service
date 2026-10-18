@@ -1,0 +1,18 @@
+[Unit]
+Description=A082 speaker anonymization web demo
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=a082
+WorkingDirectory=@DEST@/code
+Environment=TORCH_HOME=@DEST@/assets/torch HF_HOME=@DEST@/assets/hf OMP_NUM_THREADS=4
+ExecStart=@DEST@/venv/bin/python webapp/server.py --config @DEST@/config.yaml --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
