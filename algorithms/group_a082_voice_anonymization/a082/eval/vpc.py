@@ -1,14 +1,16 @@
 """Run the VPC 2024 evaluation for one anonymized suffix and collect the numbers of Table 1.
 
     python -m a082.eval.vpc identity --vpc-root R                 # data/<set>_orig -> original audio (row 0)
-    python -m a082.eval.vpc run      --vpc-root R --suffix _knn1 [--stages pre post] [--no-iemocap]
+    python -m a082.eval.vpc run      --vpc-root R --suffix _knn1 [--stages pre post] [--no-iemocap | --emotion crema]
     python -m a082.eval.vpc collect  --vpc-root R --suffix _knn1 [--row 1] [--json out.json]
     python -m a082.eval.vpc report   --vpc-root R --out results/summary.md
 
 The framework's scripts are used unchanged (evaluation plan §6 forbids changing them); `run` is the
 "option 2" route of its README: eval_pre with the pretrained models, then eval_post, which trains the
 attacker ASV on the anonymized train-clean-360. --no-iemocap restricts both to LibriSpeech through the
-framework's own --overwrite mechanism, for use before the IEMOCAP licence arrives.
+framework's own --overwrite mechanism, for use before the IEMOCAP licence arrives. --emotion crema scores
+the organisers' IEMOCAP emotion models on CREMA-D instead (scripts/prepare_crema.py): UAR is then
+cross-corpus and is not compared with the paper.
 
 Where the numbers come from (CSV files written by the framework):
   EER (row 0, original-original):  exp/asv_orig/results<suffix>.csv, enrollment = trial = original
@@ -53,20 +55,33 @@ def make_identity(vpc_root: Path, sets: list[str]) -> None:
         kaldi.link_output_dir(data / name, data / f"{name}_orig", choose)
 
 
-def overwrite_json(suffix: str, stage: str, no_iemocap: bool) -> str:
+EMOTION_CORPORA = ("iemocap", "crema", "none")
+
+
+def overwrite_json(suffix: str, stage: str, no_iemocap: bool = False, emotion: str | None = None) -> str:
+    """--overwrite for run_evaluation.py. `emotion`: iemocap (the framework's default), crema, or none
+    (LibriSpeech only; same as no_iemocap)."""
+    emotion = "none" if no_iemocap else (emotion or "iemocap")
+    if emotion not in EMOTION_CORPORA:
+        raise ValueError(f"emotion corpus {emotion!r}; choose from {EMOTION_CORPORA}")
     o: dict = {"anon_data_suffix": suffix}
-    if no_iemocap:
+    libri = ["libri_dev", "libri_test"]
+    if emotion == "none" or (emotion == "crema" and stage != "pre"):
         o.update(LIBRI_ONLY)
         if stage == "pre":
             o["eval_steps"] = {"privacy": ["asv"], "utility": ["asr"]}
-            o["utility"] = {"asr": {"dataset_name": ["libri_dev", "libri_test"]}}
+            o["utility"] = {"asr": {"dataset_name": libri}}
+    elif emotion == "crema":
+        crema = ["CREMA_dev", "CREMA_test"]
+        o["datasets"] = LIBRI_ONLY["datasets"] + [{"name": n, "data": n} for n in crema]
+        o["utility"] = {"asr": {"dataset_name": libri}, "ser": {"dataset_name": crema}}
     return json.dumps(o)
 
 
-def run(vpc_root: Path, suffix: str, stages=("pre", "post"), no_iemocap=False) -> None:
+def run(vpc_root: Path, suffix: str, stages=("pre", "post"), no_iemocap=False, emotion: str | None = None) -> None:
     for stage in stages:
         cmd = (f"source env.sh && python run_evaluation.py --config configs/eval_{stage}.yaml "
-               f"--overwrite {shlex.quote(overwrite_json(suffix, stage, no_iemocap))} --force_compute True")
+               f"--overwrite {shlex.quote(overwrite_json(suffix, stage, no_iemocap, emotion))} --force_compute True")
         print(f"[{vpc_root}] {cmd}", flush=True)
         subprocess.run(["bash", "-c", cmd], cwd=vpc_root, check=True)
 
@@ -103,7 +118,10 @@ def collect(vpc_root: Path, suffix: str, row: str | None = None) -> dict:
         for line in lines[2:]:
             cells = line.split(",")
             rec = dict(zip(header, cells))
-            if rec.get("dataset") == "IEMOCAP" and rec.get("ser") == want:
+            if rec.get("dataset") in ("IEMOCAP", "CREMA") and rec.get("ser") == want:
+                if out.get("UAR_corpus") not in (None, rec["dataset"]):
+                    continue  # both present: keep the first (IEMOCAP is written first by our runs)
+                out["UAR_corpus"] = rec["dataset"]
                 out["UAR"][rec["split"]] = float(rec["UAR"])
 
     def avg(d, keys):
@@ -124,6 +142,8 @@ def judge(row: str, m: dict, ours: dict | None = None) -> dict:
         ours = m.get(f"{key}_avg")
         if ours is None:
             verdict[key] = "missing"
+        elif key == "UAR" and m.get("UAR_corpus") == "CREMA":
+            verdict[key] = "cross-corpus (CREMA-D), not compared"
         elif key == "EER" and "eer_min" in tol:
             verdict[key] = "ok" if ours >= tol["eer_min"] else f"below {tol['eer_min']}"
         elif key in tol:
@@ -201,6 +221,7 @@ def main(argv=None) -> None:
     sub.choices["identity"].add_argument("--sets", default="eval")
     sub.choices["run"].add_argument("--stages", nargs="+", default=["pre", "post"])
     sub.choices["run"].add_argument("--no-iemocap", action="store_true")
+    sub.choices["run"].add_argument("--emotion", choices=EMOTION_CORPORA, help="emotion corpus for UAR (default iemocap)")
     sub.choices["collect"].add_argument("--row")
     sub.choices["collect"].add_argument("--json", type=Path)
     sub.choices["report"].add_argument("--out", type=Path)
@@ -212,7 +233,7 @@ def main(argv=None) -> None:
         sets = kaldi.EVAL_SETS if args.sets == "eval" else args.sets.split(",")
         make_identity(args.vpc_root, sets)
     elif args.cmd == "run":
-        run(args.vpc_root, args.suffix, args.stages, args.no_iemocap)
+        run(args.vpc_root, args.suffix, args.stages, args.no_iemocap, args.emotion)
     elif args.cmd == "collect":
         m = collect(args.vpc_root, args.suffix, args.row)
         if args.row:

@@ -100,4 +100,4 @@ def test_missing_iemocap_is_skipped_without_creating_folders(tmp_path):
     assert len(calls) == 2
     assert not (root / "data" / "IEMOCAP_dev_t").exists()
     assert kaldi.audio_available(root / "data" / "libri_dev_enrolls", root)
-    assert runner.resolve_sets("libri") == kaldi.LIBRI_SETS and kaldi.ALL_SETS[-2:] == ["IEMOCAP_dev", "IEMOCAP_test"]
+    assert runner.resolve_sets("libri") == kaldi.LIBRI_SETS and kaldi.ALL_SETS[-4:] == ["IEMOCAP_dev", "IEMOCAP_test", "CREMA_dev", "CREMA_test"]

@@ -16,10 +16,12 @@ EVAL_SETS = [
     "libri_dev_enrolls", "libri_dev_trials_f", "libri_dev_trials_m",
     "libri_test_enrolls", "libri_test_trials_f", "libri_test_trials_m",
     "IEMOCAP_dev", "IEMOCAP_test",
+    "CREMA_dev", "CREMA_test",  # fallback emotion data when IEMOCAP is not available (scripts/prepare_crema.py)
 ]
 TRAIN_SET = "train-clean-360"
 LIBRI_SETS = [n for n in EVAL_SETS if n.startswith("libri")]
-ALL_SETS = LIBRI_SETS + [TRAIN_SET, "IEMOCAP_dev", "IEMOCAP_test"]  # IEMOCAP last: it may be missing
+EMO_SETS = [n for n in EVAL_SETS if not n.startswith("libri")]
+ALL_SETS = LIBRI_SETS + [TRAIN_SET] + EMO_SETS  # emotion sets last: they may be missing
 
 
 def audio_available(set_dir: str | Path, vpc_root: str | Path) -> bool:

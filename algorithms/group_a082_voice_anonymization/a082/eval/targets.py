@@ -100,7 +100,7 @@ def internal_checks(ours: dict, sweep: dict) -> list[tuple[str, str]]:
     if len(pts) >= 3:
         mono = all(b[1] >= a[1] for a, b in zip(pts, pts[1:])) and all(b[2] <= a[2] for a, b in zip(pts, pts[1:]))
         out.append(("Fig. 4: dev-f EER rises and UAR falls with p", "ok" if mono else "NOT met"))
-    if 0.5 in sweep and sweep[0.5].get("UAR_avg") is not None:
+    if 0.5 in sweep and sweep[0.5].get("UAR_avg") is not None and sweep[0.5].get("UAR_corpus") != "CREMA":
         d = sweep[0.5]["UAR_avg"] - FIG4_P05_UAR
         out.append(("Fig. 4: UAR at p = 0.5 within 2 of 44.77", "ok" if abs(d) <= 2.0 else f"off by {d:+.2f}"))
     return out
