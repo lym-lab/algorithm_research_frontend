@@ -59,7 +59,8 @@ def loudness_normalize(wav: torch.Tensor, sr: int = SR, target_lufs: float = -16
     x = wav if wav.dim() == 2 else wav[None]
     if x.shape[-1] < int(0.4 * sr):
         return wav
-    lufs = torchaudio.functional.loudness(x, sr).item()
+    dev = "cuda" if torch.cuda.is_available() else "cpu"   # torchaudio's lfilter takes seconds on the CPU
+    lufs = torchaudio.functional.loudness(x.to(dev), sr).item()
     if not math.isfinite(lufs):
         return wav
     return torchaudio.functional.gain(wav, target_lufs - lufs)

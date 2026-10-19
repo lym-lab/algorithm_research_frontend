@@ -442,14 +442,20 @@ class MultiheadAttention(nn.Module):
         return relative_buckets
 
     def compute_bias(self, query_length, key_length):
-        context_position = torch.arange(query_length, dtype=torch.long)[:, None]
-        memory_position = torch.arange(key_length, dtype=torch.long)[None, :]
-        relative_position = memory_position - context_position
-        relative_position_bucket = self._relative_positions_bucket(
-            relative_position,
-            bidirectional=True
-        )
-        relative_position_bucket = relative_position_bucket.to(self.relative_attention_bias.weight.device)
+        # a082 change, for speed: the bucket of a (query, key) pair depends only on key - query, so it is looked
+        # up in a table over all offsets, computed once on the CPU with the original function, instead of
+        # building the query x key matrix on the CPU for every utterance (seconds per long utterance)
+        dev = self.relative_attention_bias.weight.device
+        n = max(query_length, key_length)
+        table = getattr(self, "_bucket_table", None)
+        if table is None or table.shape[0] < 2 * n - 1 or table.device != dev:
+            m = max(n, 4096)
+            offsets = torch.arange(-(m - 1), m, dtype=torch.long)
+            self._bucket_table = self._relative_positions_bucket(offsets, bidirectional=True).to(dev)
+            self._bucket_half = m - 1
+        context_position = torch.arange(query_length, dtype=torch.long, device=dev)[:, None]
+        memory_position = torch.arange(key_length, dtype=torch.long, device=dev)[None, :]
+        relative_position_bucket = self._bucket_table[memory_position - context_position + self._bucket_half]
         values = self.relative_attention_bias(relative_position_bucket)
         values = values.permute([2, 0, 1])
         return values
