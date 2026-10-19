@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import io
 import os
+import sys
 from pathlib import Path
 from typing import Iterable, Iterator
 
@@ -60,8 +61,18 @@ def parquet_rows(files: list[Path]) -> Iterator[tuple[str, bytes]]:
 
 
 def download(dst: Path) -> list[Path]:
+    import time
     from huggingface_hub import snapshot_download
-    snapshot_download(REPO, repo_type="dataset", revision=REVISION, local_dir=dst, allow_patterns=["data/*.parquet"])
+    for attempt in range(8):  # slow mirrors break connections; each attempt resumes the partial files
+        try:
+            snapshot_download(REPO, repo_type="dataset", revision=REVISION, local_dir=dst,
+                              allow_patterns=["data/*.parquet"])
+            break
+        except Exception as e:  # noqa: BLE001 - requests and hub errors alike
+            if attempt == 7:
+                raise
+            print(f"download interrupted ({type(e).__name__}), retry {attempt + 1}", file=sys.stderr)
+            time.sleep(10)
     return sorted((dst / "data").glob("*.parquet"))
 
 
