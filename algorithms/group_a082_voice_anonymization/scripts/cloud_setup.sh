@@ -30,13 +30,17 @@
 #                                       ser.zip, WavLM-Large.pt, prematch_g_02500000.pt,
 #                                       whisper-<commit>.tar.gz, knn-vc.tar.gz
 #   DISK_MIN=200                        minimum direct read and write speed of the work dir in MB/s (0 = skip)
+#   VPC_DIR=/root/vpc2024               put the framework checkout and its Python environment there (e.g. on the
+#                                       system disk, so that a saved machine image carries the environment);
+#                                       its data/, exp/ and corpora/ are then links into <work dir>, which keeps
+#                                       all corpora, outputs and results on the data disk (default <work>/vpc2024)
 #   DEMO_DATA=skip                      skip LibriTTS-R (only the web demo needs it)
 #   PIP_INDEX_URL=...                   pip mirror, read by pip itself
 set -euo pipefail
 
 WORK=${1:?usage: cloud_setup.sh <work dir>}
 CODE=$(cd "$(dirname "$0")/.." && pwd)
-VPC=$WORK/vpc2024
+VPC=${VPC_DIR:-$WORK/vpc2024}
 VPC_COMMIT=0ef5506
 WHISPER_COMMIT=86098128c0b4f24f0e2aa2994de830614b474227
 HF=${HF_ENDPOINT:-https://huggingface.co}
@@ -119,6 +123,13 @@ if [ ! -d "$VPC/.git" ]; then
   git -C "$VPC" config core.autocrlf false
   git -C "$VPC" checkout -q $VPC_COMMIT && git -C "$VPC" reset -q --hard $VPC_COMMIT   # LF line endings
 fi
+if [ "$VPC" != "$WORK/vpc2024" ]; then   # bulky directories stay on the data disk
+  for d in data exp corpora; do
+    mkdir -p "$WORK/vpc_$d"
+    [ -L "$VPC/$d" ] || { [ -d "$VPC/$d" ] && cp -a "$VPC/$d/." "$WORK/vpc_$d/" && rm -rf "$VPC/$d"; ln -s "$WORK/vpc_$d" "$VPC/$d"; }
+  done
+  ln -sfn "$VPC" "$WORK/vpc2024"   # so that <work>/vpc2024 works as the framework path everywhere
+fi
 if [ ! -f "$VPC/.done-python-requirements" ] || [ -f "$VPC/.done-python-requirements.pending" ]; then
   # 00_install.sh only for the environment and the CUDA toolkit: its torch (cu117) and requirements steps are
   # marked done beforehand and replaced below (cu118 build first, so requirements do not pull another torch)
@@ -141,6 +152,7 @@ if [ ! -f "$VPC/.done-python-requirements" ] || [ -f "$VPC/.done-python-requirem
     pip install -q -r requirements.txt "${PINS[@]}" Cython
   ) >> "$WORK/logs/00_install.log" 2>&1
   rm -f "$VPC/.done-python-requirements.pending"; touch "$VPC/.done-python-requirements"
+  (cd "$VPC" && set +u && source env.sh && set -u && pip cache purge >/dev/null 2>&1; micromamba clean -a -y >/dev/null 2>&1) || true
 fi
 
 # 3. pins, torch for CUDA 11.8, our code and its extra dependencies, in the framework's environment
