@@ -169,7 +169,7 @@ fi
   log "our code"
   whisper="openai-whisper @ git+https://github.com/openai/whisper@$WHISPER_COMMIT"
   [ -n "${GH_ASSETS:-}" ] && [ -f "$GH_ASSETS/whisper-$WHISPER_COMMIT.tar.gz" ] && whisper="$GH_ASSETS/whisper-$WHISPER_COMMIT.tar.gz"
-  pip install -q -e "$CODE" "$whisper" piper-tts==1.8.0 fastapi uvicorn python-multipart "${PINS[@]}"
+  pip install -q -e "$CODE" "$whisper" piper-tts==1.8.0 jiwer fastapi uvicorn python-multipart "${PINS[@]}"
   python - <<'PY'
 import torch
 assert torch.cuda.is_available(), "no CUDA"
