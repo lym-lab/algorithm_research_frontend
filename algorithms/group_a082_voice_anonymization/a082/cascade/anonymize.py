@@ -29,6 +29,13 @@ class Cascade:
         from piper import PiperVoice
         self.whisper = whisper.load_model(whisper_model, device=device)
         self.voice = PiperVoice.load(piper_model, use_cuda=piper_cuda)
+        if not piper_cuda:  # Piper's default session sizes its thread pool by the host, not the container
+            import onnxruntime
+            from .. import threads
+            opts = onnxruntime.SessionOptions()
+            opts.intra_op_num_threads, opts.inter_op_num_threads = threads(), 1
+            self.voice.session = onnxruntime.InferenceSession(str(piper_model), sess_options=opts,
+                                                              providers=["CPUExecutionProvider"])
         self.n_speakers = self.voice.config.num_speakers
         self.device = device
 

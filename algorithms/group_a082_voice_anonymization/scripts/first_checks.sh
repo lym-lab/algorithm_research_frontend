@@ -2,6 +2,7 @@
 # First checks on a new GPU machine, after scripts/cloud_setup.sh: correctness first, then speed.
 #
 #   bash scripts/first_checks.sh <work dir>        e.g. /root/autodl-tmp/a082   (about 1-1.5 h on one GPU)
+#   FROM=3 bash scripts/first_checks.sh <work dir>  only the speed runs (step 3), e.g. after a speed fix
 #
 #   1. kNN-VC against the official implementation (bshall/knn-vc), one real utterance
 #   2. row 0 (original speech) through the official evaluation: EER and WER must match
@@ -20,7 +21,7 @@ OUT=$W/logs/first_checks.txt
 cd "$R" && set +u && source env.sh && set -u
 cd "$CODE"
 export HF_ENDPOINT=${HF_ENDPOINT:-https://hf-mirror.com}
-: > "$OUT"
+[ "${FROM:-1}" -le 1 ] && : > "$OUT"
 say() { echo "$*" | tee -a "$OUT"; }
 now() { date +%s; }
 rtf() {  # rtf <set> <suffix> <seconds>: audio seconds of the utterances written, divided by wall time
@@ -37,6 +38,7 @@ PY
 
 say "== $(date '+%F %T') on $(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)"
 
+if [ "${FROM:-1}" -le 1 ]; then
 # 1. kNN-VC reference check
 SRC=$(ls "$R"/data/libri_dev/wav/1272-128104-0000/*.wav | head -1)
 TGT=$(ls "$W"/corpora/voxceleb1/wav/id10270/*/*.wav | head -5)
@@ -50,6 +52,8 @@ python -m a082.eval.vpc run --vpc-root "$R" --suffix _orig --stages pre
 say "2. row 0 evaluation (eval_pre): $(( $(now) - t )) s"
 python -m a082.eval.vpc collect --vpc-root "$R" --suffix _orig --row 0 | tee -a "$OUT"
 say "   paper: EER 10.511 / 0.931 / 8.761 / 0.418, WER 1.807 / 1.844 (each within 0.05)"
+fi
+say "   CPU threads per process: $(python -c 'import a082; print(a082.threads())') (cgroup quota or A082_THREADS)"
 
 # 3a. VoxCeleb1 test speakers into the pool cache
 python -m a082.knnvc.pool scan-voxceleb "$W/corpora/voxceleb1/wav" "$W/pool_vox1.json"
