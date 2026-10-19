@@ -95,7 +95,7 @@ def tasks() -> list[Task]:
         Task("g9", f"python scripts/calibrate_noise.py --vpc-root {R} --pool {POOL} > {LOGS}/g9.txt 2>&1",
              ["pool.done"], 2, after=f"python - <<'PY'\n"
              f"import json, re, yaml\n"
-             f"t = open('{LOGS}/g9.txt').read(); j = json.loads(t[t.rindex('{{\\n'):])\n"
+             f"t = open('{LOGS}/g9.txt').read(); j = json.loads(t[t.rindex('\\n{{\\n') + 1:])\n"
              f"where, delta = j['closest'].split('/')\n"
              f"c = yaml.safe_load(open('configs/knn3.yaml'))\n"
              f"c['noise'] = {{'where': where, 'delta': float(delta)}}\n"
