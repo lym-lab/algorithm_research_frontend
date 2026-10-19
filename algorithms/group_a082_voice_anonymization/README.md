@@ -113,6 +113,7 @@ sudo bash deploy/install_cpu.sh /opt/a082 <资产目录>
 - 评测集 libri_dev、libri_test 由 OpenSLR 的 LibriSpeech dev-clean、test-clean 按 VPC 2024 的官方清单重建（`scripts/rebuild_libri.py`），脚本逐句核对文件是否齐全、时长是否与清单一致。
 - 目标说话人池用 VoxCeleb1 dev + test；VoxCeleb 与 IEMOCAP 的音频按许可不随项目分发，网页演示的目标说话人改用 LibriTTS-R（CC BY 4.0）。
 - VPC 2024 评测框架不随本项目分发，由 `scripts/cloud_setup.sh` 从其官方仓库下载。
+- IEMOCAP 的音频由 `scripts/cloud_setup.sh` 从 Hugging Face 上的转传副本 `AbstractTTS/IEMOCAP`（固定版本）下载，经 `scripts/prepare_iemocap_hf.py` 还原成原有目录结构并核对句子齐全。
 
 ## 与论文不同或论文没写的地方
 
