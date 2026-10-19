@@ -101,9 +101,9 @@ def tasks() -> list[Task]:
              f"c['noise'] = {{'where': where, 'delta': float(delta)}}\n"
              f"open('{W}/knn3.yaml', 'w').write(yaml.safe_dump(c, sort_keys=False))\n"
              f"print('knn3 noise:', c['noise'], j['wer'])\nPY"),
-        Task("sysclf", f"python -m a082.bonus.sysclf train --vpc-root {R}", ["anon_knn1", "anon_tts"], 3,
-             after=f"mkdir -p {W}/bonus && python -m a082.bonus.sysclf eval --vpc-root {R} --sets eval "
-                   f"--json {W}/bonus/sysclf_eval.json > {LOGS}/sysclf_eval.txt 2>&1"),
+        Task("sysclf", f"python -m a082.bonus.sysclf train --vpc-root {R}", ["anon_knn1", "anon_tts"], 3),
+        Task("sysclf_eval", f"mkdir -p {W}/bonus && python -m a082.bonus.sysclf eval --vpc-root {R} --sets eval "
+             f"--json {W}/bonus/sysclf_eval.json", ["sysclf"], 3),   # needs a GPU: the model is saved on one
         evaluate("_knn1", ["anon_knn1"], 0, "1"),   # first: the first full and parallel evaluation, early warning
         evaluate("_tts", ["anon_tts"], 4, "4"),
         Task("admix", f"python -m a082.admix --vpc-root {R} --p 0.2 0.325 0.4 0.1 0.15 0.25 0.3 0.35 0.5",
