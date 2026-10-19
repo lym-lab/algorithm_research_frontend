@@ -1,6 +1,9 @@
 """Check our kNN-VC against the official implementation (bshall/knn-vc via torch.hub) on real audio.
 
-    python scripts/check_knnvc_reference.py --source <wav> --target <wav> [<wav> ...] [--device cuda]
+    python scripts/check_knnvc_reference.py --source <wav> --target <wav> [<wav> ...] [--device cuda] [--hub-dir DIR]
+
+--hub-dir: an unpacked copy of github.com/bshall/knn-vc, for machines that cannot reach GitHub (torch.hub
+then loads it with source="local"; the weights come from the torch hub checkpoint cache).
 
 Same WavLM, same matching set, same query: our features after kNN must equal the official ones up to
 float rounding, and so must the vocoded waveforms (both normalised to -16 LUFS). Prints the largest
@@ -25,9 +28,12 @@ def main() -> None:
     ap.add_argument("--target", nargs="+", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--tol", type=float, default=1e-3)
+    ap.add_argument("--hub-dir", help="local copy of the bshall/knn-vc repository")
     args = ap.parse_args()
 
-    ref = torch.hub.load("bshall/knn-vc", "knn_vc", prematched=True, trust_repo=True, pretrained=True, device=args.device)
+    kw = dict(prematched=True, pretrained=True, device=args.device)
+    ref = (torch.hub.load(args.hub_dir, "knn_vc", source="local", **kw) if args.hub_dir
+           else torch.hub.load("bshall/knn-vc", "knn_vc", trust_repo=True, **kw))
     matching_ref = ref.get_matching_set(args.target)                    # VAD 7, layer 6
     query_ref = ref.get_features(args.source)
     out_ref = ref.match(query_ref, matching_ref, topk=4)                 # -16 LUFS
