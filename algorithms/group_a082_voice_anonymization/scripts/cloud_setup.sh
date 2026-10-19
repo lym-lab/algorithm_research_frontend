@@ -3,7 +3,7 @@
 #
 #   bash scripts/cloud_setup.sh <work dir on the data disk>     e.g. /data/a082
 #
-# Needs: git, curl, unzip, flac; ~600 GB free under the work dir; HF_TOKEN in the environment for
+# Needs: git, curl, unzip, flac; ~600 GB free under the work dir; a Hugging Face login (or HF_TOKEN) for
 # VoxCeleb (a read-only token of an account that accepted the ProgramComputer/voxceleb terms).
 # IEMOCAP sentence audio comes from the Hugging Face copy AbstractTTS/IEMOCAP (scripts/prepare_iemocap_hf.py).
 # env.sh (micromamba activation) may read unset variables, so nounset is lifted around each `source`.
@@ -79,7 +79,8 @@ test -d "$VPC/exp/asv_orig" && test -d "$VPC/exp/asr" && test -d "$VPC/corpora/L
 
 # 5. kNN-VC target pool: VoxCeleb1 dev + test from the Hugging Face mirror
 if [ ! -d "$WORK/corpora/voxceleb1/wav" ]; then
-  : "${HF_TOKEN:?set HF_TOKEN for the VoxCeleb mirror}"
+  [ -n "${HF_TOKEN:-}" ] || [ -f "${HF_HOME:-$HOME/.cache/huggingface}/token" ] || \
+    { echo "log in to Hugging Face first (huggingface-cli login) or set HF_TOKEN, for the VoxCeleb mirror"; exit 1; }
   (cd "$VPC" && set +u; source env.sh; set -u && python - "$WORK/corpora/voxceleb1" <<'PY'
 import sys
 from huggingface_hub import hf_hub_download
