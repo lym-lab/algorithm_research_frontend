@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from collections import OrderedDict
 from pathlib import Path
 
@@ -94,7 +95,10 @@ class Pool:
     utterances rarely share their second target: without it nearly every utterance reads a set from disk."""
 
     def __init__(self, cache: str | Path, device="cuda", min_frames: int = MIN_FRAMES, keep: int = 8,
-                 keep_cpu: int = 256):
+                 keep_cpu: int | None = None):
+        # ~60 MB per set: 256 sets made each 1M process ~26 GB and 9 of them overran the machine's memory
+        # (2026-10-20); a miss only costs a read from disk. A082_POOL_CPU_SETS overrides.
+        keep_cpu = keep_cpu if keep_cpu is not None else int(os.environ.get("A082_POOL_CPU_SETS", "48"))
         self.cache = Path(cache)
         self.device, self.keep, self.keep_cpu = device, keep, keep_cpu
         self._dev: OrderedDict[str, torch.Tensor] = OrderedDict()
