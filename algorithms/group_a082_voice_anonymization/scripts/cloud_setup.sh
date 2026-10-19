@@ -7,7 +7,21 @@
 # VoxCeleb (a read-only token of an account that accepted the ProgramComputer/voxceleb terms).
 # IEMOCAP sentence audio comes from the Hugging Face copy AbstractTTS/IEMOCAP (scripts/prepare_iemocap_hf.py).
 # env.sh (micromamba activation) may read unset variables, so nounset is lifted around each `source`.
+#
+# Download sources (check them first with scripts/net_test.sh):
+#   OPENSLR=https://openslr.magicdatatech.com   OpenSLR mirror (default https://www.openslr.org)
+#   NETWORK_TURBO=off                           do not source /etc/network_turbo (AutoDL's GitHub/HF proxy)
+#   HF_ENDPOINT=...                             Hugging Face mirror, read by huggingface_hub itself
 set -euo pipefail
+
+OPENSLR=${OPENSLR:-https://www.openslr.org}
+if [ "${NETWORK_TURBO:-auto}" != off ] && [ -f /etc/network_turbo ]; then
+  set +u; source /etc/network_turbo; set -u
+  export no_proxy="${no_proxy:+$no_proxy,}${OPENSLR#https://}"   # the OpenSLR mirror is reached directly
+fi
+
+# fetch <url> <file>: resumable download into a file (large archives are checked against OpenSLR's md5sum.txt)
+fetch() { curl -fSL --retry 5 -C - -o "$2" "$1"; }
 
 WORK=${1:?usage: cloud_setup.sh <work dir>}
 CODE=$(cd "$(dirname "$0")/.." && pwd)
@@ -38,7 +52,7 @@ if [ ! -d "$VPC/data/libri_dev_enrolls" ]; then
 fi
 for part in dev-clean test-clean; do
   if [ ! -d "$WORK/corpora/LibriSpeech/$part" ]; then
-    curl -sSL "https://www.openslr.org/resources/12/$part.tar.gz" | tar -xz -C "$WORK/corpora"
+    curl -fsSL "$OPENSLR/resources/12/$part.tar.gz" | tar -xz -C "$WORK/corpora"
   fi
 done
 (cd "$VPC" && set +u; source env.sh; set -u && python "$CODE/scripts/rebuild_libri.py" --vpc-root "$VPC" --librispeech "$WORK/corpora/LibriSpeech")
@@ -48,6 +62,15 @@ if [ ! -d "$VPC/data/IEMOCAP/wav/Session1" ]; then
   (cd "$VPC" && set +u; source env.sh; set -u && python "$CODE/scripts/prepare_iemocap_hf.py" \
      --vpc-root "$VPC" --out "$WORK/corpora/IEMOCAP_full_release" --parquet-dir "$WORK/corpora/iemocap_hf")
 fi
+
+# 4a. train-clean-360 (23 GB) from $OPENSLR next to dev/test-clean; the framework's script links it
+if [ ! -d "$WORK/corpora/LibriSpeech/train-clean-360" ]; then
+  fetch "$OPENSLR/resources/12/md5sum.txt" "$WORK/corpora/md5sum_12.txt"
+  fetch "$OPENSLR/resources/12/train-clean-360.tar.gz" "$WORK/corpora/train-clean-360.tar.gz"
+  (cd "$WORK/corpora" && grep ' train-clean-360.tar.gz$' md5sum_12.txt | md5sum -c -)
+  tar -xzf "$WORK/corpora/train-clean-360.tar.gz" -C "$WORK/corpora" && rm "$WORK/corpora/train-clean-360.tar.gz"
+fi
+export librispeech_corpus="$WORK/corpora/LibriSpeech"
 
 # 4. train-clean-360 and the pretrained evaluation models via the framework's script.
 #    It stops with an error if data/IEMOCAP/wav is missing; everything before that is done by then.
@@ -71,7 +94,7 @@ fi
 
 # 6. public demo targets: LibriTTS-R test-clean (CC BY 4.0) and the Piper voice
 if [ ! -d "$WORK/corpora/LibriTTS_R/test-clean" ]; then
-  curl -sSL https://www.openslr.org/resources/141/test_clean.tar.gz | tar -xz -C "$WORK/corpora"
+  curl -fsSL "$OPENSLR/resources/141/test_clean.tar.gz" | tar -xz -C "$WORK/corpora"
 fi
 mkdir -p "$WORK/cache/piper"
 for f in en_US-libritts_r-medium.onnx en_US-libritts_r-medium.onnx.json; do

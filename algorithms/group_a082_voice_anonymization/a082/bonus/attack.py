@@ -23,7 +23,6 @@ from __future__ import annotations
 import argparse
 import json
 import shlex
-import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -64,10 +63,11 @@ def cmd_train(args) -> None:
     if args.no_iemocap:
         from ..eval.vpc import LIBRI_ONLY
         o = json.dumps({**json.loads(o), **LIBRI_ONLY})
-    cmd = (f"source env.sh && python run_evaluation.py --config configs/eval_post.yaml "
-           f"--overwrite {shlex.quote(o)} --force_compute True")
-    print(cmd, flush=True)
-    subprocess.run(["bash", "-c", cmd], cwd=args.vpc_root, check=True)
+    from ..eval import vpc
+    tag = f"{args.mix_suffix}__{args.subset}"
+    vpc.framework(args.vpc_root, [f"python run_evaluation.py --config configs/eval_post.yaml "
+                                  f"--overwrite {shlex.quote(o)} --force_compute True"],
+                  args.workspace, tag, fresh=(f"asv_anon{tag}",))
 
 
 def read_scores(path: Path) -> dict[tuple[str, str], float]:
@@ -143,6 +143,7 @@ def main(argv=None) -> None:
     t.add_argument("--vpc-root", required=True, type=Path); t.add_argument("--mix-suffix", required=True)
     t.add_argument("--subset", required=True, help="pred_knn | pred_tts | true_knn | true_tts")
     t.add_argument("--no-iemocap", action="store_true")
+    t.add_argument("--workspace", help="'auto' or a directory: run in a separate working copy (a082/eval/workspace.py)")
     a = sub.add_parser("analyse")
     a.add_argument("--vpc-root", required=True, type=Path); a.add_argument("--mix-suffix", required=True)
     a.add_argument("--labels", required=True); a.add_argument("--models", nargs="+", required=True)

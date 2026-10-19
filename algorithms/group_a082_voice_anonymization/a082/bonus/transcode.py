@@ -2,7 +2,7 @@
 which re-encode it. Does the privacy/utility trade-off survive? (The paper evaluates clean 16 kHz files only.)
 
     python -m a082.bonus.transcode make     --vpc-root R --suffix _knn1 --codec opus12k [--sets eval] [--workers 8]
-    python -m a082.bonus.transcode evaluate --vpc-root R --suffix _knn1 --codec opus12k [--no-iemocap]
+    python -m a082.bonus.transcode evaluate --vpc-root R --suffix _knn1 --codec opus12k [--no-iemocap] [--workspace auto]
 
 Writes data/<set><suffix>_<codec>/ with each anonymized file encoded and decoded back to 16 kHz PCM, so the
 framework can evaluate it like any other suffix. Codecs (ffmpeg must have the encoder):
@@ -71,14 +71,14 @@ def run(vpc_root: Path, suffix: str, codec: str, sets: list[str], workers: int =
         kaldi.finalize_output_dir(data / name, out)
 
 
-def evaluate(vpc_root: Path, suffix: str, codec: str, no_iemocap: bool = False) -> None:
+def evaluate(vpc_root: Path, suffix: str, codec: str, no_iemocap: bool = False, ws: str | None = None) -> None:
     from ..eval import vpc
     sc = f"{suffix}_{codec}"
     data = vpc_root / "data"
     # the framework insists that data/train-clean-360<suffix> exists; point it at the clean anonymized
     # training set (training itself is skipped: retrain = false and the model exists)
     if suffix == "_orig":  # reference: original-original through the codec; there is no attacker model
-        vpc.run(vpc_root, sc, stages=("pre",), no_iemocap=no_iemocap)
+        vpc.run(vpc_root, sc, stages=("pre",), no_iemocap=no_iemocap, ws=ws)
         return
     trained = f"exp/asv_anon{suffix}"
     if not (vpc_root / trained).exists():
@@ -91,11 +91,10 @@ def evaluate(vpc_root: Path, suffix: str, codec: str, no_iemocap: bool = False) 
                                 "evaluation": {"model_dir": trained, "results_dir": f"exp/asv_anon{sc}"}}}}
     if no_iemocap:
         post.update(vpc.LIBRI_ONLY)
-    vpc.run(vpc_root, sc, stages=("pre",), no_iemocap=no_iemocap)
-    cmd = (f"source env.sh && python run_evaluation.py --config configs/eval_post.yaml "
-           f"--overwrite {shlex.quote(json.dumps(post))}")  # no --force_compute: it would delete the trained model
-    print(cmd, flush=True)
-    subprocess.run(["bash", "-c", cmd], cwd=vpc_root, check=True)
+    vpc.run(vpc_root, sc, stages=("pre",), no_iemocap=no_iemocap, ws=ws)
+    # no --force_compute: it would delete the trained model
+    vpc.framework(vpc_root, [f"python run_evaluation.py --config configs/eval_post.yaml "
+                             f"--overwrite {shlex.quote(json.dumps(post))}"], ws, sc, fresh=(f"asv_anon{sc}",))
 
 
 def main(argv=None) -> None:
@@ -111,11 +110,12 @@ def main(argv=None) -> None:
     m.add_argument("--workers", type=int, default=8)
     m.add_argument("--ffmpeg", default=shutil.which("ffmpeg") or "ffmpeg")
     sub.choices["evaluate"].add_argument("--no-iemocap", action="store_true")
+    sub.choices["evaluate"].add_argument("--workspace", help="'auto' or a directory (a082/eval/workspace.py)")
     args = ap.parse_args(argv)
     if args.cmd == "make":
         run(args.vpc_root, args.suffix, args.codec, runner.resolve_sets(args.sets), args.workers, args.ffmpeg)
     else:
-        evaluate(args.vpc_root, args.suffix, args.codec, args.no_iemocap)
+        evaluate(args.vpc_root, args.suffix, args.codec, args.no_iemocap, args.workspace)
 
 
 if __name__ == "__main__":

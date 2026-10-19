@@ -2,6 +2,7 @@
 
     python -m a082.eval.vpc identity --vpc-root R                 # data/<set>_orig -> original audio (row 0)
     python -m a082.eval.vpc run      --vpc-root R --suffix _knn1 [--stages pre post] [--no-iemocap | --emotion crema]
+                                     [--workspace auto | DIR]   # several runs at once, see a082/eval/workspace.py
     python -m a082.eval.vpc collect  --vpc-root R --suffix _knn1 [--row 1] [--json out.json]
     python -m a082.eval.vpc report   --vpc-root R --out results/summary.md
 
@@ -28,7 +29,7 @@ import subprocess
 from pathlib import Path
 
 from .. import kaldi
-from . import targets
+from . import targets, workspace as wsp
 
 LIBRI_ONLY = {
     "datasets": [
@@ -78,12 +79,30 @@ def overwrite_json(suffix: str, stage: str, no_iemocap: bool = False, emotion: s
     return json.dumps(o)
 
 
-def run(vpc_root: Path, suffix: str, stages=("pre", "post"), no_iemocap=False, emotion: str | None = None) -> None:
-    for stage in stages:
-        cmd = (f"source env.sh && python run_evaluation.py --config configs/eval_{stage}.yaml "
-               f"--overwrite {shlex.quote(overwrite_json(suffix, stage, no_iemocap, emotion))} --force_compute True")
-        print(f"[{vpc_root}] {cmd}", flush=True)
-        subprocess.run(["bash", "-c", cmd], cwd=vpc_root, check=True)
+def framework(vpc_root: Path, cmds: list[str], ws: Path | str | None = None, suffix: str = "",
+              fresh: tuple[str, ...] = ()) -> None:
+    """Run framework commands (each after `source env.sh`) in the framework tree, or, with `ws`, in a
+    separate working copy whose results are moved back afterwards (`auto`: <vpc-root>/../evalws/<suffix>).
+    The working copy is kept when a command fails."""
+    vpc_root = Path(vpc_root)
+    cwd = vpc_root
+    if ws is not None:
+        ws = vpc_root.resolve().parent / "evalws" / (suffix.lstrip("_") or "run") if str(ws) == "auto" else Path(ws)
+        cwd = wsp.create(vpc_root, ws, suffix, fresh)
+    for c in cmds:
+        cmd = f"source env.sh && {c}"
+        print(f"[{cwd}] {cmd}", flush=True)
+        subprocess.run(["bash", "-c", cmd], cwd=cwd, check=True)
+    if ws is not None:
+        print(f"moved {len(wsp.merge(cwd, vpc_root))} result files into {vpc_root / 'exp'}", flush=True)
+
+
+def run(vpc_root: Path, suffix: str, stages=("pre", "post"), no_iemocap=False, emotion: str | None = None,
+        ws: Path | str | None = None) -> None:
+    cmds = [f"python run_evaluation.py --config configs/eval_{stage}.yaml "
+            f"--overwrite {shlex.quote(overwrite_json(suffix, stage, no_iemocap, emotion))} --force_compute True"
+            for stage in stages]
+    framework(vpc_root, cmds, ws, suffix, fresh=(f"asv_anon{suffix}",))
 
 
 def _rows(path: Path) -> list[dict]:
@@ -222,6 +241,8 @@ def main(argv=None) -> None:
     sub.choices["run"].add_argument("--stages", nargs="+", default=["pre", "post"])
     sub.choices["run"].add_argument("--no-iemocap", action="store_true")
     sub.choices["run"].add_argument("--emotion", choices=EMOTION_CORPORA, help="emotion corpus for UAR (default iemocap)")
+    sub.choices["run"].add_argument("--workspace", help="'auto' or a directory: run in a separate working copy, "
+                                    "so that several evaluations can run at once (one GPU each)")
     sub.choices["collect"].add_argument("--row")
     sub.choices["collect"].add_argument("--json", type=Path)
     sub.choices["report"].add_argument("--out", type=Path)
@@ -233,7 +254,7 @@ def main(argv=None) -> None:
         sets = kaldi.EVAL_SETS if args.sets == "eval" else args.sets.split(",")
         make_identity(args.vpc_root, sets)
     elif args.cmd == "run":
-        run(args.vpc_root, args.suffix, args.stages, args.no_iemocap, args.emotion)
+        run(args.vpc_root, args.suffix, args.stages, args.no_iemocap, args.emotion, args.workspace)
     elif args.cmd == "collect":
         m = collect(args.vpc_root, args.suffix, args.row)
         if args.row:
