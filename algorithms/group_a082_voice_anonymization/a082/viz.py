@@ -66,7 +66,7 @@ def tradeoff_figure(points: dict, anchors: dict | None = None) -> plt.Figure:
     """
     fig, ax = plt.subplots(figsize=(5.5, 4), constrained_layout=True)
     ps = sorted(points)
-    ax.plot([points[p][1] for p in ps], [points[p][0] for p in ps], "o-", color="C0", label="admixture")
+    ax.plot([points[p][1] for p in ps], [points[p][0] for p in ps], "o-", label="admixture")
     for p in ps:
         ax.annotate(f"{p:g}", (points[p][1], points[p][0]), textcoords="offset points", xytext=(4, 4), fontsize=8)
     for i, (label, (eer, uar)) in enumerate((anchors or {}).items()):
