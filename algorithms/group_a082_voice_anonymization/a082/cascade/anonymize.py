@@ -1,5 +1,5 @@
 """System 4 of Table 1: Whisper medium.en transcription, then Piper (VITS) synthesis with a random
-LibriTTS-R voice per utterance (paper §2.2).
+LibriTTS-R voice per utterance (paper §2.3).
 
     python -m a082.cascade.anonymize --vpc-root <VPC repo> --piper-model <en_US-libritts_r-medium.onnx>
            [--suffix _tts] [--transcripts <dir>] [--sets all] [--shard i/n] [--device cuda]

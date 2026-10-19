@@ -1,4 +1,4 @@
-"""WavLM conversion model (Table 1 rows 5-8; paper §2.3).
+"""WavLM conversion model (Table 1 rows 5-8; paper §2.2).
 
 A FastSpeech2-style feed-forward Transformer that maps WavLM layer-6 features of any speaker to the
 features kNN-VC would produce for one fixed target speaker, frame by frame:

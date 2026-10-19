@@ -115,7 +115,7 @@ def collect(vpc_root: Path, suffix: str, row: str | None = None) -> dict:
     return out
 
 
-def judge(row: str, m: dict, base5: dict | None = None) -> dict:
+def judge(row: str, m: dict, ours: dict | None = None) -> dict:
     """Compare our averages with Table 1 under the §5 tolerances."""
     _, eer, uar, wer = targets.TABLE1[row]
     tol = targets.TOLERANCE.get(row, {})
@@ -130,7 +130,7 @@ def judge(row: str, m: dict, base5: dict | None = None) -> dict:
             verdict[key] = "ok" if abs(ours - paper) <= tol[key] else f"off by {ours - paper:+.2f}"
         else:
             verdict[key] = f"{ours - paper:+.2f}"
-    q = targets.qualitative(row, m, base5)
+    q = targets.qualitative(row, m, ours or {})
     if q:
         verdict["qualitative"] = q
     return verdict
@@ -138,19 +138,42 @@ def judge(row: str, m: dict, base5: dict | None = None) -> dict:
 
 def report_rows(vpc_root: Path) -> list[dict]:
     """Every Table 1 row with the paper's averages, ours (None where not measured) and the verdict."""
-    rows, base5 = [], None
+    rows, measured_rows = [], {}
     for row, (suffix, eer, uar, wer) in targets.TABLE1.items():
         m = collect(vpc_root, suffix, row)
-        if row == "5":
-            base5 = m
+        measured_rows[row] = m
         ours = {k: m[f"{k}_avg"] for k in ("EER", "UAR", "WER")}
         measured = any(v is not None for v in ours.values())
         rows.append({"row": row, "suffix": suffix, "name": targets.NAMES_ZH[row],
                      "paper": {"EER": eer, "UAR": uar, "WER": wer},
                      "ours": ours if measured else None,
                      "subsets": {k: m[k] for k in ("EER", "UAR", "WER")},
-                     "verdict": judge(row, m, base5) if measured else None})
+                     "verdict": judge(row, m, measured_rows) if measured else None})
     return rows
+
+
+def sweep_points(vpc_root: Path) -> dict:
+    """Fig. 4: admixture probability -> metrics, for the points that have results."""
+    pts = {p: collect(vpc_root, sfx) for p, sfx in targets.SWEEP.items()}
+    return {p: m for p, m in pts.items() if m["UAR_avg"] is not None or m["EER"]}
+
+
+def fig4(vpc_root: Path, out: Path) -> None:
+    from .. import viz
+    pts = {p: (m["EER"]["dev_f"], m["UAR_avg"]) for p, m in sweep_points(vpc_root).items()
+           if m["EER"].get("dev_f") is not None and m["UAR_avg"] is not None}
+    anchors = {}
+    for row, label in (("1", "kNN-VC (1)"), ("4", "cascade (4)")):
+        m = collect(vpc_root, targets.TABLE1[row][0], row)
+        if m["EER"].get("dev_f") is not None and m["UAR_avg"] is not None:
+            anchors[label] = (m["EER"]["dev_f"], m["UAR_avg"])
+    out.parent.mkdir(parents=True, exist_ok=True)
+    viz.tradeoff_figure(pts, anchors).savefig(out, dpi=150)
+
+
+def checks(vpc_root: Path) -> list[tuple[str, str]]:
+    ours = {r: collect(vpc_root, sfx, r) for r, (sfx, *_) in targets.TABLE1.items()}
+    return targets.internal_checks(ours, sweep_points(vpc_root))
 
 
 def report(vpc_root: Path) -> str:
@@ -161,6 +184,9 @@ def report(vpc_root: Path) -> str:
         fmt = lambda k: f"{o.get(k) if o.get(k) is not None else '—'} ({r['paper'][k]})"
         v = "; ".join(f"{k}: {s}" for k, s in (r["verdict"] or {}).items()) or "not measured"
         lines.append(f"| {r['row']} | `{r['suffix']}` | {fmt('EER')} | {fmt('UAR')} | {fmt('WER')} | {v} |")
+    internal = checks(vpc_root)
+    if internal:
+        lines += ["", "| internal check | verdict |", "|---|---|"] + [f"| {n} | {v} |" for n, v in internal]
     return "\n".join(lines) + "\n"
 
 
@@ -179,6 +205,7 @@ def main(argv=None) -> None:
     sub.choices["collect"].add_argument("--json", type=Path)
     sub.choices["report"].add_argument("--out", type=Path)
     sub.choices["report"].add_argument("--json", type=Path, help="rows for the web page's results view")
+    sub.choices["report"].add_argument("--fig4", type=Path, help="PNG of the admixture sweep (paper Fig. 4)")
     args = ap.parse_args(argv)
 
     if args.cmd == "identity":
@@ -203,6 +230,8 @@ def main(argv=None) -> None:
         if args.json:
             args.json.parent.mkdir(parents=True, exist_ok=True)
             args.json.write_text(json.dumps(report_rows(args.vpc_root), ensure_ascii=False, indent=1), encoding="utf-8")
+        if args.fig4:
+            fig4(args.vpc_root, args.fig4)
 
 
 if __name__ == "__main__":
