@@ -9,7 +9,7 @@
 # Needs ~350 GB free under the work dir and a Hugging Face login (`huggingface-cli login`, or HF_TOKEN) of an
 # account that accepted the ProgramComputer/voxceleb terms. Log of each background download: <work>/logs/.
 #
-# Lessons of 2026-10-19 (Compshare 4090) built in:
+# Problems met on a first run (2026-10-19, RTX 4090), handled here:
 #   - a slow disk makes everything unusable: step 0 measures it and stops below DISK_MIN MB/s;
 #   - the framework's requirements have only lower bounds; pip then pulls 2026 majors (numpy 2 via pyarrow,
 #     pandas 3, transformers 5) that break it: they are pinned back to 2024 versions (PINS);
@@ -28,8 +28,7 @@
 #   GH_ASSETS=<dir>                     GitHub files fetched elsewhere (for machines where GitHub is slow):
 #                                       vpc2024.tar, micromamba-linux-64, data.zip, asv_orig.zip, asr.zip,
 #                                       ser.zip, WavLM-Large.pt, prematch_g_02500000.pt,
-#                                       whisper-<commit>.tar.gz, knn-vc.tar.gz (kept on the local PC in
-#                                       <local copy of gh> with SHA256SUMS)
+#                                       whisper-<commit>.tar.gz, knn-vc.tar.gz
 #   DISK_MIN=200                        minimum direct read and write speed of the work dir in MB/s (0 = skip)
 #   DEMO_DATA=skip                      skip LibriTTS-R (only the web demo needs it)
 #   PIP_INDEX_URL=...                   pip mirror, read by pip itself

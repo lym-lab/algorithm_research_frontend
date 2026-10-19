@@ -71,4 +71,4 @@ if t.exists():
 else:
     print("target.pt not copied yet: pretrain-spk can run now, train needs it")
 PY
-echo "train node ready: source $WORK/venv/bin/activate, then train with --vpc-root $VPC"
+echo "train node ready: source $WORK/venv/bin/activate, then train as in docs/REPRODUCE.md section 6 with --vpc-root $VPC"

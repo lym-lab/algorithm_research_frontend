@@ -5,7 +5,7 @@
 #
 #   1. kNN-VC against the official implementation (bshall/knn-vc), one real utterance
 #   2. row 0 (original speech) through the official evaluation: EER and WER must match
-#   3. speed of each kind of work on a small share, for scheduling
+#   3. speed of each kind of work on a small share, to plan the full runs
 #      kNN-VC (row 1 config, 1/20 of libri_dev_trials_f), cascade (row 4, same share), WavLM conversion
 #      training (200 steps of the row 5 config); the attacker ASV training time is read from the first
 #      full evaluation instead (it is logged as "ASV training time").
