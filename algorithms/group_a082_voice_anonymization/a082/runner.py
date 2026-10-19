@@ -25,7 +25,7 @@ def resolve_sets(spec: str) -> list[str]:
 
 
 def available_sets(vpc_root: Path, sets: Iterable[str], source_suffix: str = "") -> list[str]:
-    """Drop sets whose source audio is not present (with a warning), e.g. IEMOCAP before its licence."""
+    """Drop sets whose source audio is not present (with a warning), e.g. IEMOCAP when it was not prepared."""
     data = Path(vpc_root) / "data"
     keep = []
     for name in sets:
@@ -73,7 +73,7 @@ def anonymize_sets(vpc_root: Path, sets: Iterable[str], suffix: str,
 def add_common_args(ap) -> None:
     ap.add_argument("--vpc-root", required=True, type=Path)
     ap.add_argument("--sets", default="all", help="all | eval | libri | comma-separated set names; "
-                    "sets without audio (IEMOCAP before its licence) are skipped")
+                    "sets without audio (e.g. IEMOCAP not prepared) are skipped")
     ap.add_argument("--shard", default="0/1", help="i/n: this process handles every n-th utterance from i")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--source-suffix", default="", help="read input audio from data/<set><suffix> (system chaining)")

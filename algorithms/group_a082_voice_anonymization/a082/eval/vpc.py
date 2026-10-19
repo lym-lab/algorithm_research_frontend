@@ -8,7 +8,7 @@
 The framework's scripts are used unchanged (evaluation plan §6 forbids changing them); `run` is the
 "option 2" route of its README: eval_pre with the pretrained models, then eval_post, which trains the
 attacker ASV on the anonymized train-clean-360. --no-iemocap restricts both to LibriSpeech through the
-framework's own --overwrite mechanism, for use before the IEMOCAP licence arrives. --emotion crema scores
+framework's own --overwrite mechanism, for use while IEMOCAP is not prepared. --emotion crema scores
 the organisers' IEMOCAP emotion models on CREMA-D instead (scripts/prepare_crema.py): UAR is then
 cross-corpus and is not compared with the paper.
 

@@ -26,7 +26,7 @@ ALL_SETS = LIBRI_SETS + [TRAIN_SET] + EMO_SETS  # emotion sets last: they may be
 
 def audio_available(set_dir: str | Path, vpc_root: str | Path) -> bool:
     """True if the set's wav.scp exists and its first entry can be read (a file, or a pipe whose
-    input file exists). IEMOCAP is absent until its licence arrives; creating an output folder for it
+    input file exists). IEMOCAP may be absent (not prepared yet); creating an output folder for it
     anyway would make the framework's format check exit (it inspects every folder with the suffix)."""
     scp = Path(set_dir) / "wav.scp"
     if not scp.exists():

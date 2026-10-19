@@ -5,7 +5,7 @@
 #
 # Needs: git, curl, unzip, flac; ~600 GB free under the work dir; HF_TOKEN in the environment for
 # VoxCeleb (a read-only token of an account that accepted the ProgramComputer/voxceleb terms).
-# IEMOCAP is linked later by hand (licence; see docs/REPRODUCE.md).
+# IEMOCAP sentence audio comes from the Hugging Face copy AbstractTTS/IEMOCAP (scripts/prepare_iemocap_hf.py).
 # env.sh (micromamba activation) may read unset variables, so nounset is lifted around each `source`.
 set -euo pipefail
 
@@ -43,8 +43,14 @@ for part in dev-clean test-clean; do
 done
 (cd "$VPC" && set +u; source env.sh; set -u && python "$CODE/scripts/rebuild_libri.py" --vpc-root "$VPC" --librispeech "$WORK/corpora/LibriSpeech")
 
+# 3b. IEMOCAP: sentence audio from the Hugging Face copy, linked as data/IEMOCAP/wav (needs data.zip from step 3)
+if [ ! -d "$VPC/data/IEMOCAP/wav/Session1" ]; then
+  (cd "$VPC" && set +u; source env.sh; set -u && python "$CODE/scripts/prepare_iemocap_hf.py" \
+     --vpc-root "$VPC" --out "$WORK/corpora/IEMOCAP_full_release" --parquet-dir "$WORK/corpora/iemocap_hf")
+fi
+
 # 4. train-clean-360 and the pretrained evaluation models via the framework's script.
-#    It ends with an error while IEMOCAP is missing; everything before that is done by then.
+#    It stops with an error if data/IEMOCAP/wav is missing; everything before that is done by then.
 (cd "$VPC" && bash 01_download_data_model.sh) 2>&1 | tee "$WORK/logs/01_download.log" || true
 test -d "$VPC/exp/asv_orig" && test -d "$VPC/exp/asr" && test -d "$VPC/corpora/LibriSpeech/train-clean-360"
 
