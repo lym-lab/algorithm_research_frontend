@@ -36,6 +36,10 @@
 #                                       all corpora, outputs and results on the data disk (default <work>/vpc2024)
 #   DEMO_DATA=skip                      skip LibriTTS-R (only the web demo needs it)
 #   PIP_INDEX_URL=...                   pip mirror, read by pip itself
+#   TORCH_WHEELS=https://mirrors.aliyun.com/pytorch-wheels/cu118
+#                                       torch wheels from this directory listing instead of download.pytorch.org
+#                                       (there about 0.4 MB/s from AutoDL on 2026-10-19, Aliyun 11 MB/s); wheels
+#                                       placed in $GH_ASSETS are used first
 set -euo pipefail
 
 WORK=${1:?usage: cloud_setup.sh <work dir>}
@@ -147,8 +151,10 @@ if [ ! -f "$VPC/.done-python-requirements" ] || [ -f "$VPC/.done-python-requirem
   (
     cd "$VPC" && set +u && source env.sh && set -u
     log "torch 2.0.1+cu118, framework requirements with pins"
-    pip install -q torch==2.0.1+cu118 torchaudio==2.0.2+cu118 torchvision==0.15.2+cu118 \
-      --index-url https://download.pytorch.org/whl/cu118
+    torch_src=(--index-url https://download.pytorch.org/whl/cu118)
+    [ -n "${TORCH_WHEELS:-}" ] && torch_src=(-f "$TORCH_WHEELS")
+    [ -n "${GH_ASSETS:-}" ] && ls "$GH_ASSETS"/torch-2.0.1+cu118-*.whl >/dev/null 2>&1 && torch_src=(-f "$GH_ASSETS")
+    pip install -q torch==2.0.1+cu118 torchaudio==2.0.2+cu118 torchvision==0.15.2+cu118 "${torch_src[@]}"
     pip install -q -r requirements.txt "${PINS[@]}" Cython
   ) >> "$WORK/logs/00_install.log" 2>&1
   rm -f "$VPC/.done-python-requirements.pending"; touch "$VPC/.done-python-requirements"
