@@ -11,17 +11,42 @@
 # Download sources (check them first with scripts/net_test.sh):
 #   OPENSLR=https://openslr.magicdatatech.com   OpenSLR mirror (default https://www.openslr.org)
 #   NETWORK_TURBO=off                           do not source /etc/network_turbo (AutoDL's GitHub/HF proxy)
-#   HF_ENDPOINT=...                             Hugging Face mirror, read by huggingface_hub itself
+#   HF_ENDPOINT=https://hf-mirror.com           Hugging Face mirror (huggingface_hub reads it; also used for curl)
+#   PROXY=off                                   ignore a platform-set http(s)_proxy (Compshare containers set one)
+#   LIBRISPEECH=hf                              LibriSpeech archives from <HF>/datasets/k2-fsa/LibriSpeech instead
+#                                               of OpenSLR (same files: checked against OpenSLR's md5 below)
+#   GH_ASSETS=<dir>                             GitHub files fetched elsewhere and copied here (for machines where
+#                                               GitHub is slow): vpc2024.tar (framework checkout with .git),
+#                                               micromamba-linux-64, data.zip, asv_orig.zip, asr.zip, ser.zip,
+#                                               WavLM-Large.pt, prematch_g_02500000.pt, whisper-<commit>.tar.gz
+#   DEMO_DATA=skip                              skip LibriTTS-R and the Piper voice (only the demo needs them)
+#   PIP_INDEX_URL=...                           pip mirror, read by pip itself
 set -euo pipefail
 
 OPENSLR=${OPENSLR:-https://www.openslr.org}
-if [ "${NETWORK_TURBO:-auto}" != off ] && [ -f /etc/network_turbo ]; then
+HF=${HF_ENDPOINT:-https://huggingface.co}
+if [ "${PROXY:-on}" = off ]; then
+  unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+elif [ "${NETWORK_TURBO:-auto}" != off ] && [ -f /etc/network_turbo ]; then
   set +u; source /etc/network_turbo; set -u
   export no_proxy="${no_proxy:+$no_proxy,}${OPENSLR#https://}"   # the OpenSLR mirror is reached directly
 fi
 
-# fetch <url> <file>: resumable download into a file (large archives are checked against OpenSLR's md5sum.txt)
+# fetch <url> <file>: resumable download into a file
 fetch() { curl -fSL --retry 5 -C - -o "$2" "$1"; }
+# gh <name> <url> <file>: a GitHub download, taken from $GH_ASSETS when it is there
+gh() { if [ -n "${GH_ASSETS:-}" ] && [ -f "$GH_ASSETS/$1" ]; then cp "$GH_ASSETS/$1" "$3"; else fetch "$2" "$3"; fi; }
+# LibriSpeech parts with OpenSLR's md5 (resources/12/md5sum.txt, checked 2026-10-19)
+declare -A LS_MD5=([dev-clean]=42e2234ba48799c1f50f24a7926300a1 [test-clean]=32fa31d27d2e1cad72775fee3f4849a9
+                   [train-clean-360]=c0e676e450a7ff2f54aeade5171606fa)
+librispeech() {  # librispeech <part>: download, check, unpack into $WORK/corpora/LibriSpeech/<part>
+  local url="$OPENSLR/resources/12/$1.tar.gz" tgz="$WORK/corpora/$1.tar.gz"
+  [ "${LIBRISPEECH:-openslr}" = hf ] && url="$HF/datasets/k2-fsa/LibriSpeech/resolve/main/$1.tar.gz"
+  fetch "$url" "$tgz"
+  (cd "$WORK/corpora" && echo "${LS_MD5[$1]}  $1.tar.gz" | md5sum -c -)
+  tar -xzf "$tgz" -C "$WORK/corpora" && rm "$tgz"
+}
+WHISPER_COMMIT=86098128c0b4f24f0e2aa2994de830614b474227
 
 WORK=${1:?usage: cloud_setup.sh <work dir>}
 CODE=$(cd "$(dirname "$0")/.." && pwd)
@@ -31,29 +56,39 @@ mkdir -p "$WORK"/{corpora,cache,logs}
 
 # 1. VPC 2024 framework at the pinned commit, its own environment (Python 3.11, torch 2.0.1 + CUDA 11.7)
 if [ ! -d "$VPC/.git" ]; then
-  git clone https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024.git "$VPC"
+  if [ -n "${GH_ASSETS:-}" ] && [ -f "$GH_ASSETS/vpc2024.tar" ]; then
+    mkdir -p "$VPC" && tar -xf "$GH_ASSETS/vpc2024.tar" -C "$VPC" --strip-components=1
+  else
+    git clone https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024.git "$VPC"
+  fi
   git -C "$VPC" checkout -q $VPC_COMMIT
 fi
 if [ ! -f "$VPC/.done-python-requirements" ]; then
-  (cd "$VPC" && bash 00_install.sh) 2>&1 | tee "$WORK/logs/00_install.log"
+  # micromamba placed beforehand; NEW_INSTALL_TRIGGER=no keeps 00_install.sh from deleting it on a first run
+  mkdir -p "$VPC/.micromamba"
+  [ -x "$VPC/.micromamba/micromamba" ] || { gh micromamba-linux-64 \
+    https://github.com/mamba-org/micromamba-releases/releases/download/1.5.1-0/micromamba-linux-64 "$VPC/.micromamba/micromamba"
+    chmod +x "$VPC/.micromamba/micromamba"; }
+  (cd "$VPC" && NEW_INSTALL_TRIGGER=no bash 00_install.sh) 2>&1 | tee "$WORK/logs/00_install.log"
+  test -f "$VPC/.done-python-requirements"
 fi
 
 # 2. our code and its extra dependencies, in the framework's environment
 (
   cd "$VPC" && set +u; source env.sh; set -u
   pip install -e "$CODE"
-  pip install "openai-whisper @ git+https://github.com/openai/whisper@86098128c0b4f24f0e2aa2994de830614b474227" \
-              piper-tts==1.8.0 fastapi uvicorn python-multipart matplotlib huggingface_hub
+  whisper="openai-whisper @ git+https://github.com/openai/whisper@$WHISPER_COMMIT"
+  [ -n "${GH_ASSETS:-}" ] && [ -f "$GH_ASSETS/whisper-$WHISPER_COMMIT.tar.gz" ] && whisper="$GH_ASSETS/whisper-$WHISPER_COMMIT.tar.gz"
+  pip install "$whisper" piper-tts==1.8.0 fastapi uvicorn python-multipart matplotlib huggingface_hub
 )
 
 # 3. evaluation data lists (data.zip), then libri_dev / libri_test rebuilt from OpenSLR (no sftp password)
 if [ ! -d "$VPC/data/libri_dev_enrolls" ]; then
-  (cd "$VPC" && curl -sSL -o .data.zip https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024/releases/download/data.zip/data.zip && unzip -q .data.zip)
+  gh data.zip https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024/releases/download/data.zip/data.zip "$VPC/.data.zip"
+  (cd "$VPC" && unzip -q -o .data.zip)
 fi
 for part in dev-clean test-clean; do
-  if [ ! -d "$WORK/corpora/LibriSpeech/$part" ]; then
-    curl -fsSL "$OPENSLR/resources/12/$part.tar.gz" | tar -xz -C "$WORK/corpora"
-  fi
+  [ -d "$WORK/corpora/LibriSpeech/$part" ] || librispeech $part
 done
 (cd "$VPC" && set +u; source env.sh; set -u && python "$CODE/scripts/rebuild_libri.py" --vpc-root "$VPC" --librispeech "$WORK/corpora/LibriSpeech")
 
@@ -64,13 +99,18 @@ if [ ! -d "$VPC/data/IEMOCAP/wav/Session1" ]; then
 fi
 
 # 4a. train-clean-360 (23 GB) from $OPENSLR next to dev/test-clean; the framework's script links it
-if [ ! -d "$WORK/corpora/LibriSpeech/train-clean-360" ]; then
-  fetch "$OPENSLR/resources/12/md5sum.txt" "$WORK/corpora/md5sum_12.txt"
-  fetch "$OPENSLR/resources/12/train-clean-360.tar.gz" "$WORK/corpora/train-clean-360.tar.gz"
-  (cd "$WORK/corpora" && grep ' train-clean-360.tar.gz$' md5sum_12.txt | md5sum -c -)
-  tar -xzf "$WORK/corpora/train-clean-360.tar.gz" -C "$WORK/corpora" && rm "$WORK/corpora/train-clean-360.tar.gz"
-fi
+[ -d "$WORK/corpora/LibriSpeech/train-clean-360" ] || librispeech train-clean-360
 export librispeech_corpus="$WORK/corpora/LibriSpeech"
+# pretrained evaluation models (the framework's script unzips .<model>.zip when it finds one) and kNN-VC weights
+for m in asv_orig asr ser; do
+  [ -d "$VPC/exp/$m" ] || [ -f "$VPC/.$m.zip" ] || \
+    gh $m.zip https://github.com/Voice-Privacy-Challenge/Voice-Privacy-Challenge-2024/releases/download/pre_model.zip/$m.zip "$VPC/.$m.zip"
+done
+HUB=${TORCH_HOME:-$HOME/.cache/torch}/hub/checkpoints
+mkdir -p "$HUB"
+for f in WavLM-Large.pt prematch_g_02500000.pt; do
+  [ -f "$HUB/$f" ] || gh $f https://github.com/bshall/knn-vc/releases/download/v0.1/$f "$HUB/$f"
+done
 
 # 4. train-clean-360 and the pretrained evaluation models via the framework's script.
 #    It stops with an error if data/IEMOCAP/wav is missing; everything before that is done by then.
@@ -94,13 +134,14 @@ PY
 fi
 
 # 6. public demo targets: LibriTTS-R test-clean (CC BY 4.0) and the Piper voice
+[ "${DEMO_DATA:-yes}" = skip ] && { echo "setup done (demo data skipped): VPC at $VPC"; exit 0; }
 if [ ! -d "$WORK/corpora/LibriTTS_R/test-clean" ]; then
   curl -fsSL "$OPENSLR/resources/141/test_clean.tar.gz" | tar -xz -C "$WORK/corpora"
 fi
 mkdir -p "$WORK/cache/piper"
 for f in en_US-libritts_r-medium.onnx en_US-libritts_r-medium.onnx.json; do
   [ -f "$WORK/cache/piper/$f" ] || curl -sSL -o "$WORK/cache/piper/$f" \
-    "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/libritts_r/medium/$f"
+    "$HF/rhasspy/piper-voices/resolve/main/en/en_US/libritts_r/medium/$f"
 done
 (cd "$WORK/cache/piper" && sha256sum en_US-libritts_r-medium.onnx | grep -q 10bb85e071d616fcf4071f369f1799d0491492ab3c5d552ec19fb548fac13195 \
   || echo "WARNING: Piper voice differs from the file recorded on 2026-10-18")
