@@ -87,7 +87,9 @@ def framework(vpc_root: Path, cmds: list[str], ws: Path | str | None = None, suf
     vpc_root = Path(vpc_root)
     cwd = vpc_root
     if ws is not None:
-        ws = vpc_root.resolve().parent / "evalws" / (suffix.lstrip("_") or "run") if str(ws) == "auto" else Path(ws)
+        # next to <vpc-root> as given, not as resolved: with the framework on the system disk and <work>/vpc2024
+        # a link to it, the working copies (attacker models, features) belong on the data disk
+        ws = vpc_root.absolute().parent / "evalws" / (suffix.lstrip("_") or "run") if str(ws) == "auto" else Path(ws)
         cwd = wsp.create(vpc_root, ws, suffix, fresh)
     for c in cmds:
         cmd = f"source env.sh && {c}"

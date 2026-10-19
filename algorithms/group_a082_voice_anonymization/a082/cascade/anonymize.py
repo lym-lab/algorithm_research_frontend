@@ -28,6 +28,10 @@ class Cascade:
         import whisper
         from piper import PiperVoice
         self.whisper = whisper.load_model(whisper_model, device=device)
+        if piper_cuda:  # needs the onnxruntime-gpu build; the CPU build would silently fall back to the CPU
+            import onnxruntime
+            if "CUDAExecutionProvider" not in onnxruntime.get_available_providers():
+                raise RuntimeError("--piper-cuda: this onnxruntime has no CUDAExecutionProvider")
         self.voice = PiperVoice.load(piper_model, use_cuda=piper_cuda)
         if not piper_cuda:  # Piper's default session sizes its thread pool by the host, not the container
             import onnxruntime
@@ -89,6 +93,7 @@ def main(argv=None) -> None:
     ap.add_argument("--suffix", default="_tts")
     ap.add_argument("--transcripts", type=Path, default=Path("work/transcripts"))
     ap.add_argument("--whisper-model", default="medium.en")
+    ap.add_argument("--piper-cuda", action="store_true", help="run Piper on the GPU (needs onnxruntime-gpu)")
     runner.add_common_args(ap)
     args = ap.parse_args(argv)
     shard = runner.parse_shard(args.shard)
@@ -96,7 +101,7 @@ def main(argv=None) -> None:
     if args.finalize_only:
         runner.anonymize_sets(args.vpc_root, sets, args.suffix, None, finalize_only=True)
         return
-    cascade = Cascade(args.piper_model, args.device, args.whisper_model)
+    cascade = Cascade(args.piper_model, args.device, args.whisper_model, piper_cuda=args.piper_cuda)
     for name in sets:
         cache = TranscriptCache(args.transcripts / f"{name}.{shard[0]}of{shard[1]}.txt")
 

@@ -168,6 +168,7 @@ def cpu_share(n: int) -> int:
 
 def launch(cmd: str, logfile: Path, gpu: int | None, threads: int) -> subprocess.Popen:
     env = dict(os.environ, A082_THREADS=str(threads))
+    env.setdefault("HF_ENDPOINT", "https://hf-mirror.com")   # huggingface.co is unreachable from the machine
     env["CUDA_VISIBLE_DEVICES"] = "" if gpu is None else str(gpu)
     full = f"cd {shlex.quote(str(R))} && set +u && source env.sh && set -u && cd {shlex.quote(str(CODE))} && {cmd}"
     f = open(logfile, "a")
@@ -235,7 +236,8 @@ def main() -> None:
                 if j.ok() and j.finished():
                     log(f"{t.id}: shards {j.shards} finished on GPU {j.gpu}")
                     continue
-                log(f"{t.id}: shards {j.shards} failed on GPU {j.gpu}; they go back to the pool of shards")
+                log(f"{t.id}: shards {j.shards} failed on GPU {j.gpu} (exit codes {[p.returncode for p in j.procs]}); "
+                    f"they go back to the pool of shards")
                 claimed[t.id] -= set(j.shards)
                 tries[t.id] += 1
                 if tries[t.id] > RETRIES * 3:
@@ -249,7 +251,7 @@ def main() -> None:
                 log(f"done {t.id} ({(time.time() - j.start) / 3600:.2f} h)")
             else:
                 tries[t.id] += 1
-                log(f"{t.id} failed (try {tries[t.id]}), see q_{t.id}.log")
+                log(f"{t.id} failed (try {tries[t.id]}, exit codes {[p.returncode for p in j.procs]}), see q_{t.id}.log")
                 if tries[t.id] > RETRIES:
                     (DONE / f"{t.id}.failed").touch()
                     log(f"FAILED {t.id}")
