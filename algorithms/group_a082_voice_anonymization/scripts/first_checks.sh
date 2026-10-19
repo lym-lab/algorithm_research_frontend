@@ -7,7 +7,7 @@
 #   1. kNN-VC against the official implementation (bshall/knn-vc), one real utterance
 #   2. row 0 (original speech) through the official evaluation: EER and WER must match
 #   3. speed of each kind of work on a small share, to plan the full runs
-#      kNN-VC (row 1 config, 1/20 of libri_dev_trials_f), cascade (row 4, same share), WavLM conversion
+#      kNN-VC (row 1 config, 1/5 of libri_dev_trials_f), cascade (row 4, same share), WavLM conversion
 #      training (200 steps of the row 5 config); the attacker ASV training time is read from the first
 #      full evaluation instead (it is logged as "ASV training time").
 # Speed runs use throwaway suffixes (_speedknn, _speedtts) and are removed at the end. The VoxCeleb1 test
@@ -79,13 +79,14 @@ done
 sed 's/^suffix:.*/suffix: _speedknn/' configs/knn1.yaml > "$W/knn_speed.yaml"
 t=$(now)
 python -m a082.knnvc.anonymize --config "$W/knn_speed.yaml" --pool "$W/cache/pool_speed" --vpc-root "$R" \
-  --sets libri_dev_trials_f --shard 0/20 > "$W/logs/speed_knn.log" 2>&1
+  --sets libri_dev_trials_f --shard 0/5 > "$W/logs/speed_knn.log" 2>&1
 say "3b. kNN-VC (row 1): $(rtf libri_dev_trials_f _speedknn $(( $(now) - t )))"
 
-# 3c. cascade speed (Whisper medium.en is downloaded on first use)
+# 3c. cascade speed (Whisper medium.en is downloaded on first use); no cached transcripts, or Whisper is skipped
+rm -rf "$W/work/speed_transcripts"
 t=$(now)
 python -m a082.cascade.anonymize --vpc-root "$R" --piper-model "$W/cache/piper/en_US-libritts_r-medium.onnx" \
-  --suffix _speedtts --transcripts "$W/work/speed_transcripts" --sets libri_dev_trials_f --shard 0/20 \
+  --suffix _speedtts --transcripts "$W/work/speed_transcripts" --sets libri_dev_trials_f --shard 0/5 \
   > "$W/logs/speed_tts.log" 2>&1
 say "3c. cascade (row 4): $(rtf libri_dev_trials_f _speedtts $(( $(now) - t ))) (includes the Whisper download)"
 
@@ -104,5 +105,5 @@ say "3d. WavLM conversion training (row 5 config): $(grep -o '[0-9.]* it/s' "$W/
 grep -E "Error|error" "$W/logs/speed_wc.log" | tail -2 | tee -a "$OUT"
 
 # clean up the throwaway outputs
-rm -rf "$R"/data/*_speedknn "$R"/data/*_speedtts "$W/cache/pool_speed" "$W/wc/speed" "$W/wc/speed_target.pt"
+rm -rf "$R"/data/*_speedknn "$R"/data/*_speedtts "$W/work/speed_transcripts" "$W/cache/pool_speed" "$W/wc/speed" "$W/wc/speed_target.pt"
 say "== done $(date '+%F %T'); full log: logs/first_checks.log"
