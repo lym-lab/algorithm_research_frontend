@@ -169,6 +169,10 @@ def cpu_share(n: int) -> int:
 def launch(cmd: str, logfile: Path, gpu: int | None, threads: int) -> subprocess.Popen:
     env = dict(os.environ, A082_THREADS=str(threads))
     env.setdefault("HF_ENDPOINT", "https://hf-mirror.com")   # huggingface.co is unreachable from the machine
+    # loading and freeing ~60 MB matching sets fragmented glibc's heap (kNN processes grew to 16-26 GB); a fixed
+    # mmap threshold returns large blocks to the system when they are freed
+    env.setdefault("MALLOC_MMAP_THRESHOLD_", "1048576")
+    env.setdefault("MALLOC_ARENA_MAX", "4")
     env["CUDA_VISIBLE_DEVICES"] = "" if gpu is None else str(gpu)
     full = f"cd {shlex.quote(str(R))} && set +u && source env.sh && set -u && cd {shlex.quote(str(CODE))} && {cmd}"
     f = open(logfile, "a")
