@@ -34,7 +34,12 @@ def load_scp_entry(entry: str, root: str | Path | None = None) -> tuple[torch.Te
         path = Path(entry)
         if root is not None and not path.is_absolute():
             path = Path(root) / path
-        data, sr = sf.read(path, dtype="float32", always_2d=True)
+        if path.suffix.lower() in (".m4a", ".aac", ".mp4"):   # VoxCeleb2: decoded by ffmpeg, rate unchanged
+            out = subprocess.run(["ffmpeg", "-nostdin", "-loglevel", "error", "-i", str(path), "-f", "wav", "-"],
+                                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout
+            data, sr = sf.read(io.BytesIO(out), dtype="float32", always_2d=True)
+        else:
+            data, sr = sf.read(path, dtype="float32", always_2d=True)
     wav = torch.from_numpy(data.T.copy())
     if wav.shape[0] > 1:
         wav = wav.mean(dim=0, keepdim=True)

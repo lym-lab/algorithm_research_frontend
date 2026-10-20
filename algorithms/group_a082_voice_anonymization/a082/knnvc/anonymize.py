@@ -72,7 +72,7 @@ class KnnSystem:
 
 
 def build(cfg: dict, pool_dir: Path, device="cuda", wavlm_path=None, hifigan_path=None) -> KnnSystem:
-    pool = Pool(pool_dir, device=device)
+    pool = Pool(pool_dir, device=device, max_frames=cfg.get("pool_max_frames"))   # see Pool: truncated sets
     return KnnSystem(cfg, pool, load_wavlm(device, wavlm_path),
                      load_hifigan(device, cfg.get("prematched", True), hifigan_path), device)
 

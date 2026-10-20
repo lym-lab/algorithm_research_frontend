@@ -26,12 +26,12 @@ MAX_FRAMES = 30000   # 10 min at 50 frames/s
 MIN_FRAMES = 15000   # speakers with less than 5 min after VAD are left out
 
 
-def scan_voxceleb(root: str | Path) -> dict[str, list[str]]:
-    """VoxCeleb1 layout: <root>/<id10270>/<video id>/<00001>.wav."""
+def scan_voxceleb(root: str | Path, ext: str = ".wav") -> dict[str, list[str]]:
+    """VoxCeleb layout: <root>/<id10270>/<video id>/<00001>.wav (VoxCeleb2: .m4a)."""
     root = Path(root)
     pool = {}
     for spk_dir in sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith("id")):
-        files = sorted(str(f) for f in spk_dir.glob("*/*.wav"))
+        files = sorted(str(f) for f in spk_dir.glob(f"*/*{ext}"))
         if files:
             pool[spk_dir.name] = files
     return pool
@@ -70,7 +70,7 @@ def build_matching_set(wavlm, files: list[str], spk: str, max_frames: int = MAX_
 
 
 def build(manifest: dict[str, list[str]], cache: str | Path, device="cuda", shard=(0, 1),
-          wavlm_path=None) -> None:
+          wavlm_path=None, max_frames: int = MAX_FRAMES) -> None:
     """Write <cache>/<spk>.pt and its frame count <cache>/<spk>.frames. Each file is written once,
     atomically, by the shard that owns the speaker, so shards never touch a shared file."""
     cache = Path(cache)
@@ -81,7 +81,7 @@ def build(manifest: dict[str, list[str]], cache: str | Path, device="cuda", shar
         out, count = cache / f"{spk}.pt", cache / f"{spk}.frames"
         if out.exists() and count.exists():
             continue
-        s = build_matching_set(wavlm, manifest[spk], spk)
+        s = build_matching_set(wavlm, manifest[spk], spk, max_frames=max_frames)
         tmp = out.with_suffix(".tmp")
         torch.save(s, tmp)
         tmp.replace(out)
@@ -95,7 +95,10 @@ class Pool:
     utterances rarely share their second target: without it nearly every utterance reads a set from disk."""
 
     def __init__(self, cache: str | Path, device="cuda", min_frames: int = MIN_FRAMES, keep: int = 8,
-                 keep_cpu: int | None = None):
+                 keep_cpu: int | None = None, max_frames: int | None = None):
+        # max_frames: use only the first frames of each stored set. Sets are built in a fixed per-speaker order,
+        # so the first 30000 frames of an uncapped set are exactly the 10-minute set (one cache serves both)
+        self.max_frames = max_frames
         # ~60 MB per set: 256 sets made each 1M process ~26 GB and 9 of them overran the machine's memory
         # (2026-10-20); a miss only costs a read from disk. A082_POOL_CPU_SETS overrides.
         keep_cpu = keep_cpu if keep_cpu is not None else int(os.environ.get("A082_POOL_CPU_SETS", "48"))
@@ -130,6 +133,8 @@ class Pool:
         host = self._cpu.get(spk)
         if host is None:
             host = torch.load(self.cache / f"{spk}.pt", map_location="cpu").half()
+            if self.max_frames:
+                host = host[: self.max_frames].clone()
         self._touch(self._cpu, spk, host, self.keep_cpu)
         s = host.to(self.device).float()
         self._touch(self._dev, spk, s, self.keep)
@@ -144,18 +149,19 @@ def _parse_shard(s: str) -> tuple[int, int]:
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    a = sub.add_parser("scan-voxceleb"); a.add_argument("root"); a.add_argument("manifest")
+    a = sub.add_parser("scan-voxceleb"); a.add_argument("root"); a.add_argument("manifest"); a.add_argument("--ext", default=".wav")
     a = sub.add_parser("scan-tree"); a.add_argument("root"); a.add_argument("manifest"); a.add_argument("--ext", default=".wav")
     a = sub.add_parser("build"); a.add_argument("manifest"); a.add_argument("cache")
     a.add_argument("--device", default="cuda"); a.add_argument("--shard", default="0/1"); a.add_argument("--wavlm")
+    a.add_argument("--max-frames", type=int, default=MAX_FRAMES, help="frames per speaker (50 per s); 0 = no limit")
     args = ap.parse_args(argv)
     if args.cmd == "scan-voxceleb":
-        m = scan_voxceleb(args.root)
+        m = scan_voxceleb(args.root, args.ext)
     elif args.cmd == "scan-tree":
         m = scan_tree(args.root, args.ext)
     else:
         build(json.loads(Path(args.manifest).read_text()), args.cache, args.device,
-              _parse_shard(args.shard), args.wavlm)
+              _parse_shard(args.shard), args.wavlm, args.max_frames or 10**9)
         return
     Path(args.manifest).write_text(json.dumps(m, indent=1))
     print(f"{len(m)} speakers, {sum(map(len, m.values()))} files -> {args.manifest}")
