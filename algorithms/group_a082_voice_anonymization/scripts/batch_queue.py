@@ -12,6 +12,9 @@ fails gets <id>.failed and blocks only its dependants.
 When nothing runs and nothing more can start, the queue writes logs/queue_end.txt and, after a grace period,
 shuts the machine down (AutoDL stops billing the GPUs). Create <work>/no_shutdown to prevent that.
 Status: logs/queue.log (events), logs/queue_status.json (running, done, failed, waiting).
+Tasks added while the queue runs: <work>/tasks_extra.json, a list of objects with the fields of `Task` (commands may
+use {W}, {R}, {LOGS}, {POOL}, {PIPER}); the file is read again every cycle, new ids are added. Finished shards leave
+<id>.shard<i> in <work>/done, so a restarted queue does not hand them out again.
 Training of ID 5-8 is not here: it waits for the Huawei vouchers (until 2026-10-26).
 """
 from __future__ import annotations
@@ -205,6 +208,25 @@ class Job:
                 pass
 
 
+def extra_tasks(known: set[str]) -> list[Task]:
+    f = W / "tasks_extra.json"
+    if not f.exists():
+        return []
+    try:
+        items = json.loads(f.read_text())
+    except (OSError, ValueError) as e:
+        log(f"tasks_extra.json unreadable: {e}")
+        return []
+    fmt = dict(W=W, R=R, LOGS=LOGS, POOL=POOL, PIPER=PIPER)
+    out = []
+    for d in items:
+        if d.get("id") in known:
+            continue
+        d = {k: (v.format(**fmt) if isinstance(v, str) and k in ("cmd", "finalize", "after") else v) for k, v in d.items()}
+        out.append(Task(**d))
+    return out
+
+
 def main() -> None:
     DONE.mkdir(exist_ok=True)
     LOGS.mkdir(exist_ok=True)
@@ -215,7 +237,8 @@ def main() -> None:
     is_done = lambda k: (DONE / k).exists()
     is_failed = lambda k: (DONE / f"{k}.failed").exists()
     jobs: list[Job] = []
-    claimed: dict[str, set[int]] = {t.id: set() for t in T if t.shards}
+    shard_done = lambda t, i: (DONE / f"{t.id}.shard{i}").exists()
+    claimed: dict[str, set[int]] = {t.id: {i for i in range(t.shards) if shard_done(t, i)} for t in T if t.shards}
     tries: dict[str, int] = {t.id: 0 for t in T}
     idle_since = None
     log(f"queue start: {G} GPUs, {share} CPU threads per GPU, {len(T)} tasks, "
@@ -228,6 +251,12 @@ def main() -> None:
         return any(is_failed(d) or (d in by and blocked(by[d])) for d in t.deps)
 
     while True:
+        # 0. tasks added while running
+        for t in extra_tasks(set(by)):
+            T.append(t); by[t.id] = t; tries[t.id] = 0
+            if t.shards:
+                claimed[t.id] = {i for i in range(t.shards) if shard_done(t, i)}
+            log(f"added task {t.id}")
         # 1. collect finished jobs
         for j in [j for j in jobs if j.finished() or time.time() - j.start > j.task.timeout_h * 3600]:
             t = j.task
@@ -238,6 +267,8 @@ def main() -> None:
             jobs.remove(j)
             if t.shards:
                 if j.ok() and j.finished():
+                    for i in j.shards:
+                        (DONE / f"{t.id}.shard{i}").touch()
                     log(f"{t.id}: shards {j.shards} finished on GPU {j.gpu}")
                     continue
                 log(f"{t.id}: shards {j.shards} failed on GPU {j.gpu} (exit codes {[p.returncode for p in j.procs]}); "
@@ -273,6 +304,8 @@ def main() -> None:
                     tries[t.id] += 1
                     log(f"{t.id}: finalize found missing outputs; running all shards again (they skip finished files)")
                     claimed[t.id] = set()
+                    for i in range(t.shards):
+                        (DONE / f"{t.id}.shard{i}").unlink(missing_ok=True)
                     if tries[t.id] > RETRIES * 3:
                         (DONE / f"{t.id}.failed").touch()
                         log(f"FAILED {t.id}")
