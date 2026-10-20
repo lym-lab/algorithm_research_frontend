@@ -59,19 +59,27 @@ def shared_scale(*wavs: torch.Tensor, sr: int = SR) -> tuple[float, float]:
     return float(min(s.min() for s in specs)), float(max(s.max() for s in specs))
 
 
-def tradeoff_figure(points: dict, anchors: dict | None = None) -> plt.Figure:
-    """Fig. 4 of the paper: EER on libri-dev-f against average UAR, one point per admixture probability.
+def tradeoff_figure(points: dict, anchors: dict | None = None, paper: dict | None = None, ax=None,
+                    uar_label: str = "UAR (%)") -> plt.Figure:
+    """Fig. 4 of the paper: EER on libri-dev-f against UAR, one point per admixture probability.
 
-    `points`: p -> (EER, UAR); `anchors`: label -> (EER, UAR) for the pure systems (rows 1 and 4).
+    `points`: p -> (EER, UAR); `anchors`: label -> (EER, UAR) for the pure systems (rows 1 and 4);
+    `paper`: label -> (EER, UAR) of the paper's points, drawn hollow; `ax`: draw into an existing axes.
     """
-    fig, ax = plt.subplots(figsize=(5.5, 4), constrained_layout=True)
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(5.5, 4), constrained_layout=True)
+    else:
+        fig = ax.figure
     ps = sorted(points)
     ax.plot([points[p][1] for p in ps], [points[p][0] for p in ps], "o-", label="admixture")
     for p in ps:
         ax.annotate(f"{p:g}", (points[p][1], points[p][0]), textcoords="offset points", xytext=(4, 4), fontsize=8)
     for i, (label, (eer, uar)) in enumerate((anchors or {}).items()):
         ax.plot(uar, eer, "s", color=f"C{i + 1}", label=label)
-    ax.set_xlabel("UAR (%)")
+    if paper:
+        ax.plot([u for _, u in paper.values()], [e for e, _ in paper.values()], "o", mfc="none", mec="k",
+                label="paper (Table 1)")
+    ax.set_xlabel(uar_label)
     ax.set_ylabel("EER, libri-dev-f (%)")
     ax.grid(alpha=0.3)
     ax.legend()

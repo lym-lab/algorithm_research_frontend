@@ -71,6 +71,10 @@ MIX_ABOVE_LINEAR = 3.0  # admixture EER must exceed the linear interpolation of 
 SWEEP = {0.1: "_mix0p1", 0.15: "_mix0p15", 0.2: "_mix0p2", 0.25: "_mix0p25", 0.3: "_mix0p3",
          0.325: "_mix0p325", 0.35: "_mix0p35", 0.4: "_mix0p4", 0.5: "_mix0p5"}
 FIG4_P05_UAR = 44.77    # the only Fig. 4 value given in the text (p = 0.5)
+# Table 1 points of Fig. 4 as the paper reports them: label -> (EER libri-dev-f, UAR dev, UAR test)
+PAPER_FIG4 = {"kNN-VC (1)": (11.789, 56.7330, 56.6740), "cascade (4)": (47.584, 30.1074, 30.5932),
+              "p = 0.2": (26.003, 51.2840, 52.1324), "p = 0.325": (34.518, 49.3398, 48.7304),
+              "p = 0.4": (41.192, 47.0784, 47.1046)}
 
 
 def internal_checks(ours: dict, sweep: dict) -> list[tuple[str, str]]:

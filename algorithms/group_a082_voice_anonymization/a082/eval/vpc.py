@@ -200,16 +200,23 @@ def sweep_points(vpc_root: Path) -> dict:
 
 
 def fig4(vpc_root: Path, out: Path) -> None:
+    """Two panels, UAR on IEMOCAP dev and on test: the paper does not say which one its Fig. 4 uses."""
+    import matplotlib.pyplot as plt
     from .. import viz
-    pts = {p: (m["EER"]["dev_f"], m["UAR_avg"]) for p, m in sweep_points(vpc_root).items()
-           if m["EER"].get("dev_f") is not None and m["UAR_avg"] is not None}
-    anchors = {}
-    for row, label in (("1", "kNN-VC (1)"), ("4", "cascade (4)")):
-        m = collect(vpc_root, targets.TABLE1[row][0], row)
-        if m["EER"].get("dev_f") is not None and m["UAR_avg"] is not None:
-            anchors[label] = (m["EER"]["dev_f"], m["UAR_avg"])
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.2), constrained_layout=True, sharey=True)
+    sweep = sweep_points(vpc_root)
+    for k, (split, ax) in enumerate(zip(("dev", "test"), axes)):
+        pts = {p: (m["EER"]["dev_f"], m["UAR"][split]) for p, m in sweep.items()
+               if m["EER"].get("dev_f") is not None and split in m["UAR"]}
+        anchors = {}
+        for row, label in (("1", "kNN-VC (1)"), ("4", "cascade (4)")):
+            m = collect(vpc_root, targets.TABLE1[row][0], row)
+            if m["EER"].get("dev_f") is not None and split in m["UAR"]:
+                anchors[label] = (m["EER"]["dev_f"], m["UAR"][split])
+        paper = {lab: (e, (ud, ut)[k]) for lab, (e, ud, ut) in targets.PAPER_FIG4.items()}
+        viz.tradeoff_figure(pts, anchors, paper, ax=ax, uar_label=f"UAR, IEMOCAP {split} (%)")
     out.parent.mkdir(parents=True, exist_ok=True)
-    viz.tradeoff_figure(pts, anchors).savefig(out, dpi=150)
+    fig.savefig(out, dpi=150)
 
 
 def checks(vpc_root: Path) -> list[tuple[str, str]]:
