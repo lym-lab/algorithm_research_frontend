@@ -53,7 +53,7 @@ def test_split_writes_labels_and_subsets(tmp_path, monkeypatch):
 
     class A:
         vpc_root = root; device = "cpu"; model = str(tmp_path / "m.pt"); mix_suffix = "_mix0p4"; p = 0.4
-        sets = "train-clean-360"; labels_dir = str(tmp_path / "labels"); level = "utt"
+        sets = "train-clean-360"; labels_dir = str(tmp_path / "labels"); level = "utt"; name = "pred"; no_true = False
     sysclf.cmd_split(A)
     labels = sysclf.read_labels(tmp_path / "labels" / "mix0p4" / "train-clean-360.txt")
     assert len(labels) == 8

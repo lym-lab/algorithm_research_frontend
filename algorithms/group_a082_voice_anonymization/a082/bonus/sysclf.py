@@ -120,7 +120,10 @@ def cmd_split(args) -> None:
     data = args.vpc_root / "data"
     model = torch.load(args.model)
     wavlm = load_wavlm(args.device)
-    out_labels = Path(args.labels_dir) / args.mix_suffix.lstrip("_")
+    # --name other than "pred": a second split of the same admixture (e.g. by a classifier the attacker retrained
+    # for improvement A) next to the first one, in labels/<mix>_<name> and train-clean-360<mix>_<name>_{knn,tts}
+    tag = "" if args.name == "pred" else f"_{args.name}"
+    out_labels = Path(args.labels_dir) / (args.mix_suffix.lstrip("_") + tag)
     out_labels.mkdir(parents=True, exist_ok=True)
     summary = {}
     for name in runner.available_sets(args.vpc_root, runner.resolve_sets(args.sets), args.mix_suffix):
@@ -137,7 +140,7 @@ def cmd_split(args) -> None:
         summary[name] = {"accuracy": acc, "n": len(utts)}
         print(f"{name}{args.mix_suffix}: accuracy {acc:.4f}")
         if name == kaldi.TRAIN_SET:
-            for kind, lab in (("pred", pred), ("true", truth)):
+            for kind, lab in ((args.name, pred),) + ((("true", truth),) if not args.no_true else ()):
                 for cls in LABELS:
                     keep = {u for u in utts if lab[u] == cls}
                     n = kaldi.subset_dir(d, data / f"{name}{args.mix_suffix}_{kind}_{cls}", keep)
@@ -172,6 +175,8 @@ def main(argv=None) -> None:
     s.add_argument("--p", type=float, required=True); s.add_argument("--sets", default="all")
     s.add_argument("--labels-dir", default="work/bonus/labels")
     s.add_argument("--level", choices=["utt", "spk"], default="utt", help="how the admixture was drawn")
+    s.add_argument("--name", default="pred", help="name of the predicted subsets (default pred)")
+    s.add_argument("--no-true", action="store_true", help="do not (re)write the true-label subsets")
     args = ap.parse_args(argv)
     {"train": cmd_train, "eval": cmd_eval, "split": cmd_split}[args.cmd](args)
 
