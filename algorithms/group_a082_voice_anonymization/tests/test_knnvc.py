@@ -91,3 +91,15 @@ def test_kaldi_round_trip(tmp_path):
     sf.write(kaldi.wav_path(out, "s1-1-0002"), np.zeros(3200, np.float32), 16000, subtype="PCM_16")
     kaldi.finalize_output_dir(src, out)
     assert kaldi.read_kaldi(out / "utt2dur") == {"s1-1-0001": "0.100", "s1-1-0002": "0.200"}
+
+
+def test_pool_device_tier_is_bounded_in_bytes(tmp_path, monkeypatch):
+    from a082.knnvc.pool import Pool
+    for i in range(4):
+        torch.save(torch.zeros(1000, 1024), tmp_path / f"s{i}.pt")
+        (tmp_path / f"s{i}.frames").write_text("1000")
+    monkeypatch.setenv("A082_POOL_GPU_MB", "8")  # one set is 4 MB in float32: two fit
+    p = Pool(tmp_path, device="cpu", min_frames=1)
+    for s in p.speakers:
+        p.get(s)
+    assert list(p._dev) == ["s2", "s3"] and len(p._cpu) == 4

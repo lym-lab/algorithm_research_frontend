@@ -104,6 +104,9 @@ class Pool:
         keep_cpu = keep_cpu if keep_cpu is not None else int(os.environ.get("A082_POOL_CPU_SETS", "48"))
         self.cache = Path(cache)
         self.device, self.keep, self.keep_cpu = device, keep, keep_cpu
+        # uncapped sets reach 1.5 GB in float32 (VoxCeleb1, up to ~2 h per speaker): with 3 processes per GPU, 8 of
+        # them would overrun a 32 GB card, so the device tier is also bounded in bytes (10-minute sets never hit it)
+        self.dev_bytes = int(float(os.environ.get("A082_POOL_GPU_MB", "3000")) * 2**20)
         self._dev: OrderedDict[str, torch.Tensor] = OrderedDict()
         self._cpu: OrderedDict[str, torch.Tensor] = OrderedDict()
         pts = sorted(self.cache.glob("*.pt"))
@@ -120,10 +123,11 @@ class Pool:
         return len(self.speakers)
 
     @staticmethod
-    def _touch(lru: OrderedDict, key, value, limit):
+    def _touch(lru: OrderedDict, key, value, limit, max_bytes: int | None = None):
         lru[key] = value
         lru.move_to_end(key)
-        while len(lru) > limit:
+        size = lambda: sum(t.numel() * t.element_size() for t in lru.values())
+        while len(lru) > limit or (max_bytes is not None and len(lru) > 1 and size() > max_bytes):
             lru.popitem(last=False)
 
     def get(self, spk: str) -> torch.Tensor:
@@ -137,7 +141,7 @@ class Pool:
                 host = host[: self.max_frames].clone()
         self._touch(self._cpu, spk, host, self.keep_cpu)
         s = host.to(self.device).float()
-        self._touch(self._dev, spk, s, self.keep)
+        self._touch(self._dev, spk, s, self.keep, self.dev_bytes)
         return s
 
 
