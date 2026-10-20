@@ -39,6 +39,38 @@ def compare_figure(orig: torch.Tensor, anon: torch.Tensor, sr: int = SR,
     return fig
 
 
+def systems_figure(signals: dict, sr: int = SR, seconds: float | None = None) -> plt.Figure:
+    """One log-mel spectrogram per system (title -> waveform), stacked, on one colour scale."""
+    ws = {k: (w.reshape(-1)[: int(seconds * sr)] if seconds else w.reshape(-1)) for k, w in signals.items()}
+    specs = {k: log_mel(w, sr) for k, w in ws.items()}
+    vmin, vmax = min(s.min() for s in specs.values()), max(s.max() for s in specs.values())
+    fig, axes = plt.subplots(len(specs), 1, figsize=(9, 1.45 * len(specs)), sharex=True, constrained_layout=True)
+    for ax, (title, spec) in zip(np.atleast_1d(axes), specs.items()):
+        ax.imshow(spec, origin="lower", aspect="auto", vmin=vmin, vmax=vmax, cmap="magma",
+                  extent=(0, len(ws[title]) / sr, 0, spec.shape[0]))
+        ax.set_ylabel("mel", fontsize=8)
+        ax.set_title(title, fontsize=9, loc="left")
+    np.atleast_1d(axes)[-1].set_xlabel("time (s)")
+    return fig
+
+
+def privacy_utility_figure(rows: dict, thresholds=(10, 20, 30, 40), offsets: dict | None = None) -> plt.Figure:
+    """EER against UAR and against WER for every system (label -> (EER, UAR, WER)), with the VPC 2024
+    minimum-privacy lines. `offsets`: label -> (dx, dy) in points for labels that would overlap."""
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.2), constrained_layout=True, sharey=True)
+    for ax, k, name in ((axes[0], 1, "UAR (%)"), (axes[1], 2, "WER (%)")):
+        for t in thresholds:
+            ax.axhline(t, color="0.75", lw=0.8, ls="--")
+        for i, (label, v) in enumerate(rows.items()):
+            ax.plot(v[k], v[0], "o", color=f"C{i % 10}")
+            ax.annotate(label, (v[k], v[0]), textcoords="offset points", xytext=(offsets or {}).get(label, (4, 3)),
+                        fontsize=8)
+        ax.set_xlabel(name)
+        ax.grid(alpha=0.3)
+    axes[0].set_ylabel("EER, average of 4 subsets (%)")
+    return fig
+
+
 def spectrogram_png(wav: torch.Tensor, vmin: float, vmax: float, sr: int = SR,
                     width_px: int = 640, height_px: int = 200) -> bytes:
     """Log-mel spectrogram as a bare PNG (no axes) on a fixed colour scale, for the web page."""
