@@ -1,6 +1,6 @@
 """Where the feature noise of system 3 goes and how large it is.
 
-    python scripts/calibrate_noise.py --vpc-root R --pool <cache> [--n 50] [--device cuda]
+    python scripts/calibrate_noise.py --vpc-root R --pool <cache> [--n 50] [--combos matching:18,matching:20] [--device cuda]
 
 1. Prints the per-dimension standard deviation of WavLM layer-6 features on the calibration utterances,
    to judge how large "infinity norm < 32" is relative to the feature scale.
@@ -37,7 +37,9 @@ def main() -> None:
     ap.add_argument("--pool", required=True, type=Path)
     ap.add_argument("--n", type=int, default=50)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--combos", help="where:delta,... (default: matching/query x 16/32)")
     args = ap.parse_args()
+    combos = COMBOS if not args.combos else [(c.split(":")[0], float(c.split(":")[1])) for c in args.combos.split(",")]
     data = args.vpc_root / "data"
 
     # calibration set: n utterances of libri-dev-asr, chosen by hash
@@ -45,7 +47,8 @@ def main() -> None:
     for sub in ("libri_dev_trials_f", "libri_dev_trials_m"):
         utts += list(kaldi.read_kaldi(data / sub / "wav.scp"))
     keep = set(sorted(utts, key=lambda u: seeding.seed_int(u, "g9"))[: args.n])
-    calib = data / "calib_g9"
+    cname = "calib_g9" if args.n == 50 else f"calib_g9_n{args.n}"   # the framework caches results per set name
+    calib = data / cname
     merged = data / "calib_g9_all"
     merged.mkdir(exist_ok=True)
     for name in ("wav.scp", "utt2spk", "text", "utt2dur", "spk2gender"):
@@ -66,15 +69,15 @@ def main() -> None:
     pool = Pool(args.pool, device=args.device)
     base = yaml.safe_load((CONFIGS / "knn3.yaml").read_text())
     results = {}
-    for where, delta in COMBOS:
-        suffix = f"_g9{where[0]}{int(delta)}"
+    for where, delta in combos:
+        suffix = f"_g9{where[0]}{int(delta)}n{args.n}"
         system = KnnSystem({**base, "suffix": suffix, "noise": {"where": where, "delta": delta}},
                            pool, wavlm, hifigan, args.device)
-        runner.anonymize_sets(args.vpc_root, ["calib_g9"], suffix, lambda u, w: system.convert(u, w))
+        runner.anonymize_sets(args.vpc_root, [cname], suffix, lambda u, w: system.convert(u, w))
         o = {"anon_data_suffix": suffix,
-             "datasets": [{"name": "calib_g9", "data": "calib_g9"}],
+             "datasets": [{"name": cname, "data": cname}],
              "eval_steps": {"privacy": [], "utility": ["asr"]},
-             "utility": {"asr": {"dataset_name": ["calib_g9"]}}}
+             "utility": {"asr": {"dataset_name": [cname]}}}
 
         cmd = (f"source env.sh && python run_evaluation.py --config configs/eval_pre.yaml "
                f"--overwrite {shlex.quote(json.dumps(o))} --force_compute True")
