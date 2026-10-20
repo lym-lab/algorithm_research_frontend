@@ -74,7 +74,7 @@ def test_analyse_with_synthetic_scores(tmp_path):
         (d / "trials").write_text("\n".join(lines) + "\n")
         (tmp_path / "labels").mkdir(exist_ok=True)
         (tmp_path / "labels" / f"{tri}.txt").write_text("\n".join(lab) + "\n")
-        for model in ("single", "knn", "tts"):
+        for model in ("single", "knn", "tts", "true_knn", "true_tts"):
             sd = root / "exp" / model / f"{enr}_mix0p4-{tri}_mix0p4"; sd.mkdir(parents=True)
             rows = []
             for ln in lines:
@@ -85,6 +85,10 @@ def test_analyse_with_synthetic_scores(tmp_path):
                          {m: root / "exp" / m for m in ("single", "knn", "tts")})
     assert set(rep["average"]) == {"single", "knn", "tts", "routed"}
     assert rep["average"]["single"]["all"] < 20
+    # without a predicted-tts model (improvement A): no routed; the oracle pair still routes
+    rep = attack.analyse(root, "_mix0p4", tmp_path / "labels",
+                         {m: root / "exp" / m for m in ("single", "knn", "true_knn", "true_tts")})
+    assert set(rep["average"]) == {"single", "knn", "true_knn", "true_tts", "routed_true"}
 
 
 def test_missing_iemocap_is_skipped_without_creating_folders(tmp_path):

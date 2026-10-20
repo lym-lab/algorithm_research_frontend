@@ -16,7 +16,8 @@ official one. Each run evaluates on the full admixture trials and writes the per
 - EER of each model on all trials, on trials whose test utterance came from kNN-VC, and from the cascade;
 - the "routed" attacker: each trial is scored by the model trained on the predicted system of its test
   utterance (knn or tts); scores are standardised per model before pooling (our heuristic: cosine scores
-  of two separately trained models are not on the same scale).
+  of two separately trained models are not on the same scale);
+- "routed_true": the same with the true system and the oracle models (true_knn, true_tts), when given.
 """
 from __future__ import annotations
 
@@ -105,15 +106,19 @@ def analyse(vpc_root: Path, mix_suffix: str, labels_dir: Path, models: dict[str,
             res[name] = {"all": split_eer(sc, lambda k: True),
                          "test_knn": split_eer(sc, lambda k: labels[k[1]][0] == "knn"),
                          "test_tts": split_eer(sc, lambda k: labels[k[1]][0] == "tts")}
-        if "knn" in scores and "tts" in scores:
+        # routed: by the predicted system (models knn, tts); routed_true: by the true one (true_knn, true_tts)
+        for out, prefix, col in (("routed", "", 1), ("routed_true", "true_", 0)):
+            if f"{prefix}knn" not in scores or f"{prefix}tts" not in scores:
+                continue
             z = {}
-            for name in ("knn", "tts"):
-                v = np.array(list(scores[name].values()))
-                z[name] = {k: (s - v.mean()) / (v.std() + 1e-9) for k, s in scores[name].items()}
-            routed = {k: z[labels[k[1]][1]][k] for k in trials}
-            res["routed"] = {"all": split_eer(routed, lambda k: True),
-                             "test_knn": split_eer(routed, lambda k: labels[k[1]][0] == "knn"),
-                             "test_tts": split_eer(routed, lambda k: labels[k[1]][0] == "tts")}
+            for system in ("knn", "tts"):
+                sc = scores[f"{prefix}{system}"]
+                v = np.array(list(sc.values()))
+                z[system] = {k: (s - v.mean()) / (v.std() + 1e-9) for k, s in sc.items()}
+            routed = {k: z[labels[k[1]][col]][k] for k in trials}
+            res[out] = {"all": split_eer(routed, lambda k: True),
+                        "test_knn": split_eer(routed, lambda k: labels[k[1]][0] == "knn"),
+                        "test_tts": split_eer(routed, lambda k: labels[k[1]][0] == "tts")}
         report[trials_name] = res
     names = next(iter(report.values())).keys()
     report["average"] = {n: {c: _mean([report[t][n][c] for _, t in TRIAL_SETS])
