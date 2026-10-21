@@ -96,3 +96,41 @@ def test_commands_end_to_end(tmp_path, monkeypatch):
                               shard="0/1", device="cpu", finalize_only=False))
     scp = kaldi.read_kaldi(root / "data" / "libri_dev_enrolls_wcT" / "wav.scp")
     assert len(scp) == 2 and all(sf.info(p).samplerate == 16000 for p in scp.values())
+
+
+def _train_rank(rank, world, port, kw):
+    import os
+    os.environ.update(WORLD_SIZE=str(world), RANK=str(rank), LOCAL_RANK=str(rank),
+                      MASTER_ADDR="127.0.0.1", MASTER_PORT=str(port))
+    train.load_wavlm = tiny_wavlm
+    train.cmd_train(Namespace(**kw))
+
+
+def test_train_on_two_ranks(tmp_path):
+    """The training loop under torchrun's environment with two CPU processes (gloo): batch 8 is split 4 + 4 and
+    the one target-reconstruction sample goes to rank 0 only, with the adversarial and CTC losses on."""
+    import socket
+    import torch.multiprocessing as mp
+    root = tmp_path / "vpc"
+    tgt_files = make_vpc(root)
+    manifest = tmp_path / "pool.json"
+    manifest.write_text(json.dumps({"idT": tgt_files}))
+    matching = torch.randn(300, DIM)
+    target = tmp_path / "target.pt"
+    torch.save({"speaker": "idT", "matching": matching.half(),
+                "centroids": kmeans.spherical_kmeans(matching, k=8, iters=5), "k": 8}, target)
+    spk = tmp_path / "spk.pt"
+    torch.save({"model": train.SpeakerClassifier(2, DIM).state_dict(), "n_speakers": 2, "feat_dim": DIM}, spk)
+    cfg = {"name": "tiny", "steps": 3, "crop_s": 1.0, "batch": 8, "warmup": 10, "target_recon": 0.125,
+           "valid_utts": 4, "adv": True, "ctc": True, "ctc_sigma": 10.0,
+           "model": {"feat_dim": DIM, "d": 16, "enc_layers": 1, "dec_layers": 1, "heads": 2, "filt": 24}}
+    cfg_path = tmp_path / "tiny.yaml"
+    cfg_path.write_text(yaml.safe_dump(cfg))
+    out = tmp_path / "wc"
+    kw = dict(config=str(cfg_path), vpc_root=root, target=str(target), manifest=str(manifest), spk=str(spk),
+              init=None, out=str(out), workers=0, device="cpu", log_every=1, save_every=2)
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0)); port = s.getsockname()[1]
+    mp.spawn(_train_rank, args=(2, port, kw), nprocs=2)
+    ck = torch.load(out / "last.pt")
+    assert ck["step"] == 3 and ck["gpus"] == 2 and "clf" in ck and "ctc" in ck

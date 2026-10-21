@@ -7,6 +7,8 @@
     # 3. base model (row 5), then the variants from the base checkpoint
     python -m a082.wavlm_conv.train train --config configs/wc5.yaml --vpc-root R --target work/wc/target.pt --manifest pool.json
     python -m a082.wavlm_conv.train train --config configs/wc6.yaml ... --spk work/wc/spk.pt --init work/wc5/last.pt
+    # the same on n GPUs of one machine (data parallel; `batch` in the config stays the total batch)
+    OMP_NUM_THREADS=8 torchrun --standalone --nproc_per_node 4 -m a082.wavlm_conv.train train --config ...
     # 4. anonymize the VPC sets (same runner as the other systems)
     python -m a082.wavlm_conv.train infer --ckpt work/wc5/last.pt --suffix _wc5 --vpc-root R [--sets all --shard i/n]
 
@@ -18,16 +20,19 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import random
 import time
 from pathlib import Path
 
 import soundfile as sf
 import torch
+import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
 import yaml
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.distributed import DistributedSampler
 
 from .. import audio, kaldi, runner, seeding
 from ..knnvc.core import knn_regress
@@ -90,8 +95,12 @@ def collate(batch):
 
 
 def forever(loader):
+    epoch = 0
     while True:
+        if isinstance(loader.sampler, DistributedSampler):
+            loader.sampler.set_epoch(epoch)  # a new shuffle every epoch, the same on all ranks
         yield from loader
+        epoch += 1
 
 
 def split_train_valid(utts: list[str], valid_frac: float = 0.005) -> tuple[list[str], list[str]]:
@@ -103,6 +112,59 @@ def split_train_valid(utts: list[str], valid_frac: float = 0.005) -> tuple[list[
 def speaker_index(vpc_root: Path, name: str = kaldi.TRAIN_SET) -> dict[str, int]:
     spks = sorted(set(kaldi.read_kaldi(vpc_root / "data" / name / "utt2spk").values()))
     return {s: i for i, s in enumerate(spks)}
+
+
+# ---------------------------------------------------------------- data parallel (torchrun)
+#
+# One process per GPU. Each rank draws its share of the batch, gradients are averaged over the ranks before
+# every optimizer step, and batch norm is synchronised, so one step still sees `batch` utterances and the step
+# counts, learning-rate schedule and checkpoints are those of one GPU. The losses are means within each rank,
+# so the averaged gradient weights the ranks equally rather than by their number of frames.
+
+def init_dist(args) -> tuple[int, int]:
+    """(rank, world size); (0, 1) when not started by torchrun. Sets args.device to this rank's GPU."""
+    world = int(os.environ.get("WORLD_SIZE", 1))
+    if world == 1:
+        return 0, 1
+    cuda = str(args.device).startswith("cuda")
+    if cuda:
+        local = int(os.environ["LOCAL_RANK"])
+        torch.cuda.set_device(local)
+        args.device = f"cuda:{local}"
+    dist.init_process_group("nccl" if cuda else "gloo")
+    return dist.get_rank(), world
+
+
+def rank_share(total: int, rank: int, world: int) -> int:
+    """This rank's part of `total` items; the remainder goes to the lowest ranks, so the parts sum to `total`."""
+    return total // world + (rank < total % world)
+
+
+def all_reduce_grads(params, world: int) -> None:
+    """Average the gradients over the ranks, in one flat buffer (a missing gradient counts as zero)."""
+    if world == 1:
+        return
+    ps = [p for p in params if p.requires_grad]
+    grads = [p.grad if p.grad is not None else torch.zeros_like(p) for p in ps]
+    flat = torch._utils._flatten_dense_tensors(grads)
+    dist.all_reduce(flat)
+    flat /= world
+    for p, g in zip(ps, torch._utils._unflatten_dense_tensors(flat, grads)):
+        if p.grad is None:
+            p.grad = g
+        else:
+            p.grad.copy_(g)
+
+
+def data_parallel(module: nn.Module, world: int, dev) -> nn.Module:
+    """Synchronised batch norm (works without DDP in torch 2.0) and rank 0's weights on every rank."""
+    if world == 1:
+        return module
+    if str(dev).startswith("cuda"):
+        module = nn.SyncBatchNorm.convert_sync_batchnorm(module)
+    for t in list(module.parameters()) + list(module.buffers()):
+        dist.broadcast(t.data, 0)
+    return module
 
 
 # ---------------------------------------------------------------- features on the GPU
@@ -216,22 +278,30 @@ def accuracy(clf, wavlm, loader, dev, convert=None) -> float:
 
 def cmd_train(args) -> None:
     cfg = yaml.safe_load(Path(args.config).read_text())
+    rank, world = init_dist(args)
     dev = args.device
+    say = print if rank == 0 else (lambda *a, **k: None)
+    if cfg["batch"] % world:
+        raise ValueError(f"batch {cfg['batch']} is not divisible by {world} GPUs")
+    batch = cfg["batch"] // world
     out = Path(args.out or f"work/{cfg['name']}")
     out.mkdir(parents=True, exist_ok=True)
-    torch.manual_seed(cfg.get("seed", 0)); random.seed(cfg.get("seed", 0))
+    seed = cfg.get("seed", 0)
+    torch.manual_seed(seed); random.seed(seed)
 
     target = torch.load(args.target, map_location="cpu")
     matching = target["matching"].float().to(dev)
     spk_index = speaker_index(args.vpc_root)
     utts = sorted(kaldi.read_kaldi(args.vpc_root / "data" / kaldi.TRAIN_SET / "wav.scp"))
     train_u, valid_u = split_train_valid(utts)
-    src_dl = DataLoader(UtteranceSet(args.vpc_root, kaldi.TRAIN_SET, train_u, spk_index, cfg["crop_s"]),
-                        batch_size=cfg["batch"], shuffle=True, num_workers=args.workers, collate_fn=collate, drop_last=True)
+    src_set = UtteranceSet(args.vpc_root, kaldi.TRAIN_SET, train_u, spk_index, cfg["crop_s"])
+    sampler = DistributedSampler(src_set, world, rank, shuffle=True, seed=seed, drop_last=True) if world > 1 else None
+    src_dl = DataLoader(src_set, batch_size=batch, shuffle=sampler is None, sampler=sampler, num_workers=args.workers,
+                        collate_fn=collate, drop_last=True)
     valid_dl = DataLoader(UtteranceSet(args.vpc_root, kaldi.TRAIN_SET, valid_u[: cfg.get("valid_utts", 200)], spk_index,
-                                       cfg["crop_s"]), batch_size=cfg["batch"], num_workers=args.workers, collate_fn=collate)
+                                       cfg["crop_s"]), batch_size=batch, num_workers=args.workers, collate_fn=collate)
     rho = cfg.get("target_recon", 0.2)
-    n_tgt = int(round(rho * cfg["batch"]))
+    n_tgt = rank_share(int(round(rho * cfg["batch"])), rank, world)  # 3 of 16: 1, 1, 1, 0 on 4 GPUs
     tgt_it = None
     if n_tgt:
         files = json.loads(Path(args.manifest).read_text())[target["speaker"]]
@@ -240,7 +310,7 @@ def cmd_train(args) -> None:
     src_it = forever(src_dl)
 
     wavlm = load_wavlm(dev)
-    model = WavLMConverter(**cfg.get("model", {})).to(dev)
+    model = data_parallel(WavLMConverter(**cfg.get("model", {})).to(dev), world, dev)
     ctc = losses.CosineCTC(target["centroids"], sigma=cfg.get("ctc_sigma", 10.0)).to(dev) if cfg.get("ctc") else None
     params = list(model.parameters()) + (list(ctc.parameters()) if ctc is not None else [])
     opt = torch.optim.Adam(params, lr=1.0, betas=(0.9, 0.98), eps=1e-9)
@@ -250,6 +320,7 @@ def cmd_train(args) -> None:
         ck = torch.load(args.spk, map_location="cpu")
         clf = SpeakerClassifier(ck["n_speakers"], ck.get("feat_dim", 1024)).to(dev)
         clf.load_state_dict(ck["model"])
+        clf = data_parallel(clf, world, dev)
         clf_opt = torch.optim.Adam(clf.parameters(), lr=cfg.get("clf_lr", 1e-4))
     step = 0
     if args.init:  # variants continue from the base checkpoint; optimizer and schedule restart
@@ -261,7 +332,10 @@ def cmd_train(args) -> None:
         if ctc is not None and "ctc" in ck: ctc.load_state_dict(ck["ctc"])
         if clf is not None and "clf" in ck: clf.load_state_dict(ck["clf"]); clf_opt.load_state_dict(ck["clf_opt"])
         step = ck["step"]
-    print(f"{cfg['name']}: {count_params(model):,} parameters, starting at step {step}", flush=True)
+    if world > 1:  # the same weights on all ranks, then a different random stream (dropout, crops) on each
+        torch.manual_seed(seed + rank); random.seed(seed + rank)
+    say(f"{cfg['name']}: {count_params(model):,} parameters, starting at step {step}, {world} GPU(s) x batch {batch}",
+        flush=True)
 
     lam = cfg.get("adv_lambda", 0.1)
     mu = cfg.get("ctc_weight", 1.0)
@@ -289,7 +363,7 @@ def cmd_train(args) -> None:
             # classifier step on detached outputs of source utterances only
             src = is_src.nonzero().squeeze(1)
             c_loss = F.cross_entropy(clf(y_post[src].detach(), lengths[src]), spk[src])
-            clf_opt.zero_grad(); c_loss.backward(); clf_opt.step()
+            clf_opt.zero_grad(); c_loss.backward(); all_reduce_grads(clf.parameters(), world); clf_opt.step()
             adv = losses.capped_adversarial(clf(y_post[src], lengths[src]), spk[src], clf.n_speakers)
             loss = loss - lam * adv
             log.update(clf_ce=c_loss.item(), adv=adv.item())
@@ -299,21 +373,26 @@ def cmd_train(args) -> None:
             loss = loss + mu * c
             log["ctc"] = c.item()
 
-        opt.zero_grad(); loss.backward()
+        opt.zero_grad(); loss.backward(); all_reduce_grads(params, world)
         torch.nn.utils.clip_grad_norm_(params, cfg.get("grad_clip", 1.0))
         opt.step(); sched.step(); step += 1
 
         if step % args.log_every == 0:
             rate = args.log_every / (time.time() - t0); t0 = time.time()
-            print(f"step {step} " + " ".join(f"{k} {v:.4f}" for k, v in log.items()) + f" | {rate:.2f} it/s", flush=True)
+            say(f"step {step} " + " ".join(f"{k} {v:.4f}" for k, v in log.items()) + f" | {rate:.2f} it/s", flush=True)
         if step % args.save_every == 0 or step == cfg["steps"]:
-            ck = {"model": model.state_dict(), "opt": opt.state_dict(), "sched": sched.state_dict(), "step": step,
-                  "cfg": cfg, "target_speaker": target["speaker"]}
-            if ctc is not None: ck["ctc"] = ctc.state_dict()
-            if clf is not None: ck.update(clf=clf.state_dict(), clf_opt=clf_opt.state_dict())
-            torch.save(ck, out / "last.tmp"); (out / "last.tmp").replace(resume)
-            v = validate(model, wavlm, valid_dl, matching, dev)
-            print(f"step {step} valid rec {v:.4f}", flush=True)
+            if rank == 0:
+                ck = {"model": model.state_dict(), "opt": opt.state_dict(), "sched": sched.state_dict(), "step": step,
+                      "cfg": cfg, "target_speaker": target["speaker"], "gpus": world}
+                if ctc is not None: ck["ctc"] = ctc.state_dict()
+                if clf is not None: ck.update(clf=clf.state_dict(), clf_opt=clf_opt.state_dict())
+                torch.save(ck, out / "last.tmp"); (out / "last.tmp").replace(resume)
+                v = validate(model, wavlm, valid_dl, matching, dev)
+                print(f"step {step} valid rec {v:.4f}", flush=True)
+            if world > 1:
+                dist.barrier()  # the other ranks wait while rank 0 saves and validates
+    if world > 1:
+        dist.destroy_process_group()
 
 
 @torch.no_grad()
