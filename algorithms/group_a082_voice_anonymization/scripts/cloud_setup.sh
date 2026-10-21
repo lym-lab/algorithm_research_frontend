@@ -41,7 +41,7 @@
 #   VOXCELEB=skip                       skip VoxCeleb1 (~31 GB; only the target pools need it): a machine for
 #                                       rows 5-8 alone gets the target speaker from scripts/wc_bundle.py
 #   PIP_INDEX_URL=...                   pip mirror, read by pip itself
-#   TORCH_WHEELS=https://mirrors.aliyun.com/pytorch-wheels/cu118
+#   TORCH_WHEELS=https://mirrors.aliyun.com/pytorch-wheels/cu118  (fetched with curl into <work>/wheels, sha256-checked)
 #                                       torch wheels from this directory listing instead of download.pytorch.org
 #                                       (there about 0.4 MB/s from AutoDL on 2026-10-19, Aliyun 11 MB/s); wheels
 #                                       placed in $GH_ASSETS are used first
@@ -56,6 +56,10 @@ HF=${HF_ENDPOINT:-https://huggingface.co}
 OPENSLR=${OPENSLR:-https://www.openslr.org}
 C=$WORK/corpora
 PINS=("numpy==1.26.4" "pyarrow==15.0.2" "pandas==2.2.2" "transformers==4.40.2" "huggingface_hub==0.23.4")
+# file:sha256 from https://download.pytorch.org/whl/cu118/<name>/ (read 2026-10-22)
+TORCH_WHL_SHA=("torch-2.0.1+cu118-cp311-cp311-linux_x86_64.whl:143b6c658c17d43376e2dfbaa2c106d35639d615e5e8dec4429cf1e510dd8d61"
+               "torchaudio-2.0.2+cu118-cp311-cp311-linux_x86_64.whl:7bc0b50a0d83a24bdc3916270c23934345ac84351df76bd3bb08834bdb271df6"
+               "torchvision-0.15.2+cu118-cp311-cp311-linux_x86_64.whl:def9af47ebc2cad55c5aa2dad1230dcf4261833ed6df8a73e839bc233764f09e")
 mkdir -p "$WORK"/{corpora,cache,logs}
 [ "${PROXY:-on}" = off ] && unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 GH_PROXY_ENV=()
@@ -158,7 +162,16 @@ if [ ! -f "$VPC/.done-python-requirements" ] || [ -f "$VPC/.done-python-requirem
     cd "$VPC" && set +u && source env.sh && set -u
     log "torch 2.0.1+cu118, framework requirements with pins"
     torch_src=(--index-url https://download.pytorch.org/whl/cu118)
-    [ -n "${TORCH_WHEELS:-}" ] && torch_src=(-f "$TORCH_WHEELS")
+    if [ -n "${TORCH_WHEELS:-}" ]; then
+      # pip itself fetched from the Aliyun mirror at ~0.2 MB/s on Huawei Cloud (2026-10-21) while curl got
+      # ~18 MB/s from the same files: fetch the three wheels with curl, check them against download.pytorch.org
+      mkdir -p "$WORK/wheels"
+      for whl in "${TORCH_WHL_SHA[@]}"; do
+        f=${whl%%:*}; [ -f "$WORK/wheels/$f" ] || curl -fsS --retry 5 -o "$WORK/wheels/$f" "$TORCH_WHEELS/$f"
+        echo "${whl##*:}  $WORK/wheels/$f" | sha256sum -c - >/dev/null || { echo "bad checksum: $f"; rm -f "$WORK/wheels/$f"; exit 1; }
+      done
+      torch_src=(-f "$WORK/wheels")
+    fi
     [ -n "${GH_ASSETS:-}" ] && ls "$GH_ASSETS"/torch-2.0.1+cu118-*.whl >/dev/null 2>&1 && torch_src=(-f "$GH_ASSETS")
     pip install -q torch==2.0.1+cu118 torchaudio==2.0.2+cu118 torchvision==0.15.2+cu118 "${torch_src[@]}"
     pip install -q -r requirements.txt "${PINS[@]}" Cython
