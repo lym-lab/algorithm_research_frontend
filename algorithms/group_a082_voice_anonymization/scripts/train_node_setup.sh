@@ -4,13 +4,13 @@
 #
 #   bash scripts/train_node_setup.sh <work dir>      # use the same <work dir> path as on the main machine
 #
-# Copy these from the main machine first (same absolute paths, so the pool manifest stays valid), e.g.
-# relayed through the local PC with `scp -3`:
+# Copy these first (from the local machine: gh and wc_bundle):
 #   <work dir>/vpc2024/.data.zip               (the framework's data.zip, 10 MB)
-#   <work dir>/wc/target.pt, <work dir>/pool_vox1.json
-#   the target speaker's audio files listed in pool_vox1.json under that speaker
+#   wc_bundle.tar, unpacked with `python scripts/wc_bundle.py unpack wc_bundle.tar <work dir>` (target speaker,
+#   speaker classifier, wc5 checkpoint, wc/target_manifest.json)
 #   ~/.cache/torch/hub/checkpoints/WavLM-Large.pt   (optional; downloaded from GitHub otherwise)
-# Then train as in docs/REPRODUCE.md §7 with --vpc-root <work dir>/vpc2024, and copy <work dir>/wc/*/last.pt back.
+# Then train as in docs/REPRODUCE.md §7 with --vpc-root <work dir>/vpc2024 --manifest <work dir>/wc/target_manifest.json,
+# and copy <work dir>/wc/*/last.pt back.
 #
 #   OPENSLR    LibriSpeech source (default: the CN mirror https://openslr.magicdatatech.com)
 #   PIP_INDEX  pip index (default: Huawei Cloud's PyPI mirror)
