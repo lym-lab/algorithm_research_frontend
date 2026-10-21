@@ -64,6 +64,7 @@ class Task:
     timeout_h: float = 10.0
     gpus: int = 1                  # GPUs of one job; 0 = all GPUs of the machine ({ngpu} in cmd is their number)
     disk_gb: float = 0             # space its output needs under <work>; it waits until that much is free
+    gpu_frac: float = 1.0          # share of one GPU a job (or shard slot) takes; jobs share a GPU up to 1.0
 
 
 def knn(sid: str, config: str, deps: list[str], prio: int, source: str = "") -> Task:
@@ -173,27 +174,30 @@ def wc_tasks() -> list[Task]:
     only needed to train its attacker and is deleted after its evaluation."""
     common = f"--vpc-root {R} --target {WC}/target.pt --manifest {WC}/target_manifest.json"
     # priorities by system (5 before 6 before 7 before 8): on one GPU each row is finished, evaluation included,
-    # before the next one is trained, so a budget that runs out still leaves complete rows
+    # before the next one is trained, so a budget that runs out still leaves complete rows. Every job takes half a
+    # GPU (HALF), so two run side by side: training used ~55 % of a GPU and ~10 GB on 2026-10-20.
+    HALF = 0.5
     T = [
         # ID 0, which also caches the results on original speech (scripts/first_checks.sh); done on a set-up machine
         Task("eval_orig", f"python -m a082.eval.vpc identity --vpc-root {R} --sets {ORIG_SETS} && "
-             f"python -m a082.eval.vpc run --vpc-root {R} --suffix _orig --stages pre", [], 21,
+             f"python -m a082.eval.vpc run --vpc-root {R} --suffix _orig --stages pre", [], 21, gpu_frac=HALF,
              after=f"python -m a082.eval.vpc collect --vpc-root {R} --suffix _orig --row 0 > {LOGS}/result_orig.txt 2>&1"),
         Task("train_wc5", f"python -m torch.distributed.run --standalone --nproc_per_node {{ngpu}} "
              f"-m a082.wavlm_conv.train train --config configs/wc5.yaml {common} --out {WC}/wc5", [], 20, gpus=0,
-             timeout_h=40),
+             timeout_h=40, gpu_frac=HALF),
     ]
     prio = {5: 21, 6: 22, 7: 23, 8: 24}
     for v in (6, 7, 8):
         T.append(Task(f"train_wc{v}", f"python -m a082.wavlm_conv.train train --config configs/wc{v}.yaml {common} "
                       f"--spk {WC}/spk2.pt --init {WC}/wc5/last.pt --out {WC}/wc{v}", ["train_wc5"], prio[v],
-                      timeout_h=40))
+                      timeout_h=40, gpu_frac=HALF))
     for v in (5, 6, 7, 8):
         infer = f"python -m a082.wavlm_conv.train infer --ckpt {WC}/wc{v}/last.pt --suffix _wc{v} --vpc-root {R} --sets all"
-        T.append(Task(f"anon_wc{v}", infer, [f"train_wc{v}"], prio[v], shards=12, procs=3,
-                      finalize=f"{infer} --finalize-only", disk_gb=45))
+        T.append(Task(f"anon_wc{v}", infer, [f"train_wc{v}"], prio[v], shards=12, procs=2,
+                      finalize=f"{infer} --finalize-only", disk_gb=45, gpu_frac=HALF))
         e = evaluate(f"_wc{v}", [f"anon_wc{v}", "eval_orig"], prio[v], str(v))
         e.after += f"; rm -rf {R}/data/train-clean-360_wc{v}"
+        e.gpu_frac = HALF
         T.append(e)
     return T
 
@@ -382,13 +386,24 @@ def main() -> None:
                 log(f"start {t.id} (CPU)")
 
         # 4. GPU tasks onto free GPUs, highest priority first
-        busy = set().union(*(j.gpu_set for j in jobs))
-        free_gpus = [g for g in range(G) if g not in busy]
-        need = lambda t: 1 if t.shards else (t.gpus or G)
-        while free_gpus:
+        # A GPU holds jobs up to a load of 1.0: each one-GPU job counts its task's gpu_frac, so two jobs of 0.5 share
+        # a GPU; a multi-GPU job takes whole idle GPUs.
+        load = {g: 0.0 for g in range(G)}
+        for j in jobs:
+            for g in j.gpu_set:
+                load[g] += j.task.gpu_frac if len(j.gpu_set) == 1 else 1.0
+
+        def place(t: Task) -> list[int] | None:
+            if t.shards or (t.gpus or G) == 1:
+                free = [g for g in range(G) if load[g] + t.gpu_frac <= 1.0 + 1e-9]
+                return [min(free, key=lambda g: load[g])] if free else None
+            idle = [g for g in range(G) if load[g] == 0]
+            return idle[: t.gpus or G] if len(idle) >= (t.gpus or G) else None
+
+        while True:
             cands = []
             for t in T:
-                if not t.gpu or not ready(t) or need(t) > len(free_gpus) or not disk_room(t, jobs, claimed):
+                if not t.gpu or not ready(t) or not disk_room(t, jobs, claimed) or place(t) is None:
                     continue
                 if t.shards:
                     if len(claimed[t.id]) < t.shards:
@@ -398,19 +413,22 @@ def main() -> None:
             if not cands:
                 break
             t = min(cands, key=lambda x: x.prio)
-            use, free_gpus = free_gpus[:need(t)], free_gpus[need(t):]
+            use = place(t)
+            for x in use:
+                load[x] += t.gpu_frac if len(use) == 1 else 1.0
             g = use[0] if len(use) == 1 else use
+            threads = max(2, round(share * t.gpu_frac)) if len(use) == 1 else share
             if t.shards:
                 free = [i for i in range(t.shards) if i not in claimed[t.id]][: t.procs]
                 claimed[t.id] |= set(free)
                 n = len(free)
-                procs = [launch(f"{t.cmd} --shard {i}/{t.shards}", LOGS / f"q_{t.id}_{i}.log", g, max(1, share // n))
+                procs = [launch(f"{t.cmd} --shard {i}/{t.shards}", LOGS / f"q_{t.id}_{i}.log", g, max(1, threads // n))
                          for i in free]
                 jobs.append(Job(t, g, procs, free))
                 log(f"start {t.id} shards {free} on GPU {g}")
             else:
                 cmd = t.cmd.replace("{ngpu}", str(len(use)))
-                jobs.append(Job(t, g, [launch(cmd, LOGS / f"q_{t.id}.log", g, share)], []))
+                jobs.append(Job(t, g, [launch(cmd, LOGS / f"q_{t.id}.log", g, threads)], []))
                 log(f"start {t.id} on GPU {g}")
 
         # 5. status, and the end
