@@ -172,23 +172,27 @@ def wc_tasks() -> list[Task]:
     wc/target_manifest.json and, to continue, wc/wc5/last.pt. A system's anonymized training set (~42 GB) is
     only needed to train its attacker and is deleted after its evaluation."""
     common = f"--vpc-root {R} --target {WC}/target.pt --manifest {WC}/target_manifest.json"
+    # priorities by system (5 before 6 before 7 before 8): on one GPU each row is finished, evaluation included,
+    # before the next one is trained, so a budget that runs out still leaves complete rows
     T = [
         # ID 0, which also caches the results on original speech (scripts/first_checks.sh); done on a set-up machine
         Task("eval_orig", f"python -m a082.eval.vpc identity --vpc-root {R} --sets {ORIG_SETS} && "
-             f"python -m a082.eval.vpc run --vpc-root {R} --suffix _orig --stages pre", [], 22,
+             f"python -m a082.eval.vpc run --vpc-root {R} --suffix _orig --stages pre", [], 21,
              after=f"python -m a082.eval.vpc collect --vpc-root {R} --suffix _orig --row 0 > {LOGS}/result_orig.txt 2>&1"),
         Task("train_wc5", f"python -m torch.distributed.run --standalone --nproc_per_node {{ngpu}} "
              f"-m a082.wavlm_conv.train train --config configs/wc5.yaml {common} --out {WC}/wc5", [], 20, gpus=0,
              timeout_h=40),
     ]
+    prio = {5: 21, 6: 22, 7: 23, 8: 24}
     for v in (6, 7, 8):
         T.append(Task(f"train_wc{v}", f"python -m a082.wavlm_conv.train train --config configs/wc{v}.yaml {common} "
-                      f"--spk {WC}/spk2.pt --init {WC}/wc5/last.pt --out {WC}/wc{v}", ["train_wc5"], 21, timeout_h=40))
+                      f"--spk {WC}/spk2.pt --init {WC}/wc5/last.pt --out {WC}/wc{v}", ["train_wc5"], prio[v],
+                      timeout_h=40))
     for v in (5, 6, 7, 8):
         infer = f"python -m a082.wavlm_conv.train infer --ckpt {WC}/wc{v}/last.pt --suffix _wc{v} --vpc-root {R} --sets all"
-        T.append(Task(f"anon_wc{v}", infer, [f"train_wc{v}"], 22, shards=12, procs=3,
+        T.append(Task(f"anon_wc{v}", infer, [f"train_wc{v}"], prio[v], shards=12, procs=3,
                       finalize=f"{infer} --finalize-only", disk_gb=45))
-        e = evaluate(f"_wc{v}", [f"anon_wc{v}", "eval_orig"], 23, str(v))
+        e = evaluate(f"_wc{v}", [f"anon_wc{v}", "eval_orig"], prio[v], str(v))
         e.after += f"; rm -rf {R}/data/train-clean-360_wc{v}"
         T.append(e)
     return T
