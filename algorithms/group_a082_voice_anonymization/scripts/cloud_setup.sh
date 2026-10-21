@@ -35,6 +35,8 @@
 #                                       its data/, exp/ and corpora/ are then links into <work dir>, which keeps
 #                                       all corpora, outputs and results on the data disk (default <work>/vpc2024)
 #   DEMO_DATA=skip                      skip LibriTTS-R (only the web demo needs it)
+#   VOXCELEB=skip                       skip VoxCeleb1 (~31 GB; only the target pools need it): a machine for
+#                                       rows 5-8 alone gets the target speaker from scripts/wc_bundle.py
 #   PIP_INDEX_URL=...                   pip mirror, read by pip itself
 #   TORCH_WHEELS=https://mirrors.aliyun.com/pytorch-wheels/cu118
 #                                       torch wheels from this directory listing instead of download.pytorch.org
@@ -114,7 +116,8 @@ fi
 # 1. big downloads in the background (they need no Python environment)
 log "background downloads: logs/dl_*.log"
 ( librispeech train-clean-360 ) > "$WORK/logs/dl_ls360.log" 2>&1 & P_LS=$!
-( voxceleb ) > "$WORK/logs/dl_vox.log" 2>&1 & P_VOX=$!
+P_VOX=
+[ "${VOXCELEB:-yes}" = skip ] || { ( voxceleb ) > "$WORK/logs/dl_vox.log" 2>&1 & P_VOX=$!; }
 
 # 2. VPC 2024 framework at the pinned commit, its own environment (Python 3.11, torch 2.0.1)
 if [ ! -d "$VPC/.git" ]; then
@@ -224,8 +227,10 @@ wait $P_LS || { echo "train-clean-360 failed: logs/dl_ls360.log"; exit 1; }
 mkdir -p "$VPC/corpora"
 [ -e "$VPC/corpora/LibriSpeech" ] || ln -s "$C/LibriSpeech" "$VPC/corpora/LibriSpeech"
 test -f "$VPC/data/train-clean-360/wav.scp"
-log "waiting for VoxCeleb"
-wait $P_VOX || { echo "VoxCeleb failed: logs/dl_vox.log"; exit 1; }
+if [ -n "$P_VOX" ]; then
+  log "waiting for VoxCeleb"
+  wait $P_VOX || { echo "VoxCeleb failed: logs/dl_vox.log"; exit 1; }
+fi
 
 # 7. public demo targets: LibriTTS-R test-clean (CC BY 4.0)
 if [ "${DEMO_DATA:-yes}" != skip ] && [ ! -d "$C/LibriTTS_R/test-clean" ]; then

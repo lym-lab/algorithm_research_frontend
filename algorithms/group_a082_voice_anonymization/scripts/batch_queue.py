@@ -15,7 +15,10 @@ Status: logs/queue.log (events), logs/queue_status.json (running, done, failed, 
 Tasks added while the queue runs: <work>/tasks_extra.json, a list of objects with the fields of `Task` (commands may
 use {W}, {R}, {LOGS}, {POOL}, {PIPER}); the file is read again every cycle, new ids are added. Finished shards leave
 <id>.shard<i> in <work>/done, so a restarted queue does not hand them out again.
-Training of ID 5-8 is not here: it waits for the Huawei vouchers (until 2026-10-26).
+
+ID 5-8 (the WavLM conversion models) are the group `wc`; on a machine set up only for them (e.g. Huawei Cloud):
+
+    python scripts/batch_queue.py <work dir> --only wc
 """
 from __future__ import annotations
 
@@ -23,13 +26,20 @@ import json
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-W = Path(sys.argv[1] if len(sys.argv) > 1 else "/root/autodl-tmp/a082")
+_args = sys.argv[1:]
+ONLY = None
+if "--only" in _args:
+    _i = _args.index("--only")
+    ONLY = _args[_i + 1]
+    del _args[_i:_i + 2]
+W = Path(_args[0] if _args else "/root/autodl-tmp/a082")
 R = W / "vpc2024"
 CODE = Path(__file__).resolve().parent.parent
 DONE, LOGS = W / "done", W / "logs"
@@ -52,6 +62,8 @@ class Task:
     finalize: str = ""             # after all shards: completeness check and wav.scp
     after: str = ""                # extra command run after success (CPU)
     timeout_h: float = 10.0
+    gpus: int = 1                  # GPUs of one job; 0 = all GPUs of the machine ({ngpu} in cmd is their number)
+    disk_gb: float = 0             # space its output needs under <work>; it waits until that much is free
 
 
 def knn(sid: str, config: str, deps: list[str], prio: int, source: str = "") -> Task:
@@ -149,6 +161,39 @@ def tasks() -> list[Task]:
     return T
 
 
+WC = W / "wc"
+ORIG_SETS = ("libri_dev_enrolls,libri_dev_trials_f,libri_dev_trials_m,libri_test_enrolls,libri_test_trials_f,"
+             "libri_test_trials_m,IEMOCAP_dev,IEMOCAP_test")
+
+
+def wc_tasks() -> list[Task]:
+    """Rows 5-8: the base model on all GPUs (data parallel), then the three variants from it on one GPU each,
+    then inference and evaluation of each. Inputs (scripts/wc_bundle.py): wc/target.pt, wc/spk2.pt,
+    wc/target_manifest.json and, to continue, wc/wc5/last.pt. A system's anonymized training set (~42 GB) is
+    only needed to train its attacker and is deleted after its evaluation."""
+    common = f"--vpc-root {R} --target {WC}/target.pt --manifest {WC}/target_manifest.json"
+    T = [
+        # ID 0, which also caches the results on original speech (scripts/first_checks.sh); done on a set-up machine
+        Task("eval_orig", f"python -m a082.eval.vpc identity --vpc-root {R} --sets {ORIG_SETS} && "
+             f"python -m a082.eval.vpc run --vpc-root {R} --suffix _orig --stages pre", [], 22,
+             after=f"python -m a082.eval.vpc collect --vpc-root {R} --suffix _orig --row 0 > {LOGS}/result_orig.txt 2>&1"),
+        Task("train_wc5", f"python -m torch.distributed.run --standalone --nproc_per_node {{ngpu}} "
+             f"-m a082.wavlm_conv.train train --config configs/wc5.yaml {common} --out {WC}/wc5", [], 20, gpus=0,
+             timeout_h=40),
+    ]
+    for v in (6, 7, 8):
+        T.append(Task(f"train_wc{v}", f"python -m a082.wavlm_conv.train train --config configs/wc{v}.yaml {common} "
+                      f"--spk {WC}/spk2.pt --init {WC}/wc5/last.pt --out {WC}/wc{v}", ["train_wc5"], 21, timeout_h=40))
+    for v in (5, 6, 7, 8):
+        infer = f"python -m a082.wavlm_conv.train infer --ckpt {WC}/wc{v}/last.pt --suffix _wc{v} --vpc-root {R} --sets all"
+        T.append(Task(f"anon_wc{v}", infer, [f"train_wc{v}"], 22, shards=12, procs=3,
+                      finalize=f"{infer} --finalize-only", disk_gb=45))
+        e = evaluate(f"_wc{v}", [f"anon_wc{v}", "eval_orig"], 23, str(v))
+        e.after += f"; rm -rf {R}/data/train-clean-360_wc{v}"
+        T.append(e)
+    return T
+
+
 # ---------------------------------------------------------------------------------------------------------
 
 def log(msg: str) -> None:
@@ -169,14 +214,15 @@ def cpu_share(n: int) -> int:
     return max(1, a082.cpu_limit() // n)
 
 
-def launch(cmd: str, logfile: Path, gpu: int | None, threads: int) -> subprocess.Popen:
-    env = dict(os.environ, A082_THREADS=str(threads))
+def launch(cmd: str, logfile: Path, gpu: int | list[int] | None, threads: int) -> subprocess.Popen:
+    """`threads` per process; torchrun would otherwise give each of its workers one (OMP_NUM_THREADS=1)."""
+    env = dict(os.environ, A082_THREADS=str(threads), OMP_NUM_THREADS=str(threads))
     env.setdefault("HF_ENDPOINT", "https://hf-mirror.com")   # huggingface.co is unreachable from the machine
     # loading and freeing ~60 MB matching sets fragmented glibc's heap (kNN processes grew to 16-26 GB); a fixed
     # mmap threshold returns large blocks to the system when they are freed
     env.setdefault("MALLOC_MMAP_THRESHOLD_", "1048576")
     env.setdefault("MALLOC_ARENA_MAX", "4")
-    env["CUDA_VISIBLE_DEVICES"] = "" if gpu is None else str(gpu)
+    env["CUDA_VISIBLE_DEVICES"] = "" if gpu is None else ",".join(map(str, gpu)) if isinstance(gpu, list) else str(gpu)
     full = f"cd {shlex.quote(str(R))} && set +u && source env.sh && set -u && cd {shlex.quote(str(CODE))} && {cmd}"
     f = open(logfile, "a")
     f.write(f"\n### {time.strftime('%F %T')} gpu={gpu} threads={threads}\n### {cmd}\n")
@@ -191,8 +237,12 @@ def run_sync(cmd: str, logfile: Path, threads: int) -> bool:
 
 
 class Job:
-    def __init__(self, task: Task, gpu: int | None, procs: list[subprocess.Popen], shards: list[int]):
+    def __init__(self, task: Task, gpu: int | list[int] | None, procs: list[subprocess.Popen], shards: list[int]):
         self.task, self.gpu, self.procs, self.shards, self.start = task, gpu, procs, shards, time.time()
+
+    @property
+    def gpu_set(self) -> set[int]:
+        return set() if self.gpu is None else set(self.gpu) if isinstance(self.gpu, list) else {self.gpu}
 
     def finished(self) -> bool:
         return all(p.poll() is not None for p in self.procs)
@@ -206,6 +256,15 @@ class Job:
                 os.killpg(p.pid, 15)
             except ProcessLookupError:
                 pass
+
+
+def disk_room(t: Task, jobs: list[Job], claimed: dict[str, set[int]]) -> bool:
+    """A task with `disk_gb` starts only when that much is free beyond the full `disk_gb` of the running ones
+    (their partial output is already counted as used, so this errs on the safe side). Once begun it continues."""
+    if not t.disk_gb or any(j.task.id == t.id for j in jobs) or (t.shards and claimed.get(t.id)):
+        return True
+    reserved = sum({j.task.id: j.task.disk_gb for j in jobs}.values())
+    return shutil.disk_usage(W).free / 1e9 - reserved >= t.disk_gb
 
 
 def extra_tasks(known: set[str]) -> list[Task]:
@@ -230,10 +289,12 @@ def extra_tasks(known: set[str]) -> list[Task]:
 def main() -> None:
     DONE.mkdir(exist_ok=True)
     LOGS.mkdir(exist_ok=True)
-    T = tasks()
+    T = {None: tasks() + wc_tasks(), "wc": wc_tasks()}[ONLY]
     by = {t.id: t for t in T}
     G = ngpu()
     share = cpu_share(G)
+    if (R / "exp/results_summary/eval_orig_orig").is_dir():   # ID 0 was evaluated outside the queue
+        (DONE / "eval_orig").touch()
     is_done = lambda k: (DONE / k).exists()
     is_failed = lambda k: (DONE / f"{k}.failed").exists()
     jobs: list[Job] = []
@@ -317,11 +378,13 @@ def main() -> None:
                 log(f"start {t.id} (CPU)")
 
         # 4. GPU tasks onto free GPUs, highest priority first
-        busy = {j.gpu for j in jobs if j.gpu is not None}
-        for g in [g for g in range(G) if g not in busy]:
+        busy = set().union(*(j.gpu_set for j in jobs))
+        free_gpus = [g for g in range(G) if g not in busy]
+        need = lambda t: 1 if t.shards else (t.gpus or G)
+        while free_gpus:
             cands = []
             for t in T:
-                if not t.gpu or not ready(t):
+                if not t.gpu or not ready(t) or need(t) > len(free_gpus) or not disk_room(t, jobs, claimed):
                     continue
                 if t.shards:
                     if len(claimed[t.id]) < t.shards:
@@ -331,6 +394,8 @@ def main() -> None:
             if not cands:
                 break
             t = min(cands, key=lambda x: x.prio)
+            use, free_gpus = free_gpus[:need(t)], free_gpus[need(t):]
+            g = use[0] if len(use) == 1 else use
             if t.shards:
                 free = [i for i in range(t.shards) if i not in claimed[t.id]][: t.procs]
                 claimed[t.id] |= set(free)
@@ -340,7 +405,8 @@ def main() -> None:
                 jobs.append(Job(t, g, procs, free))
                 log(f"start {t.id} shards {free} on GPU {g}")
             else:
-                jobs.append(Job(t, g, [launch(t.cmd, LOGS / f"q_{t.id}.log", g, share)], []))
+                cmd = t.cmd.replace("{ngpu}", str(len(use)))
+                jobs.append(Job(t, g, [launch(cmd, LOGS / f"q_{t.id}.log", g, share)], []))
                 log(f"start {t.id} on GPU {g}")
 
         # 5. status, and the end
