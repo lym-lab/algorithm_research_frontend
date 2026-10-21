@@ -6,8 +6,10 @@
 W=${1:?usage: guard.sh <work dir>}
 idle=0
 while true; do
-  # anchored on the interpreter: the tmux server's command line is the `tmux new ... batch_queue.py` that started it
-  if pgrep -f '^[^ ]*python[^ ]* scripts/batch_queue[.]py' >/dev/null || pgrep -f '^python -m a082[.]' >/dev/null \
+  # anchored on the interpreter: the tmux server's command line is the `tmux new ... batch_queue.py` that started it;
+  # torchrun starts its workers as `<venv>/bin/python -u -m a082...`
+  if pgrep -f '^[^ ]*python[^ ]* scripts/batch_queue[.]py' >/dev/null \
+     || pgrep -f '^[^ ]*python[0-9.]* (-u )?-m a082[.]' >/dev/null \
      || pgrep -f 'run_evaluation[.]py' >/dev/null; then
     idle=0
   else
