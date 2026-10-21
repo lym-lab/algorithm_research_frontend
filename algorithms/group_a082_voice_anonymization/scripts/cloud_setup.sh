@@ -35,6 +35,9 @@
 #                                       its data/, exp/ and corpora/ are then links into <work dir>, which keeps
 #                                       all corpora, outputs and results on the data disk (default <work>/vpc2024)
 #   DEMO_DATA=skip                      skip LibriTTS-R (only the web demo needs it)
+#   GPU_CHECK=skip                      set up on a machine without a GPU (e.g. a cheap CPU server whose data disk
+#                                       then moves to the GPU server); run the script once more on the GPU server,
+#                                       which only repeats the quick steps and the GPU check
 #   VOXCELEB=skip                       skip VoxCeleb1 (~31 GB; only the target pools need it): a machine for
 #                                       rows 5-8 alone gets the target speaker from scripts/wc_bundle.py
 #   PIP_INDEX_URL=...                   pip mirror, read by pip itself
@@ -173,13 +176,16 @@ fi
   whisper="openai-whisper @ git+https://github.com/openai/whisper@$WHISPER_COMMIT"
   [ -n "${GH_ASSETS:-}" ] && [ -f "$GH_ASSETS/whisper-$WHISPER_COMMIT.tar.gz" ] && whisper="$GH_ASSETS/whisper-$WHISPER_COMMIT.tar.gz"
   pip install -q -e "$CODE" "$whisper" piper-tts==1.8.0 jiwer fastapi uvicorn python-multipart "${PINS[@]}"
-  python - <<'PY'
-import torch
-assert torch.cuda.is_available(), "no CUDA"
-x = torch.randn(2, 16000, device="cuda")
-torch.stft(x, 400, return_complex=True)           # the cuFFT check
+  GPU_CHECK=${GPU_CHECK:-yes} python - <<'PY'
+import os, torch
 import speechbrain, whisper, piper, a082            # noqa: F401
-print("environment ok:", torch.__version__, torch.cuda.get_device_name(0))
+if os.environ["GPU_CHECK"] == "skip":
+    print("environment ok without the GPU check:", torch.__version__)
+else:
+    assert torch.cuda.is_available(), "no CUDA"
+    x = torch.randn(2, 16000, device="cuda")
+    torch.stft(x, 400, return_complex=True)           # the cuFFT check
+    print("environment ok:", torch.__version__, torch.cuda.get_device_name(0))
 PY
 )
 
