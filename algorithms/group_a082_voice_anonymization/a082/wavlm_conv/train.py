@@ -19,9 +19,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import math
 import os
 import random
+import signal
 import time
 from pathlib import Path
 
@@ -345,6 +347,20 @@ def cmd_train(args) -> None:
     say(f"{cfg['name']}: {count_params(model):,} parameters, starting at step {step}, {world} GPU(s) x batch {batch}"
         + (", fp16 autocast" if amp else ""), flush=True)
 
+    def save() -> None:
+        ck = {"model": model.state_dict(), "opt": opt.state_dict(), "sched": sched.state_dict(), "step": step,
+              "cfg": cfg, "target_speaker": target["speaker"], "gpus": world}
+        if ctc is not None: ck["ctc"] = ctc.state_dict()
+        if clf is not None: ck.update(clf=clf.state_dict(), clf_opt=clf_opt.state_dict())
+        if amp: ck["scaler"] = scaler.state_dict()
+        torch.save(ck, out / "last.tmp"); (out / "last.tmp").replace(resume)
+
+    # one process: SIGTERM (queue restart, guard, shutdown) saves the current step before exiting; under torchrun
+    # the ranks could stop at different steps, so there the last periodic checkpoint is the restart point
+    stop = []
+    if world == 1:
+        signal.signal(signal.SIGTERM, lambda *_: stop.append(1))
+
     lam = cfg.get("adv_lambda", 0.1)
     mu = cfg.get("ctc_weight", 1.0)
     t0 = time.time()
@@ -402,17 +418,16 @@ def cmd_train(args) -> None:
             say(f"step {step} " + " ".join(f"{k} {v:.4f}" for k, v in log.items()) + f" | {rate:.2f} it/s", flush=True)
         if step % args.save_every == 0 or step == cfg["steps"]:
             if rank == 0:
-                ck = {"model": model.state_dict(), "opt": opt.state_dict(), "sched": sched.state_dict(), "step": step,
-                      "cfg": cfg, "target_speaker": target["speaker"], "gpus": world}
-                if ctc is not None: ck["ctc"] = ctc.state_dict()
-                if clf is not None: ck.update(clf=clf.state_dict(), clf_opt=clf_opt.state_dict())
-                if amp: ck["scaler"] = scaler.state_dict()
-                torch.save(ck, out / "last.tmp"); (out / "last.tmp").replace(resume)
+                save()
                 with autocast():
                     v = validate(model, wavlm, valid_dl, matching, dev)
                 print(f"step {step} valid rec {v:.4f}", flush=True)
             if world > 1:
                 dist.barrier()  # the other ranks wait while rank 0 saves and validates
+        if stop:
+            save()
+            print(f"SIGTERM: saved step {step}, exiting", flush=True)
+            sys.exit(143)
     if world > 1:
         dist.destroy_process_group()
 

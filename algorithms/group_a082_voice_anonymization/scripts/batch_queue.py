@@ -183,13 +183,13 @@ def wc_tasks() -> list[Task]:
              f"python -m a082.eval.vpc run --vpc-root {R} --suffix _orig --stages pre", [], 21, gpu_frac=HALF,
              after=f"python -m a082.eval.vpc collect --vpc-root {R} --suffix _orig --row 0 > {LOGS}/result_orig.txt 2>&1"),
         Task("train_wc5", f"python -m torch.distributed.run --standalone --nproc_per_node {{ngpu}} "
-             f"-m a082.wavlm_conv.train train --config configs/wc5.yaml {common} --out {WC}/wc5", [], 20, gpus=0,
+             f"-m a082.wavlm_conv.train train --config configs/wc5.yaml {common} --out {WC}/wc5 --amp", [], 20, gpus=0,
              timeout_h=40, gpu_frac=HALF),
     ]
     prio = {5: 21, 6: 22, 7: 23, 8: 24}
     for v in (6, 7, 8):
         T.append(Task(f"train_wc{v}", f"python -m a082.wavlm_conv.train train --config configs/wc{v}.yaml {common} "
-                      f"--spk {WC}/spk2.pt --init {WC}/wc5/last.pt --out {WC}/wc{v}", ["train_wc5"], prio[v],
+                      f"--spk {WC}/spk2.pt --init {WC}/wc5/last.pt --out {WC}/wc{v} --amp", ["train_wc5"], prio[v],
                       timeout_h=40, gpu_frac=HALF))
     for v in (5, 6, 7, 8):
         infer = f"python -m a082.wavlm_conv.train infer --ckpt {WC}/wc{v}/last.pt --suffix _wc{v} --vpc-root {R} --sets all"
