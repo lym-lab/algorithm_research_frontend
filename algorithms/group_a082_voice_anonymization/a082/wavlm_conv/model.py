@@ -113,10 +113,11 @@ def lengths_to_pad(lengths: torch.Tensor, t: int | None = None) -> torch.Tensor:
 
 
 class NoamLR(torch.optim.lr_scheduler.LambdaLR):
-    """lr = d^-0.5 * min(step^-0.5, step * warmup^-1.5) (ming024 default schedule, init_lr scaled)."""
+    """lr = d^-0.5 * min(step^-0.5, step * warmup^-1.5) (ming024 default schedule, init_lr scaled).
+    `offset` starts the schedule at that step instead of 0 (the variants continue the base's schedule)."""
 
-    def __init__(self, opt, d: int = 512, warmup: int = 4000, last_epoch: int = -1):
-        f = lambda s: (d ** -0.5) * min(max(s, 1) ** -0.5, max(s, 1) * warmup ** -1.5)
+    def __init__(self, opt, d: int = 512, warmup: int = 4000, last_epoch: int = -1, offset: int = 0):
+        f = lambda s: (d ** -0.5) * min(max(s + offset, 1) ** -0.5, max(s + offset, 1) * warmup ** -1.5)
         super().__init__(opt, f, last_epoch)
 
 

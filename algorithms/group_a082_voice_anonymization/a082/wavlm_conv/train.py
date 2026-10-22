@@ -347,7 +347,7 @@ def cmd_train(args) -> None:
     ctc = losses.CosineCTC(target["centroids"], sigma=cfg.get("ctc_sigma", 10.0)).to(dev) if cfg.get("ctc") else None
     params = list(model.parameters()) + (list(ctc.parameters()) if ctc is not None else [])
     opt = torch.optim.Adam(params, lr=1.0, betas=(0.9, 0.98), eps=1e-9)
-    sched = NoamLR(opt, d=model.d, warmup=cfg.get("warmup", 4000))
+    sched = NoamLR(opt, d=model.d, warmup=cfg.get("warmup", 4000), offset=cfg.get("schedule_offset", 0))
     clf = clf_opt = None
     if cfg.get("adv"):
         ck = torch.load(args.spk, map_location="cpu")
