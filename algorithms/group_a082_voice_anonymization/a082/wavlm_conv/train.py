@@ -68,10 +68,10 @@ class UtteranceSet(Dataset):
 
 
 class FileSet(Dataset):
-    """Target-speaker utterances for the target-reconstruction samples."""
+    """Target-speaker utterances for the target-reconstruction samples; `crop_s=None` keeps them whole."""
 
-    def __init__(self, files: list[str], crop_s: float):
-        self.files, self.crop = files, int(crop_s * audio.SR)
+    def __init__(self, files: list[str], crop_s: float | None):
+        self.files, self.crop = files, int(crop_s * audio.SR) if crop_s else None
         self._trimmed: dict[int, torch.Tensor] = {}  # VAD is slow on CPU: trim each file once per worker
 
     def __len__(self):
@@ -81,7 +81,7 @@ class FileSet(Dataset):
         if i not in self._trimmed:
             self._trimmed[i] = audio.vad_trim(audio.load_audio(self.files[i]))[0]
         wav = self._trimmed[i]
-        if wav.shape[0] > self.crop:
+        if self.crop and wav.shape[0] > self.crop:
             start = random.randrange(wav.shape[0] - self.crop)
             wav = wav[start:start + self.crop]
         return wav, -1
@@ -170,6 +170,42 @@ def data_parallel(module: nn.Module, world: int, dev) -> nn.Module:
 
 
 # ---------------------------------------------------------------- features on the GPU
+
+def target_features(files: list[str], wavlm, dev, cache: Path, workers: int, amp: bool) -> list[torch.Tensor]:
+    """Layer-6 WavLM features of the VAD-trimmed target-speaker files, computed once and cached (fp16) next to
+    target.pt. WavLM is frozen, so recomputing them for the 3 target samples of every step only cost time
+    (about 8 % of a step, 2026-10-22); a 10 s training crop is then taken in frames."""
+    if cache.exists():
+        feats = torch.load(cache, map_location="cpu")
+        if len(feats) == len(files):
+            return [f.to(dev) for f in feats]
+    from ..models import wavlm_features
+    feats = []
+    loader = DataLoader(FileSet(files, None), batch_size=None, num_workers=workers)
+    with torch.inference_mode():
+        for wav, _ in loader:
+            with torch.autocast("cuda", dtype=torch.float16, enabled=amp):
+                feats.append(wavlm_features(wavlm, wav[None].to(dev)).half().cpu())
+    tmp = cache.with_suffix(".tmp")
+    torch.save(feats, tmp); tmp.replace(cache)
+    return [f.to(dev) for f in feats]
+
+
+def target_batch(feats: list[torch.Tensor], n: int, crop_frames: int) -> tuple[torch.Tensor, torch.Tensor]:
+    """n random target utterances, each cropped to at most crop_frames at a random start: [n, T, D], lengths."""
+    crops = []
+    for _ in range(n):
+        f = feats[random.randrange(len(feats))]
+        if f.shape[0] > crop_frames:
+            start = random.randrange(f.shape[0] - crop_frames)
+            f = f[start:start + crop_frames]
+        crops.append(f)
+    lengths = torch.tensor([f.shape[0] for f in crops], device=crops[0].device)
+    x = torch.zeros(n, int(lengths.max()), crops[0].shape[1], device=crops[0].device)
+    for i, f in enumerate(crops):
+        x[i, : f.shape[0]] = f.float()
+    return x, lengths
+
 
 def frames_for(samples: torch.Tensor) -> torch.Tensor:
     """Output length of WavLM's convolutional front end (kernels 10,3,3,3,3,2,2; strides 5,2,2,2,2,2,2)."""
@@ -304,15 +340,6 @@ def cmd_train(args) -> None:
                                        cfg["crop_s"]), batch_size=batch, num_workers=args.workers, collate_fn=collate)
     rho = cfg.get("target_recon", 0.2)
     n_tgt = rank_share(int(round(rho * cfg["batch"])), rank, world)  # 3 of 16: 1, 1, 1, 0 on 4 GPUs
-    tgt_it = None
-    if n_tgt:
-        files = json.loads(Path(args.manifest).read_text())[target["speaker"]]
-        # persistent workers keep FileSet's per-worker cache of VAD-trimmed files across epochs: without them every
-        # epoch (334 steps) started new workers that trimmed every file again, and the GPU waited for them about
-        # half of the time (2026-10-22, V100: GPU ~50 %, main process mostly waiting on the loader)
-        tgt_it = forever(DataLoader(FileSet(files, cfg["crop_s"]), batch_size=n_tgt, shuffle=True,
-                                    num_workers=max(1, args.workers // 4), collate_fn=collate, drop_last=True,
-                                    persistent_workers=True))
     src_it = forever(src_dl)
 
     wavlm = load_wavlm(dev)
@@ -329,10 +356,15 @@ def cmd_train(args) -> None:
         clf = data_parallel(clf, world, dev)
         clf_opt = torch.optim.Adam(clf.parameters(), lr=cfg.get("clf_lr", 1e-4))
     # mixed precision (--amp, CUDA only): WavLM, the kNN similarities and the converter run in fp16 autocast, the
-    # losses in fp32, with loss scaling; 2.4x faster per step on a V100 (2026-10-22), where fp32 left the
-    # 16-step budget of ID 5-8 out of reach. Steps, batch and schedule are unchanged.
+    # losses in fp32, with loss scaling; 2.4x faster per step on a V100 (2026-10-22), where fp32 put the
+    # voucher budget for ID 5-8 out of reach. Steps, batch and schedule are unchanged.
     amp = bool(getattr(args, "amp", False)) and str(dev).startswith("cuda")
     autocast = lambda: torch.autocast("cuda", dtype=torch.float16, enabled=amp)
+    tfeats = None
+    if n_tgt:  # (until 2026-10-22 the audio was loaded, VAD-trimmed and run through WavLM at every step)
+        files = json.loads(Path(args.manifest).read_text())[target["speaker"]]
+        tfeats = target_features(files, wavlm, dev, Path(args.target).with_name("target_feats.pt"), args.workers, amp)
+        crop_frames = int(frames_for(torch.tensor([int(cfg["crop_s"] * audio.SR)]))[0])
     scaler = torch.cuda.amp.GradScaler(enabled=amp)
     clf_scaler = torch.cuda.amp.GradScaler(enabled=amp)
     step = 0
@@ -376,11 +408,8 @@ def cmd_train(args) -> None:
         x = x.float()
         spk = spk.to(dev)
         is_src = torch.ones(x.shape[0], dtype=torch.bool, device=dev)
-        if tgt_it is not None:  # replace the last n_tgt samples by (w(u_a), w(u_a)) pairs
-            twav, tn, _ = next(tgt_it)
-            with autocast():
-                tx, tlen = batch_features(wavlm, twav.to(dev), tn)
-            tx = tx.float()
+        if tfeats is not None:  # replace the last n_tgt samples by (w(u_a), w(u_a)) pairs
+            tx, tlen = target_batch(tfeats, n_tgt, crop_frames)
             T = max(x.shape[1], tx.shape[1])
             x, y, tx = [F.pad(a, (0, 0, 0, T - a.shape[1])) for a in (x, y, tx)]
             x = torch.cat([x[: -n_tgt], tx]); y = torch.cat([y[: -n_tgt], tx])
