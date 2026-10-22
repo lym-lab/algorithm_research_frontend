@@ -58,14 +58,53 @@ def resample(wav: torch.Tensor, sr_in: int, sr_out: int = SR) -> torch.Tensor:
     return torchaudio.functional.resample(wav, orig_freq=sr_in, new_freq=sr_out)
 
 
+def _biquad_clamped(x: np.ndarray, b: list[float], a: list[float]) -> np.ndarray:
+    from scipy.signal import lfilter
+    return np.clip(lfilter(b, a, x, axis=-1), -1.0, 1.0)   # torchaudio's lfilter clamps by default
+
+
+def loudness(wav: torch.Tensor | np.ndarray, sr: int = SR) -> float:
+    """ITU-R BS.1770-4 loudness in LUFS of a [channels, time] or [time] signal: the same K-weighting biquads
+    (with torchaudio's clamping after each), 400 ms blocks with 75 % overlap, absolute and relative gating as
+    torchaudio.functional.loudness, computed with scipy's lfilter on the CPU. torchaudio's lfilter runs sample
+    by sample: ~0.3 s per 10 s of audio on a V100 (2026-10-22), more than the HiFi-GAN vocoder itself, and
+    seconds on a CPU; this takes milliseconds and agrees with it to float32 rounding (tests/test_audio_loudness)."""
+    x = wav.detach().cpu().double().numpy() if isinstance(wav, torch.Tensor) else np.asarray(wav, dtype=np.float64)
+    x = x[None] if x.ndim == 1 else x
+    # treble shelf, gain 4 dB at 1500 Hz, Q 1/sqrt(2); then high-pass at 38 Hz, Q 0.5 (torchaudio's formulas)
+    w0, Q, A = 2 * math.pi * 1500.0 / sr, 1 / math.sqrt(2), math.exp(4.0 / 40 * math.log(10))
+    alpha = math.sin(w0) / 2 / Q
+    t1, t2, t3 = 2 * math.sqrt(A) * alpha, (A - 1) * math.cos(w0), (A + 1) * math.cos(w0)
+    x = _biquad_clamped(x, [A * ((A + 1) + t2 + t1), -2 * A * ((A - 1) + t3), A * ((A + 1) + t2 - t1)],
+                        [(A + 1) - t2 + t1, 2 * ((A - 1) - t3), (A + 1) - t2 - t1])
+    w0, Q = 2 * math.pi * 38.0 / sr, 0.5
+    alpha, c = math.sin(w0) / 2 / Q, math.cos(w0)
+    x = _biquad_clamped(x, [(1 + c) / 2, -1 - c, (1 + c) / 2], [1 + alpha, -2 * c, 1 - alpha])
+    gate = int(round(0.4 * sr))
+    step = int(round(gate * 0.25))
+    n_blocks = (x.shape[-1] - gate) // step + 1
+    if n_blocks < 1:
+        return float("nan")
+    sq = np.square(x)
+    csum = np.concatenate([np.zeros((sq.shape[0], 1)), np.cumsum(sq, axis=-1)], axis=-1)
+    starts = np.arange(n_blocks) * step
+    energy = (csum[:, starts + gate] - csum[:, starts]) / gate                  # [channels, blocks]
+    g = np.array([1.0, 1.0, 1.0, 1.41, 1.41])[: energy.shape[0], None]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        block_lufs = -0.691 + 10 * np.log10(np.sum(g * energy, axis=0))
+        keep = block_lufs > -70.0
+        rel = -0.691 + 10 * np.log10(np.sum(g[:, 0] * energy[:, keep].mean(axis=-1))) - 10
+        keep &= block_lufs > rel
+        return float(-0.691 + 10 * np.log10(np.sum(g[:, 0] * energy[:, keep].mean(axis=-1))))
+
+
 def loudness_normalize(wav: torch.Tensor, sr: int = SR, target_lufs: float = -16.0) -> torch.Tensor:
     """Scale to `target_lufs` (ITU-R BS.1770, as kNN-VC does). Left unchanged when loudness is undefined
     (shorter than one 400 ms gating block, or silent)."""
     x = wav if wav.dim() == 2 else wav[None]
     if x.shape[-1] < int(0.4 * sr):
         return wav
-    dev = "cuda" if torch.cuda.is_available() else "cpu"   # torchaudio's lfilter takes seconds on the CPU
-    lufs = torchaudio.functional.loudness(x.to(dev), sr).item()
+    lufs = loudness(x, sr)
     if not math.isfinite(lufs):
         return wav
     return torchaudio.functional.gain(wav, target_lufs - lufs)

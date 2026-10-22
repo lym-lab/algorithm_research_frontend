@@ -459,12 +459,18 @@ def cmd_infer(args) -> None:
         model.load_state_dict(ck["model"])
         wavlm, hifigan = load_wavlm(dev), load_hifigan(dev, prematched=True)
 
+    # --amp: WavLM, converter and HiFi-GAN under fp16 autocast (the vocoder 2.6x faster on a V100, 2026-10-22);
+    # the loudness is measured on the fp32 waveform
+    amp = bool(getattr(args, "amp", False)) and str(dev).startswith("cuda")
+
     @torch.inference_mode()
     def convert(utt, wav):
         from ..models import wavlm_features
-        x = wavlm_features(wavlm, wav).float()[None]
-        _, y = model(x)
-        return audio.loudness_normalize(vocode(hifigan, y[0]))
+        with torch.autocast("cuda", dtype=torch.float16, enabled=amp):
+            x = wavlm_features(wavlm, wav).float()[None]
+            _, y = model(x)
+            out = vocode(hifigan, y[0].float())
+        return audio.loudness_normalize(out.float())
 
     runner.anonymize_sets(args.vpc_root, runner.resolve_sets(args.sets), args.suffix,
                           None if args.finalize_only else convert,
@@ -492,6 +498,7 @@ def main(argv=None) -> None:
     a.add_argument("--amp", action="store_true", help="fp16 autocast with loss scaling (CUDA only)")
     a = sub.add_parser("infer")
     a.add_argument("--ckpt"); a.add_argument("--suffix", required=True)
+    a.add_argument("--amp", action="store_true", help="fp16 autocast for WavLM, converter and vocoder (CUDA only)")
     runner.add_common_args(a)
     args = ap.parse_args(argv)
     {"prepare-target": cmd_prepare_target, "pretrain-spk": cmd_pretrain_spk,
