@@ -366,8 +366,7 @@ def cmd_train(args) -> None:
         tfeats = target_features(files, wavlm, dev, Path(args.target).with_name("target_feats.pt"), args.workers, amp)
         crop_frames = int(frames_for(torch.tensor([int(cfg["crop_s"] * audio.SR)]))[0])
     scaler = torch.cuda.amp.GradScaler(enabled=amp)
-    clf_scaler = torch.cuda.amp.GradScaler(enabled=amp)
-    step = 0
+    step = bad_steps = 0
     if args.init:  # variants continue from the base checkpoint; optimizer and schedule restart
         model.load_state_dict(torch.load(args.init, map_location="cpu")["model"])
     resume = out / "last.pt"
@@ -423,16 +422,15 @@ def cmd_train(args) -> None:
         log = {"rec": loss.item()}
 
         if clf is not None:
-            # classifier step on detached outputs of source utterances only
+            # classifier step on detached outputs of source utterances only. The classifier runs in fp32 even under
+            # --amp: in fp16 it turned NaN at step 3900 of wc6 (2026-10-22; all its weights and Adam state NaN, the
+            # converter's weights intact), after which every step was skipped
             src = is_src.nonzero().squeeze(1)
-            with autocast():
-                c_logits = clf(y_post[src].detach(), lengths[src])
-            c_loss = F.cross_entropy(c_logits.float(), spk[src])
-            clf_opt.zero_grad(); clf_scaler.scale(c_loss).backward(); all_reduce_grads(clf.parameters(), world)
-            clf_scaler.step(clf_opt); clf_scaler.update()
-            with autocast():
-                a_logits = clf(y_post[src], lengths[src])
-            adv = losses.capped_adversarial(a_logits.float(), spk[src], clf.n_speakers)
+            c_loss = F.cross_entropy(clf(y_post[src].detach(), lengths[src]), spk[src])
+            clf_opt.zero_grad()
+            if torch.isfinite(c_loss):
+                c_loss.backward(); all_reduce_grads(clf.parameters(), world); clf_opt.step()
+            adv = losses.capped_adversarial(clf(y_post[src], lengths[src]), spk[src], clf.n_speakers)
             loss = loss - lam * adv
             log.update(clf_ce=c_loss.item(), adv=adv.item())
         if ctc is not None:
@@ -445,22 +443,30 @@ def cmd_train(args) -> None:
         scaler.unscale_(opt)
         torch.nn.utils.clip_grad_norm_(params, cfg.get("grad_clip", 1.0))
         scaler.step(opt); scaler.update(); sched.step(); step += 1
+        # a run that keeps producing non-finite losses only burns GPU time: stop it, so the queue reports a failure
+        bad_steps = 0 if torch.isfinite(loss) else bad_steps + 1
+        if bad_steps >= 50:
+            raise RuntimeError(f"non-finite loss for 50 steps in a row (step {step}); last good checkpoint: {resume}")
 
         if step % args.log_every == 0:
             rate = args.log_every / (time.time() - t0); t0 = time.time()
             say(f"step {step} " + " ".join(f"{k} {v:.4f}" for k, v in log.items()) + f" | {rate:.2f} it/s", flush=True)
         if step % args.save_every == 0 or step == cfg["steps"]:
             if rank == 0:
-                save()
+                if bad_steps == 0:   # never overwrite the last good checkpoint with a broken state
+                    save()
                 with autocast():
                     v = validate(model, wavlm, valid_dl, matching, dev)
                 print(f"step {step} valid rec {v:.4f}", flush=True)
             if world > 1:
                 dist.barrier()  # the other ranks wait while rank 0 saves and validates
-        if stop:
+        if stop and bad_steps == 0:
             save()
             print(f"SIGTERM: saved step {step}, exiting", flush=True)
             sys.exit(143)
+        if stop:
+            print(f"SIGTERM at step {step} with a non-finite loss: not saved, exiting", flush=True)
+            sys.exit(1)
     if world > 1:
         dist.destroy_process_group()
 
