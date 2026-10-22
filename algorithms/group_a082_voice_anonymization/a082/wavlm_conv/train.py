@@ -299,7 +299,7 @@ def cmd_train(args) -> None:
     src_set = UtteranceSet(args.vpc_root, kaldi.TRAIN_SET, train_u, spk_index, cfg["crop_s"])
     sampler = DistributedSampler(src_set, world, rank, shuffle=True, seed=seed, drop_last=True) if world > 1 else None
     src_dl = DataLoader(src_set, batch_size=batch, shuffle=sampler is None, sampler=sampler, num_workers=args.workers,
-                        collate_fn=collate, drop_last=True)
+                        collate_fn=collate, drop_last=True, persistent_workers=args.workers > 0)
     valid_dl = DataLoader(UtteranceSet(args.vpc_root, kaldi.TRAIN_SET, valid_u[: cfg.get("valid_utts", 200)], spk_index,
                                        cfg["crop_s"]), batch_size=batch, num_workers=args.workers, collate_fn=collate)
     rho = cfg.get("target_recon", 0.2)
@@ -307,8 +307,12 @@ def cmd_train(args) -> None:
     tgt_it = None
     if n_tgt:
         files = json.loads(Path(args.manifest).read_text())[target["speaker"]]
+        # persistent workers keep FileSet's per-worker cache of VAD-trimmed files across epochs: without them every
+        # epoch (334 steps) started new workers that trimmed every file again, and the GPU waited for them about
+        # half of the time (2026-10-22, V100: GPU ~50 %, main process mostly waiting on the loader)
         tgt_it = forever(DataLoader(FileSet(files, cfg["crop_s"]), batch_size=n_tgt, shuffle=True,
-                                    num_workers=max(1, args.workers // 4), collate_fn=collate, drop_last=True))
+                                    num_workers=max(1, args.workers // 4), collate_fn=collate, drop_last=True,
+                                    persistent_workers=True))
     src_it = forever(src_dl)
 
     wavlm = load_wavlm(dev)
