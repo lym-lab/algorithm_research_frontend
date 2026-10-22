@@ -275,6 +275,18 @@ def disk_room(t: Task, jobs: list[Job], claimed: dict[str, set[int]]) -> bool:
     return shutil.disk_usage(W).free / 1e9 - reserved >= t.disk_gb
 
 
+def interrupted(t: Task) -> bool:
+    """The task's log ends with the training's "SIGTERM: saved step N" line: it was stopped on purpose."""
+    f = LOGS / f"q_{t.id}.log"
+    if not f.exists():
+        return False
+    with f.open("rb") as fh:
+        fh.seek(max(0, f.stat().st_size - 20000))
+        tail = fh.read().decode(errors="replace")
+    i = tail.rfind("SIGTERM: saved step")
+    return i >= 0 and "### " not in tail[i:]   # no newer start of the task after it
+
+
 def extra_tasks(known: set[str]) -> list[Task]:
     f = W / "tasks_extra.json"
     if not f.exists():
@@ -320,7 +332,11 @@ def main() -> None:
         return any(is_failed(d) or (d in by and blocked(by[d])) for d in t.deps)
 
     while True:
-        # 0. tasks added while running
+        # 0. retry counters reset by hand (touch <work>/reset_tries), and tasks added while running
+        if (W / "reset_tries").exists():
+            (W / "reset_tries").unlink()
+            tries = {k: 0 for k in tries}
+            log("retry counters reset (reset_tries)")
         for t in extra_tasks(set(by)):
             T.append(t); by[t.id] = t; tries[t.id] = 0
             if t.shards:
@@ -353,6 +369,8 @@ def main() -> None:
                     log(f"{t.id}: post step failed (see q_{t.id}.log); marking done anyway")
                 (DONE / t.id).touch()
                 log(f"done {t.id} ({(time.time() - j.start) / 3600:.2f} h)")
+            elif interrupted(t):   # stopped on purpose and saved its state (training's SIGTERM handler)
+                log(f"{t.id} was interrupted after saving its state; restarting it (not counted as a failure)")
             else:
                 tries[t.id] += 1
                 log(f"{t.id} failed (try {tries[t.id]}, exit codes {[p.returncode for p in j.procs]}), see q_{t.id}.log")
