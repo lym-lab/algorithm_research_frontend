@@ -1,68 +1,106 @@
-# 算法研究平台
+# 第XX组：语音匿名化（情感增强特征融合）
 
-用于展示与体验内容水印、主动防御方法的统一前端。用户可以查看方法样例，上传图像、音频或视频，填写方法参数，预览并下载处理结果。算法贡献者通过方法配置和 HTTP 接口接入自己的算法。
+## 1. 小组与项目
 
-**小组提交流程：Fork 本仓库 → 在本组仓库完成接入并重写根目录 README → 发起 PR。** PR 标题格式为 `第XX组-选题名称`，XX 填写本组实际组号，选题填写本组实际选题。提交后保持打开，用于集中查看与反馈，默认不合并。详见[算法提交指南](docs/算法提交指南.md)与[小组 README 模板](docs/小组README模板.md)。
-
-## 文档导航
-
-| 你要做什么 | 阅读文档 |
+| 信息 | 本组填写 |
 | --- | --- |
-| 选择方法、上传素材、获取结果 | [使用说明](docs/使用说明.md) |
-| 定义素材、参数、样例与算法接口 | [算法接入规范](docs/算法接入规范.md) |
-| Fork 仓库、编写小组 README、提交 PR | [算法提交指南](docs/算法提交指南.md) |
-| 准备本组成果说明与附加文档入口 | [小组 README 模板](docs/小组README模板.md) |
-| 检查方法是否已具备使用条件 | [接入自查清单](docs/接入自查清单.md) |
+| 组号 | 第 XX 组（验收当天分配） |
+| 选题名称 | 语音匿名化：融合情感增强特征的 STT+TTS 方法复现 |
+| 成员 | 向泽涛（GitHub: comet7k7k）——单人组，负责全部实现 |
+| 方法 ID | `voice_anonymization` |
+| 本组仓库与提交分支 | [comet7k7k/algorithm_research_frontend](https://github.com/comet7k7k/algorithm_research_frontend) · `voice_anon_submission` |
 
-## 本地运行
+本方法解决语音数据中的说话人身份泄露问题：输入一段任意说话人的语音，输出一段音色固定为伪说话人的匿名语音，使听者无法识别原说话人身份，同时保留文本内容。
 
-准备 Node.js 22 或更新的 LTS 版本和 Git：
+## 2. 论文与代码来源
+
+- 论文：Lee, Park, You. *Voice Anonymization Using Emotion-Enriched Feature Integration with STT and TTS Models.* Proc. SPSC, 2024.
+- 算法后端代码：[comet7k7k/voice-anon](https://github.com/comet7k7k/voice-anon)
+- 使用的开源组件：
+  - Whisper small.en（OpenAI，faster-whisper 封装）
+  - VITS LJ Speech（Coqui TTS）
+  - ECAPA-TDNN（speechbrain，说话人验证）
+  - wav2vec2-base-emotion（SUPERB SER，情感识别）
+  - RAVDESS 数据集（情感原型计算）
+
+## 3. 本组实现内容
+
+| 功能 | 完成状态 | 实现位置与验证方式 |
+| --- | --- | --- |
+| Whisper 文本提取 | 已完成 | `app/whisper_model.py`，WER=3.12% |
+| F0 提取与情感原型注意力 | 已完成 | `app/emotion.py`，RAVDESS 真实 F0 质心 [222, 362, 337, 409] Hz |
+| FiLM 调制层 | 已完成 | `app/film.py`（论文公式 6-7） |
+| VITS 重合成匿名语音 | 已完成 | `app/vits.py`，固定伪说话人音色 |
+| WER / EER / UAR 评测闭环 | 已完成 | `eval/`，EER=0.00%，UAR 53.12%→25.00% |
+| GPU 加速（RTX 4060） | 已完成 | Whisper 3.3×、ECAPA 8.0×、SER 6.8× |
+| 华为云 V100 公网部署 | 已完成 | http://120.46.83.92/（按需开机） |
+| 平台标准 /process 接口 | 已完成 | `app/main.py`，支持跨域 |
+
+## 4. 输入、输出与参数
+
+| 输入字段 | 素材类型与格式 | 必填 | 限制与说明 |
+| --- | --- | --- | --- |
+| `file` | 音频 WAV | 是 | 不超过 20MB，建议 5–15 秒英文语音 |
+
+本方法无需额外参数。
+
+| 输出 | 文件类型 | 含义 |
+| --- | --- | --- |
+| 匿名后音频 | WAV | VITS 重合成的固定伪说话人音色语音 |
+| 处理报告 | JSON | 转录文本、F0 均值、情感原型来源、注意力权重形状 |
+
+## 5. 环境与安装
+
+后端算法服务（Python）：
+
+- OS：Ubuntu 22.04 / Windows 11
+- Python：3.10
+- GPU：NVIDIA GPU + CUDA 12.2（V100 或 RTX 4060）
+- 依赖：`requirements.txt`（含 torch 2.5.1+cu121、faster-whisper、coqui-tts、speechbrain、fastapi）
 
 ```bash
-git clone https://github.com/lym-lab/algorithm_research_frontend.git
-cd algorithm_research_frontend
+pip install torch==2.5.1+cu121 torchaudio==2.5.1+cu121 --index-url https://download.pytorch.org/whl/cu121
+pip install -r requirements.txt
+```
+
+模型权重不进 Git，从 [百度网盘](https://pan.baidu.com/s/1rI8gQftydnkzUqLcVg0IPg?pwd=wqcx)（提取码 wqcx）下载，放到对应目录。
+
+## 6. 启动与运行
+
+1. 启动后端服务：
+```bash
+cd voice-anon
+export PUBLIC_BASE=http://120.46.83.92  # 公网地址
+python -m uvicorn app.main:app --host 0.0.0.0 --port 80
+```
+2. 前端平台：
+```bash
 npm install
 npm run dev
 ```
+3. 在"方法集合"中选择"语音匿名化"，上传一段 WAV，点击开始处理。
+4. 结果区可试听匿名后音频，下载处理报告 JSON。
 
-在浏览器打开终端打印的地址。构建与预览命令：
+方法配置文件：`public/methods/voice_anonymization.json`
 
-```bash
-npm run build
-npm run preview
-```
+## 7. 样例与实际结果
 
-`npm test` 运行接口契约与处理逻辑测试，`npm run samples` 重新生成内置样例素材。
+| 样例 | 输入链接 | 输出链接 | 参数 | 观察重点 |
+| --- | --- | --- | --- | --- |
+| RAVDESS 中性语音 | [input.wav](public/samples/voice_anonymization/input.wav) | [output.wav](public/samples/voice_anonymization/output.wav) | 无 | 原始男声 → 匿名后统一女声音色，说话人身份抹除 |
 
-## 使用流程
+评测指标（RAVDESS 32 段）：WER=3.12%，EER=0.00%，UAR=25.00%。
 
-1. 在“方法集合”搜索或筛选方法。
-2. 查看方法详情中的输入、输出样例和效果说明。
-3. 选择素材，填写该方法的参数，点击“开始处理”。
-4. 预览结果，下载结果文件及本次参数记录。
+## 8. 验证与已知限制
 
-平台附带图像可见文字水印和音频可听周期标记两个浏览器基础样例，用于体验上传、参数设置与结果下载。论文方法的功能和效果由各方法说明及其算法接口决定。
+- 已验证：Whisper 转录正确、VITS 合成正常、EER/UAR/WER 三项指标闭环可复跑、华为云公网可访问。
+- 接口状态：华为云实例按需开机，验收当天在线；其余时间关机保留。
+- 已知限制：
+  1. VITS 无显式 F0 输入口，情感保真度有限（消融 UAR 差异 0.00pp）；
+  2. 仅支持英文语音；
+  3. 测试集仅 RAVDESS 32 段，统计置信度有限。
 
-## 接入方法
+## 9. 附加文档
 
-每个方法使用一份 JSON 配置定义输入、参数、样例和 HTTP 接口。前端根据配置生成页面与表单，支持多素材输入和多个结果文件。CPU / GPU 算法均可通过相同接口接入，算法运行环境由各自服务管理。
-
-在“接入算法”页面填写或导入配置，可先登记到当前浏览器测试。每组在自己的 Fork 中添加方法配置、目录索引和样例，并通过 PR 提交成果。根目录 `README.md` 必须介绍本组实际完成的工作，不能直接沿用平台或 baseline 的介绍。
-
-提交 PR 后，方法可在本组 Fork 中运行，公共仓库通过 PR 集中查看成果。正式加入公共平台目录时，由维护者另外整理已确认的方法配置与样例，保留平台的根目录 README。
-
-## 目录
-
-```text
-public/methods/      方法配置与目录索引
-public/samples/      输入、输出样例
-public/templates/    方法配置模板
-src/components/      素材预览、参数表单、处理工作区
-src/pages/           集合、详情、接入与指南页面
-src/services/        浏览器处理与 HTTP 调用
-src/lib/             配置校验、目录加载与本机登记
-docs/                使用与算法接入文档
-tests/               接口契约与处理逻辑测试
-```
-
-技术栈为 React、Vite、JavaScript 和 CSS。方法页面统一使用 `#/methods/方法ID` 路径。
+- [算法后端代码仓库](https://github.com/comet7k7k/voice-anon)
+- [模型权重百度网盘](https://pan.baidu.com/s/1rI8gQftydnkzUqLcVg0IPg?pwd=wqcx)（提取码 wqcx）

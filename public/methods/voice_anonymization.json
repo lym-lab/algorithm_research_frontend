@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "voice_anonymization",
+  "title": "语音匿名化（情感增强特征融合）",
+  "english": "Voice Anonymization with Emotion-Enriched Feature Integration",
+  "category": "主动防御",
+  "summary": "基于 Whisper 转写 + VITS 重合成的说话人匿名化系统，抹除说话人身份同时保留文本内容。",
+  "description": "复现 Lee et al. (SPSC 2024) 提出的语音匿名化方法：输入原始语音后，Whisper 提取文本，wav2vec2 识别情感并计算 F0，通过情感原型注意力与 FiLM 调制融合情感特征，最终由 VITS 合成为固定伪说话人音色的匿名语音。匿名后说话人验证 EER 为 0.00%（身份无法识别），WER 为 3.12%（文本内容保留），UAR 从 53.12% 降至 25.00%（情感信息被有效抹除）。",
+  "team": "第XX组",
+  "version": "1.0.0",
+  "runtime": "云端 V100 GPU · CUDA 12.2",
+  "inputs": [
+    {
+      "name": "file",
+      "label": "原始语音（WAV）",
+      "kind": "audio",
+      "accept": ["audio/wav", "audio/*"],
+      "required": true,
+      "max_mb": 20
+    }
+  ],
+  "parameters": [],
+  "examples": [
+    {
+      "title": "RAVDESS 中性情感语音匿名化示例",
+      "description": "原始语音为 RAVDESS 数据集中性情感片段，匿名后由 VITS 重合成统一女声音色，说话人身份被抹除。",
+      "input": {
+        "src": "samples/voice_anonymization/input.wav",
+        "kind": "audio",
+        "label": "原始语音"
+      },
+      "output": {
+        "src": "samples/voice_anonymization/output.wav",
+        "kind": "audio",
+        "label": "匿名后语音"
+      },
+      "parameters": {}
+    }
+  ],
+  "adapter": {
+    "type": "http",
+    "endpoint": "http://120.46.83.92/process"
+  }
+}
