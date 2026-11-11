@@ -16,7 +16,9 @@ from a082.eval import vpc
 
 ROWS = [("0", "_orig", "0"), ("1", "_knn1", "1"), ("1M", "_knn1m", None), ("2", "_knn2", "2"),
         ("3", "_knn3d18", "3"), ("4", "_tts", "4"), ("p=0.2", "_mix0p2", None), ("p=0.4", "_mix0p4", None),
-        ("A", "_mixA0p4", None), ("B", "_mix0p4spk", None)]
+        ("A", "_mixA0p4", None), ("B", "_mix0p4spk", None),
+        # ID 5-8; collect() skips any row whose evaluation is missing, so wc6-8 stay out for now
+        ("5", "_wc5", "5"), ("6", "_wc6", "6"), ("7", "_wc7", "7"), ("8", "_wc8", "8")]
 CASE = [("original", "_orig_src"), ("ID 1  kNN-VC", "_knn1"), ("ID 3  + length + noise (δ=18)", "_knn3d18"),
         ("ID 4  Whisper → Piper", "_tts"), ("improvement A  tts → kNN-VC", "_ttsknn")]
 
@@ -35,7 +37,7 @@ def main(argv=None) -> None:
         m = vpc.collect(args.vpc_root, sfx, row)
         if None not in (m["EER_avg"], m["UAR_avg"], m["WER_avg"]):
             rows[label] = (m["EER_avg"], m["UAR_avg"], m["WER_avg"])
-    offsets = {"p=0.4": (-34, 4), "A": (4, -11), "1": (-12, 3), "2": (4, 4)}
+    offsets = {"p=0.4": (-34, 4), "A": (4, -11), "1": (-12, 3), "2": (4, 4), "5": (4, 4)}
     viz.privacy_utility_figure(rows, offsets=offsets).savefig(args.out / "fig3-2_privacy_utility.png", dpi=150)
 
     if args.samples:
@@ -49,3 +51,4 @@ def main(argv=None) -> None:
 
 if __name__ == "__main__":
     main()
+

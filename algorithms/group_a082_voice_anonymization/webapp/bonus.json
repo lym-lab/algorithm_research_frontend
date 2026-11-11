@@ -1,0 +1,9 @@
+{
+ "mix_separated": {
+  "0.4": 37.512
+ },
+ "mix_single": {
+  "0.4": 40.527
+ },
+ "sysclf_accuracy": 0.9999
+}

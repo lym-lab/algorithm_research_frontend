@@ -160,17 +160,17 @@ def judge(row: str, m: dict, ours: dict | None = None) -> dict:
     tol = targets.TOLERANCE.get(row, {})
     verdict = {}
     for key, paper in (("EER", eer), ("UAR", uar), ("WER", wer)):
-        ours = m.get(f"{key}_avg")
-        if ours is None:
+        value = m.get(f"{key}_avg")
+        if value is None:
             verdict[key] = "missing"
         elif key == "UAR" and m.get("UAR_corpus") == "CREMA":
             verdict[key] = "cross-corpus (CREMA-D), not compared"
         elif key == "EER" and "eer_min" in tol:
-            verdict[key] = "ok" if ours >= tol["eer_min"] else f"below {tol['eer_min']}"
+            verdict[key] = "ok" if value >= tol["eer_min"] else f"below {tol['eer_min']}"
         elif key in tol:
-            verdict[key] = "ok" if abs(ours - paper) <= tol[key] else f"off by {ours - paper:+.2f}"
+            verdict[key] = "ok" if abs(value - paper) <= tol[key] else f"off by {value - paper:+.2f}"
         else:
-            verdict[key] = f"{ours - paper:+.2f}"
+            verdict[key] = f"{value - paper:+.2f}"
     q = targets.qualitative(row, m, ours or {})
     if q:
         verdict["qualitative"] = q
@@ -267,7 +267,8 @@ def main(argv=None) -> None:
     elif args.cmd == "collect":
         m = collect(args.vpc_root, args.suffix, args.row)
         if args.row:
-            m["verdict"] = judge(args.row, m)
+            measured = {r: collect(args.vpc_root, v[0], r) for r, v in targets.TABLE1.items()}
+            m["verdict"] = judge(args.row, m, measured)
         text = json.dumps(m, indent=1)
         print(text)
         if args.json:
