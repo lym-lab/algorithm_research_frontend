@@ -12,7 +12,7 @@
 
 项目为音频嵌入256或512位二进制消息，再从保存后的音频独立提取。提供 MSE256、NMR256、MSE512、NMR512 四个从头正式训练的模型，比较频谱均方误差与听觉掩蔽损失对音质的影响。
 
-**当前验收状态（2026-11-01）：60候选训练和四模型选模通过检查；四模型RWC客观评价、本地及华为云HTTPS前端真实处理已完成。四模型公网嵌入、下载、重上传提取及整机重启后自动恢复均已实测通过。权重下载入口见下文；最终成果通过本组Fork分支提交。项目报告按本人要求暂不撰写。** 本组保留真实失败和复现差异，不声称得到与论文完全相同的数值。
+**当前验收状态（2026-11-14）：60候选训练和四模型选模通过检查；四模型RWC客观评价、本地及华为云HTTPS前端真实处理已完成。四模型公网嵌入、下载、重上传提取及整机重启后自动恢复均已实测通过。权重下载入口见下文；最终成果通过本组Fork分支提交。项目报告已完成并补充单人组个人贡献，下载入口见附加文档。** 本组保留真实失败和复现差异，不声称得到与论文完全相同的数值。
 
 ## 2. 论文与代码来源
 
@@ -66,6 +66,8 @@ python -m venv .venv
 pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -e .
 ```
+
+正式权重完整包：[A051_正式推理权重.zip（百度网盘）](https://pan.baidu.com/s/1Up4Oj6X4ygaFuLUG4gq2dA?pwd=s2ih)，提取码：`s2ih`。包大小290,092,794字节（约277 MiB），包含四个推理模型、`selected.json`、`SHA256SUMS.txt`和使用说明；不包含优化器或原始音乐。ZIP的SHA-256为 `6e4dc78f8c5ec12cccf0ec4a1d13668ee7b8a8dd0f5c5d7485b6f6c6d0b097e3`。解压后使用包内`weights/`目录。
 
 正式四模型已导出，总计约296 MiB，训练优化器不包含在推理权重中；权重不进入Git提交。公开下载：[MSE256](https://a051.119-8-40-242.sslip.io/weights/MSE256.pt)、[NMR256](https://a051.119-8-40-242.sslip.io/weights/NMR256.pt)、[MSE512](https://a051.119-8-40-242.sslip.io/weights/MSE512.pt)、[NMR512](https://a051.119-8-40-242.sslip.io/weights/NMR512.pt)、[SHA-256清单 selected.json](https://a051.119-8-40-242.sslip.io/weights/selected.json)。固定公网带宽1Mbps，全部权重理论传输时间约42分钟；支持HTTP Range。下载后将四个`.pt`及`selected.json`置于算法目录`weights/`，执行：
 
@@ -146,6 +148,7 @@ python -m scripts.validate_service
 
 ## 9. 附加文档入口
 
+- [项目报告（DOCX，含单人组个人贡献）](docs/a051/李石屹1091_基于NMR感知损失的音频水印复现.docx)
 - [9分钟汇报PPT（含已验收云端状态）](docs/a051/A051_9min_project_review_20261101.pptx)
 - [本地浏览器真实下载与重上传提取验收](docs/a051/browser-validation.json)
 - [云端四模型、HTTPS与整机重启后验收](docs/a051/cloud-validation.json)
@@ -161,4 +164,4 @@ python -m scripts.validate_service
 - [演示与真实听评准备](algorithms/group_a051_nmr_watermark/docs/presentation-and-listening.md)
 - [平台算法提交指南](docs/算法提交指南.md)、[接口规范](docs/算法接入规范.md)、[自查清单](docs/接入自查清单.md)
 
-项目报告和评分问卷不混入本轮代码提交；报告将在项目验收完成、本人明确要求后撰写。成果PR按指南保持打开，不自行合并或关闭。
+项目报告已纳入附加文档。成果 [PR #2](https://github.com/lym-lab/algorithm_research_frontend/pull/2) 保持打开，后续修改更新同一分支，不自行合并或关闭。
