@@ -1,0 +1,1614 @@
+{
+  "runs": {
+    "mse256_s2026_a0.8": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00043632656943729816,
+        "bce": 0.0009914119555569235,
+        "distortion": 0.00029755521323643146,
+        "ber": 0.00024437997855392157,
+        "snr": 14.786793201314469,
+        "nmr": 239.83607320696865,
+        "nmr_db": 23.799145049367176
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2026_a0.9": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00028378932813710907,
+        "bce": 0.0009821206271476066,
+        "distortion": 0.00020619696508184264,
+        "ber": 0.0002586215150122549,
+        "snr": 16.634287871142813,
+        "nmr": 129.28231916607484,
+        "nmr_db": 21.115391342101745
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2026_a0.92": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00023415280213478527,
+        "bce": 0.0008182213587490111,
+        "distortion": 0.0001833642297331643,
+        "ber": 0.00019411573223039214,
+        "snr": 17.177761773049248,
+        "nmr": 112.8360023721879,
+        "nmr_db": 20.524476912864674
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2026_a0.95": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00019409570341653593,
+        "bce": 0.0011874037207128233,
+        "distortion": 0.00014181633462915973,
+        "ber": 0.00030625287224264705,
+        "snr": 18.431152638500812,
+        "nmr": 84.60719209637666,
+        "nmr_db": 19.274072821289614
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse256_s2026_a0.98": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00011757348167485165,
+        "bce": 0.0012186663703794372,
+        "distortion": 9.510219720141322e-05,
+        "ber": 0.00034263461243872547,
+        "snr": 20.236447603796044,
+        "nmr": 52.37517886670151,
+        "nmr_db": 17.191255191378612
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2027_a0.8": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0005062575161562064,
+        "bce": 0.0011466836725423277,
+        "distortion": 0.0003461509680467619,
+        "ber": 0.00030194450827205884,
+        "snr": 14.274938637047422,
+        "nmr": 298.87356726942386,
+        "nmr_db": 24.75487507221783
+      },
+      "best_epoch": 3,
+      "final_epoch": 5
+    },
+    "mse256_s2027_a0.9": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0003629261388328707,
+        "bce": 0.0016894762456764047,
+        "distortion": 0.0002155316853728151,
+        "ber": 0.0004250919117647059,
+        "snr": 16.512976325244882,
+        "nmr": 137.51747389949273,
+        "nmr_db": 21.38357886064197
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2027_a0.92": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0002556467693412902,
+        "bce": 0.0010391174919883875,
+        "distortion": 0.0001875188793194099,
+        "ber": 0.00024665383731617646,
+        "snr": 17.08512077403127,
+        "nmr": 125.8678823791143,
+        "nmr_db": 20.99914925620282
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2027_a0.95": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00022103787998061948,
+        "bce": 0.0012990237325521223,
+        "distortion": 0.00016430178297477873,
+        "ber": 0.0003380868949142157,
+        "snr": 17.66957612692141,
+        "nmr": 106.97772961696154,
+        "nmr_db": 20.292933766465996
+      },
+      "best_epoch": 3,
+      "final_epoch": 5
+    },
+    "mse256_s2027_a0.98": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0001522413127531763,
+        "bce": 0.002365138329375494,
+        "distortion": 0.0001070801477623058,
+        "ber": 0.0007076487821691176,
+        "snr": 19.65811012168141,
+        "nmr": 61.56575978181471,
+        "nmr_db": 17.893392434603562
+      },
+      "best_epoch": 3,
+      "final_epoch": 5
+    },
+    "mse256_s2028_a0.8": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.000400795136417454,
+        "bce": 0.0008786574197395513,
+        "distortion": 0.0002813295572320617,
+        "ber": 0.0002127853094362745,
+        "snr": 15.39703302424328,
+        "nmr": 184.73798519650055,
+        "nmr_db": 22.66556202777079
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse256_s2028_a0.9": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00032190787103044224,
+        "bce": 0.001502543608869161,
+        "distortion": 0.0001907261240848682,
+        "ber": 0.0004074994255514706,
+        "snr": 17.232998223398248,
+        "nmr": 111.27808010641796,
+        "nmr_db": 20.46409624115718
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse256_s2028_a0.92": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.00024563884094188287,
+        "bce": 0.0007642696380607245,
+        "distortion": 0.00020054050951062784,
+        "ber": 0.000203091490502451,
+        "snr": 16.83583769925377,
+        "nmr": 127.57243759979805,
+        "nmr_db": 21.057568539202464
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse256_s2028_a0.95": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.000204534214115519,
+        "bce": 0.0018509299733862053,
+        "distortion": 0.00011788180544829398,
+        "ber": 0.0005073098575367647,
+        "snr": 19.545549861648503,
+        "nmr": 56.59651273570444,
+        "nmr_db": 17.52789672419748
+      },
+      "best_epoch": 8,
+      "final_epoch": 10
+    },
+    "mse256_s2028_a0.98": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0001181701822953947,
+        "bce": 0.0012597605450519397,
+        "distortion": 9.487241882242433e-05,
+        "ber": 0.0003392836626838235,
+        "snr": 20.489128408332665,
+        "nmr": 44.529016130370564,
+        "nmr_db": 16.486430994907238
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse512_s2026_a0.8": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.003151220372905407,
+        "bce": 0.01324757640843517,
+        "distortion": 0.0006271312939597741,
+        "ber": 0.0027478984757965687,
+        "snr": 12.453428221011864,
+        "nmr": 449.5505029858145,
+        "nmr_db": 26.527784879180018
+      },
+      "best_epoch": 3,
+      "final_epoch": 5
+    },
+    "mse512_s2026_a0.9": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0013926833633198768,
+        "bce": 0.010624281975312852,
+        "distortion": 0.0003669501747240514,
+        "ber": 0.0022228166168811276,
+        "snr": 14.763773892615356,
+        "nmr": 157.91631724515602,
+        "nmr_db": 21.984270072939218
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse512_s2026_a0.92": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0009391921133261777,
+        "bce": 0.007838970249263095,
+        "distortion": 0.0003392114141634546,
+        "ber": 0.0013245227290134803,
+        "snr": 15.121177043137598,
+        "nmr": 137.81338428306194,
+        "nmr_db": 21.39291397818388
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse512_s2026_a0.95": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0009518322266362077,
+        "bce": 0.014056569929508602,
+        "distortion": 0.00026210917998397754,
+        "ber": 0.0034810982498468136,
+        "snr": 16.334568322113917,
+        "nmr": 91.95397460825431,
+        "nmr_db": 19.635705058756358
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse512_s2026_a0.98": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0004797091167882386,
+        "bce": 0.01535668442135348,
+        "distortion": 0.00017609737832991216,
+        "ber": 0.003684548770680147,
+        "snr": 18.203983664687943,
+        "nmr": 49.003403537903964,
+        "nmr_db": 16.902262450570305
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse512_s2027_a0.8": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0033846400667885868,
+        "bce": 0.01509999914514814,
+        "distortion": 0.0004558002174698962,
+        "ber": 0.002067117130055147,
+        "snr": 13.556878838089167,
+        "nmr": 283.6189594822187,
+        "nmr_db": 24.52735259385804
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse512_s2027_a0.9": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0022639955057849304,
+        "bce": 0.01964692608270721,
+        "distortion": 0.0003325587485603904,
+        "ber": 0.003707646388633578,
+        "snr": 15.131295933618265,
+        "nmr": 158.69475096332675,
+        "nmr_db": 22.005625621337835
+      },
+      "best_epoch": 3,
+      "final_epoch": 5
+    },
+    "mse512_s2027_a0.92": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.001540376170790599,
+        "bce": 0.01582710088102841,
+        "distortion": 0.000298052306862148,
+        "ber": 0.0026273241230085785,
+        "snr": 15.738029935634604,
+        "nmr": 126.23327657688208,
+        "nmr_db": 21.011738551356306
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse512_s2027_a0.95": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0011050723636621042,
+        "bce": 0.017436608969800028,
+        "distortion": 0.000245517795019623,
+        "ber": 0.0033841600605085784,
+        "snr": 16.716605715307534,
+        "nmr": 89.36515927270658,
+        "nmr_db": 19.511682337309512
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse512_s2027_a0.98": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.000609645039909154,
+        "bce": 0.022490263309366272,
+        "distortion": 0.00016310181797462957,
+        "ber": 0.004871503044577206,
+        "snr": 18.704007898972314,
+        "nmr": 45.58207080002427,
+        "nmr_db": 16.587940513532388
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse512_s2028_a0.8": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.002285912548484025,
+        "bce": 0.009712096059685756,
+        "distortion": 0.0004293666257117544,
+        "ber": 0.0011508717256433823,
+        "snr": 13.8716553209313,
+        "nmr": 214.66566239661518,
+        "nmr_db": 23.31762580885669
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse512_s2028_a0.9": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0014355604288878157,
+        "bce": 0.011366339295408596,
+        "distortion": 0.0003321405395902676,
+        "ber": 0.0016434613396139705,
+        "snr": 15.343065422744143,
+        "nmr": 112.33181652371388,
+        "nmr_db": 20.505027819395522
+      },
+      "best_epoch": 4,
+      "final_epoch": 6
+    },
+    "mse512_s2028_a0.92": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.001223874948410929,
+        "bce": 0.011303879765738897,
+        "distortion": 0.0003473528035582978,
+        "ber": 0.0015951717601102942,
+        "snr": 15.097091222101566,
+        "nmr": 124.49352178112787,
+        "nmr_db": 20.95146752814014
+      },
+      "best_epoch": 3,
+      "final_epoch": 5
+    },
+    "mse512_s2028_a0.95": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0008806307919953457,
+        "bce": 0.012664377302908357,
+        "distortion": 0.00026043359784410974,
+        "ber": 0.0024166331571691176,
+        "snr": 16.6565913487591,
+        "nmr": 58.321125923079784,
+        "nmr_db": 17.658258996971014
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "mse512_s2028_a0.98": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0004464793180851106,
+        "bce": 0.013574828258395998,
+        "distortion": 0.00017855383317180216,
+        "ber": 0.0027219286151960783,
+        "snr": 18.34462490683677,
+        "nmr": 33.880409512777504,
+        "nmr_db": 15.299486510112283
+      },
+      "best_epoch": 5,
+      "final_epoch": 7
+    },
+    "nmr256_s2026_a0.1": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.005513353524250252,
+        "bce": 0.0006118887957596848,
+        "distortion": 0.04962653531875534,
+        "ber": 0.0001714968213848039,
+        "snr": 16.356044999758403,
+        "nmr": 0.04962653531875534,
+        "nmr_db": -13.042860440545404
+      },
+      "best_epoch": 8,
+      "final_epoch": 10
+    },
+    "nmr256_s2026_a0.2": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.006519980650673639,
+        "bce": 0.0009286169696982445,
+        "distortion": 0.02888543490484795,
+        "ber": 0.0002595789292279412,
+        "snr": 18.64731046031503,
+        "nmr": 0.02888543490484795,
+        "nmr_db": -15.393210892493219
+      },
+      "best_epoch": 15,
+      "final_epoch": 17
+    },
+    "nmr256_s2026_a0.3": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.008438462094065971,
+        "bce": 0.001221238862096613,
+        "distortion": 0.025278648641416986,
+        "ber": 0.00037674249387254904,
+        "snr": 19.62278819317911,
+        "nmr": 0.025278648641416986,
+        "nmr_db": -15.972461464997183
+      },
+      "best_epoch": 15,
+      "final_epoch": 17
+    },
+    "nmr256_s2026_a0.4": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.009552407102869349,
+        "bce": 0.0010265176259196653,
+        "distortion": 0.02234124088130307,
+        "ber": 0.0003029019224877451,
+        "snr": 20.659106973105786,
+        "nmr": 0.02234124088130307,
+        "nmr_db": -16.50892708886646
+      },
+      "best_epoch": 15,
+      "final_epoch": 17
+    },
+    "nmr256_s2026_a0.5": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.010508174493260608,
+        "bce": 0.0017097390692692987,
+        "distortion": 0.019306609894642057,
+        "ber": 0.0004915125229779412,
+        "snr": 21.700594334508857,
+        "nmr": 0.019306609894642057,
+        "nmr_db": -17.142939785927233
+      },
+      "best_epoch": 15,
+      "final_epoch": 17
+    },
+    "nmr256_s2027_a0.1": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.004237010989534468,
+        "bce": 0.0006380347102092445,
+        "distortion": 0.03662779694240467,
+        "ber": 0.00017484777113970588,
+        "snr": 17.74317581980836,
+        "nmr": 0.03662779694240467,
+        "nmr_db": -14.361892021252466
+      },
+      "best_epoch": 14,
+      "final_epoch": 16
+    },
+    "nmr256_s2027_a0.2": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.006634547541433872,
+        "bce": 0.000892770206427949,
+        "distortion": 0.029601656396270676,
+        "ber": 0.00023684034160539216,
+        "snr": 18.740949585391025,
+        "nmr": 0.029601656396270676,
+        "nmr_db": -15.286839867912846
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    },
+    "nmr256_s2027_a0.3": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.008151820059363529,
+        "bce": 0.0009954015592429596,
+        "distortion": 0.024850129022025595,
+        "ber": 0.00027441884957107843,
+        "snr": 19.924203483731137,
+        "nmr": 0.024850129022025595,
+        "nmr_db": -16.04671352065124
+      },
+      "best_epoch": 14,
+      "final_epoch": 16
+    },
+    "nmr256_s2027_a0.4": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.009458712755711567,
+        "bce": 0.0013945724620279911,
+        "distortion": 0.02155492273752815,
+        "ber": 0.0004326315487132353,
+        "snr": 20.984698394233106,
+        "nmr": 0.02155492273752815,
+        "nmr_db": -16.66453529512729
+      },
+      "best_epoch": 14,
+      "final_epoch": 16
+    },
+    "nmr256_s2027_a0.5": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.010323938516689939,
+        "bce": 0.0018162155776557413,
+        "distortion": 0.018831661459533314,
+        "ber": 0.0005716959635416667,
+        "snr": 21.978395008573344,
+        "nmr": 0.018831661459533314,
+        "nmr_db": -17.251113618274317
+      },
+      "best_epoch": 14,
+      "final_epoch": 16
+    },
+    "nmr256_s2028_a0.1": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0043931357691511875,
+        "bce": 0.000600628124860292,
+        "distortion": 0.038525704038785955,
+        "ber": 0.00017532647824754902,
+        "snr": 17.515387258810154,
+        "nmr": 0.038525704038785955,
+        "nmr_db": -14.142494160134119
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    },
+    "nmr256_s2028_a0.2": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.0065854111778796375,
+        "bce": 0.0008872255444316579,
+        "distortion": 0.029378153113922213,
+        "ber": 0.00025598862591911766,
+        "snr": 18.773973606147017,
+        "nmr": 0.029378153113922213,
+        "nmr_db": -15.319755100312598
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    },
+    "nmr256_s2028_a0.3": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.008579978030677154,
+        "bce": 0.0010909719568555339,
+        "distortion": 0.026054324512826462,
+        "ber": 0.00031917796415441177,
+        "snr": 19.67509647023444,
+        "nmr": 0.026054324512826462,
+        "nmr_db": -15.84120181915945
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    },
+    "nmr256_s2028_a0.4": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.009769437401601131,
+        "bce": 0.0016497003806833555,
+        "distortion": 0.021949042456553262,
+        "ber": 0.000478826784620098,
+        "snr": 20.82444062045976,
+        "nmr": 0.021949042456553262,
+        "nmr_db": -16.585844214312438
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    },
+    "nmr256_s2028_a0.5": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.01084305749836323,
+        "bce": 0.0018117455320621316,
+        "distortion": 0.019874369462623314,
+        "ber": 0.0005335190716911764,
+        "snr": 21.667536343780217,
+        "nmr": 0.019874369462623314,
+        "nmr_db": -17.01706640948081
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    },
+    "nmr512_s2026_a0.1": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.012781620358902157,
+        "bce": 0.005425982876605464,
+        "distortion": 0.07898235767897145,
+        "ber": 0.001178876091452206,
+        "snr": 13.202248993106917,
+        "nmr": 0.07898235767897145,
+        "nmr_db": -11.02469906409999
+      },
+      "best_epoch": 8,
+      "final_epoch": 10
+    },
+    "nmr512_s2026_a0.2": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.016059923119496042,
+        "bce": 0.004612211159695232,
+        "distortion": 0.0618507695256495,
+        "ber": 0.0010066612094056372,
+        "snr": 14.41036917555566,
+        "nmr": 0.0618507695256495,
+        "nmr_db": -12.08654892661146
+      },
+      "best_epoch": 8,
+      "final_epoch": 10
+    },
+    "nmr512_s2026_a0.3": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.019847994427854086,
+        "bce": 0.0048804097750689834,
+        "distortion": 0.05477235656889046,
+        "ber": 0.001121670592064951,
+        "snr": 14.8612441072277,
+        "nmr": 0.05477235656889046,
+        "nmr_db": -12.614385732423251
+      },
+      "best_epoch": 8,
+      "final_epoch": 10
+    },
+    "nmr512_s2026_a0.4": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.02361076022680922,
+        "bce": 0.005400658395785071,
+        "distortion": 0.05092591178676515,
+        "ber": 0.0013205135569852942,
+        "snr": 15.24283229042502,
+        "nmr": 0.05092591178676515,
+        "nmr_db": -12.930611865709821
+      },
+      "best_epoch": 8,
+      "final_epoch": 10
+    },
+    "nmr512_s2026_a0.5": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.022301522346542164,
+        "bce": 0.007514047851174267,
+        "distortion": 0.037088996807441994,
+        "ber": 0.0020734599992340685,
+        "snr": 16.697610358163423,
+        "nmr": 0.037088996807441994,
+        "nmr_db": -14.307549134194185
+      },
+      "best_epoch": 18,
+      "final_epoch": 20
+    },
+    "nmr512_s2027_a0.1": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.010130654567368693,
+        "bce": 0.0032311720840345302,
+        "distortion": 0.07222599632964999,
+        "ber": 0.0007958505667892157,
+        "snr": 13.906812363979864,
+        "nmr": 0.07222599632964999,
+        "nmr_db": -11.413064585182457
+      },
+      "best_epoch": 11,
+      "final_epoch": 13
+    },
+    "nmr512_s2027_a0.2": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.013907488729512574,
+        "bce": 0.0032310265920743545,
+        "distortion": 0.05661333629441466,
+        "ber": 0.0008583218443627451,
+        "snr": 15.129894643203885,
+        "nmr": 0.05661333629441466,
+        "nmr_db": -12.470812508465542
+      },
+      "best_epoch": 11,
+      "final_epoch": 13
+    },
+    "nmr512_s2027_a0.3": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.017814788166159654,
+        "bce": 0.003960941184150037,
+        "distortion": 0.05014042925436561,
+        "ber": 0.0011111988740808824,
+        "snr": 15.714905936110254,
+        "nmr": 0.05014042925436561,
+        "nmr_db": -12.998119523481986
+      },
+      "best_epoch": 11,
+      "final_epoch": 13
+    },
+    "nmr512_s2027_a0.4": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.024255053530100223,
+        "bce": 0.005802609836431586,
+        "distortion": 0.051933717737704804,
+        "ber": 0.0014460544960171568,
+        "snr": 15.722875232322544,
+        "nmr": 0.051933717737704804,
+        "nmr_db": -12.845505867987875
+      },
+      "best_epoch": 7,
+      "final_epoch": 9
+    },
+    "nmr512_s2027_a0.5": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.023669551965305763,
+        "bce": 0.006184377655953022,
+        "distortion": 0.041154726238592586,
+        "ber": 0.0017643348843443627,
+        "snr": 17.021364663161485,
+        "nmr": 0.041154726238592586,
+        "nmr_db": -13.855802828945654
+      },
+      "best_epoch": 11,
+      "final_epoch": 13
+    },
+    "nmr512_s2028_a0.1": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.012025511754201908,
+        "bce": 0.005274133229920385,
+        "distortion": 0.07278791832938498,
+        "ber": 0.0013047162224264705,
+        "snr": 13.605911393259086,
+        "nmr": 0.07278791832938498,
+        "nmr_db": -11.379407008836237
+      },
+      "best_epoch": 9,
+      "final_epoch": 11
+    },
+    "nmr512_s2028_a0.2": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.01693694166172588,
+        "bce": 0.006766681682647151,
+        "distortion": 0.05761798000803181,
+        "ber": 0.0017011455461090686,
+        "snr": 14.443601677464503,
+        "nmr": 0.05761798000803181,
+        "nmr_db": -12.39441971441634
+      },
+      "best_epoch": 9,
+      "final_epoch": 11
+    },
+    "nmr512_s2028_a0.3": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.01921310338292125,
+        "bce": 0.006921622995857843,
+        "distortion": 0.047893222668847324,
+        "ber": 0.001846014284620098,
+        "snr": 15.236923487513673,
+        "nmr": 0.047893222668847324,
+        "nmr_db": -13.197259388979187
+      },
+      "best_epoch": 10,
+      "final_epoch": 12
+    },
+    "nmr512_s2028_a0.4": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.022254696579230036,
+        "bce": 0.007887885527110056,
+        "distortion": 0.04380491195319622,
+        "ber": 0.0021711162492340686,
+        "snr": 15.537936291507647,
+        "nmr": 0.04380491195319622,
+        "nmr_db": -13.584771882502018
+      },
+      "best_epoch": 10,
+      "final_epoch": 12
+    },
+    "nmr512_s2028_a0.5": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "metrics": {
+        "loss": 0.02416432381370196,
+        "bce": 0.009907033157936644,
+        "distortion": 0.03842161450735933,
+        "ber": 0.002845913756127451,
+        "snr": 16.228039380615833,
+        "nmr": 0.03842161450735933,
+        "nmr_db": -14.154243896850216
+      },
+      "best_epoch": 13,
+      "final_epoch": 15
+    }
+  },
+  "selected": {
+    "MSE256": {
+      "checkpoint": ".\\runs\\paper\\mse256_s2028_a0.98\\best.pt",
+      "metrics": {
+        "loss": 0.0001181701822953947,
+        "bce": 0.0012597605450519397,
+        "distortion": 9.487241882242433e-05,
+        "ber": 0.0003392836626838235,
+        "snr": 20.489128408332665,
+        "nmr": 44.529016130370564,
+        "nmr_db": 16.486430994907238
+      }
+    },
+    "NMR256": {
+      "checkpoint": ".\\runs\\paper\\nmr256_s2026_a0.4\\best.pt",
+      "metrics": {
+        "loss": 0.009552407102869349,
+        "bce": 0.0010265176259196653,
+        "distortion": 0.02234124088130307,
+        "ber": 0.0003029019224877451,
+        "snr": 20.659106973105786,
+        "nmr": 0.02234124088130307,
+        "nmr_db": -16.50892708886646
+      }
+    },
+    "MSE512": {
+      "checkpoint": ".\\runs\\paper\\mse512_s2027_a0.98\\best.pt",
+      "metrics": {
+        "loss": 0.000609645039909154,
+        "bce": 0.022490263309366272,
+        "distortion": 0.00016310181797462957,
+        "ber": 0.004871503044577206,
+        "snr": 18.704007898972314,
+        "nmr": 45.58207080002427,
+        "nmr_db": 16.587940513532388
+      }
+    },
+    "NMR512": {
+      "checkpoint": ".\\runs\\paper\\nmr512_s2026_a0.5\\best.pt",
+      "metrics": {
+        "loss": 0.022301522346542164,
+        "bce": 0.007514047851174267,
+        "distortion": 0.037088996807441994,
+        "ber": 0.0020734599992340685,
+        "snr": 16.697610358163423,
+        "nmr": 0.037088996807441994,
+        "nmr_db": -14.307549134194185
+      }
+    }
+  }
+}

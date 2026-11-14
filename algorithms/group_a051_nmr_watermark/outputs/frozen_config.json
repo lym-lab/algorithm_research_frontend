@@ -1,0 +1,62 @@
+{
+  "approved_diagnostics": true,
+  "stft_normalized": true,
+  "batch_size": 16,
+  "lr": 0.0001,
+  "seeds": [
+    2026,
+    2027,
+    2028
+  ],
+  "implementation_sha256": {
+    "model.py": "ae08eb0263b555b2d94689d0fbe439e50af9cea7163e8afa8e09b77d813b3097",
+    "psychoacoustics.py": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0",
+    "training.py": "375e3dda24f2524c57b7ab73ebdb395c32695070746bb63ff0db5f23b7ee0246",
+    "data.py": "ae8de33395359c646fa37650267ab916672377bce894a80c3e7fdeb1991142c4",
+    "live_progress.py": "2fef4c9bb9e616ca5d111e09ceee7cf29f2aefacf034a6a078c35c059e8530da",
+    "prefetch.py": "294fe61871c9863fc53d55901e9500fbd74b349902b122a7abb468757b5433d2"
+  },
+  "rationale": "Raw STFT MSE failed fresh-message learning; unitary STFT passed with calibrated NMR invariant.",
+  "caveat": "Fresh messages on fixed diagnostic audio only; not unseen-audio accuracy or paper results.",
+  "fresh_message_checks": [
+    {
+      "bits": 256,
+      "loss": "mse",
+      "step": 5400,
+      "fresh_message_ber": 0.09375,
+      "seconds": 187.25
+    },
+    {
+      "bits": 256,
+      "loss": "nmr",
+      "step": 4200,
+      "fresh_message_ber": 0.093505859375,
+      "seconds": 108.45300000000134
+    },
+    {
+      "bits": 512,
+      "loss": "mse",
+      "step": 11600,
+      "fresh_message_ber": 0.0999755859375,
+      "seconds": 367.9840000000004
+    },
+    {
+      "bits": 512,
+      "loss": "nmr",
+      "step": 9400,
+      "fresh_message_ber": 0.0970458984375,
+      "seconds": 288.78099999999904
+    }
+  ],
+  "live_progress_revision": {
+    "date": "2026-10-23",
+    "previous_training_sha256": "e2b90ec05d5f6e7359794b16acf7499984c909832c383558a249f91c2a6d88a5",
+    "scope": "Batch counters only; training settings unchanged. CPU regression confirms identical model, optimizer, metrics and RNG with simulated resume. Not a new GPU paper-result validation.",
+    "tests": "tests/test_live_progress.py"
+  },
+  "prefetch_revision": {
+    "date": "2026-10-23",
+    "scope": "One CPU reader thread, one batch ahead; sampler, messages, optimizer and configuration unchanged.",
+    "evidence": "outputs/prefetch-benchmark.json; 17 unit/regression tests passed. GPU 96-step losses and parameters bitwise equal; not final paper validation."
+  }
+}

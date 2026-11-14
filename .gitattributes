@@ -1,0 +1,2 @@
+# Preserve source snapshot bytes so its SHA-256 manifest also verifies after clone.
+algorithms/group_a051_nmr_watermark/** -text

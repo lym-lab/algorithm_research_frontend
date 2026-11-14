@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "id": "group_a051_nmr_watermark",
+  "title": "A051：NMR 感知损失音频水印",
+  "english": "Noise-to-mask Ratio Audio Watermarking",
+  "category": "内容水印",
+  "summary": "使用四个正式训练模型嵌入或提取256/512位消息，比较MSE与听觉掩蔽损失。",
+  "description": "复现 Martin Moritz、Toni Olán、Tuomas Virtanen 的 Noise-to-mask Ratio Loss for Deep Neural Network based Audio Watermarking（IS2 2024，arXiv:2408.15553）。以44.1kHz单声道、48640点分块执行STFT、U-Net嵌入、波形重分析和提取，提供MSE256、NMR256、MSE512、NMR512四个正式模型。嵌入后返回浮点WAV、波形差值图及保存后验证JSON；提取返回逐块消息与可选BER。原音频最多180秒/20MiB，尾部补零保留在下载文件中；提取需相同起点、模型和块边界，不提供水印存在性检测、抗攻击或自动同步。空消息在嵌入时随机生成，在提取时不计算BER。处理取消只停止浏览器等待，服务器继续当前任务；结果保留24小时并在后续请求时清理。样例输入为本项目生成的三秒和弦，输出来自正式权重的真实处理，仅演示流程，不作为音乐测试集性能。论文复现中的补充假设和已知差异见本组README。",
+  "team": "第A051组 · 李石屹（1320241091）",
+  "version": "1.0.0",
+  "runtime": "Python 3.10 / PyTorch 2.6.0 · CPU推理",
+  "inputs": [{"name": "input_file", "label": "原音频或待提取的水印音频", "kind": "audio", "accept": ["audio/wav", "audio/x-wav", "audio/flac", "audio/mpeg"], "required": true, "max_mb": 20}],
+  "parameters": [
+    {"name": "operation", "label": "操作", "type": "select", "required": true, "default": "embed", "options": [{"value": "embed", "label": "嵌入水印"}, {"value": "extract", "label": "独立提取"}]},
+    {"name": "model", "label": "正式模型", "type": "select", "required": true, "default": "NMR256", "options": [{"value": "MSE256", "label": "MSE / 256位"}, {"value": "NMR256", "label": "NMR / 256位"}, {"value": "MSE512", "label": "MSE / 512位"}, {"value": "NMR512", "label": "NMR / 512位"}]},
+    {"name": "message", "label": "二进制水印或已知原消息（可留空）", "type": "textarea", "required": false, "default": "", "max_length": 512, "help": "填写时必须为所选模型对应的256或512位0/1。嵌入留空随机生成；提取留空只输出结果，填写已知消息可计算BER。"}
+  ],
+  "examples": [{
+    "title": "三秒和弦的NMR256正式模型处理",
+    "description": "自行生成的可公开分发和弦，使用固定01交替消息。输出是正式NMR256权重的实际浮点WAV；可试听、下载并重新上传选择独立提取。已验证该样例保存后及独立提取BER均为0；这不是RWC测试集总体指标。",
+    "input": {"src": "samples/group_a051_nmr_watermark/input.wav", "kind": "audio", "label": "原始和弦"},
+    "output": {"src": "samples/group_a051_nmr_watermark/NMR256_output.wav", "kind": "audio", "label": "正式NMR256水印音频"},
+    "parameters": {"operation": "embed", "model": "NMR256", "message": "0101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101"}
+  }],
+  "adapter": {"type": "http", "endpoint": "https://a051.119-8-40-242.sslip.io/process"}
+}

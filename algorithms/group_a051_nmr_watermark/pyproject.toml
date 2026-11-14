@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nmr-watermark"
+version = "0.1.0"
+description = "Auditable reproduction of Moritz et al., IS2 2024"
+requires-python = ">=3.10"
+dependencies = ["torch==2.6.0", "numpy>=1.26,<3", "scipy>=1.11", "soundfile>=0.12", "matplotlib>=3.8", "gradio>=5,<6", "requests>=2.31", "tqdm>=4.66", "mutagen>=1.47", "PyYAML>=6", "pytest>=8", "psutil>=5.9", "fastapi>=0.115,<1", "uvicorn>=0.30,<1", "python-multipart>=0.0.18"]
+
+[project.scripts]
+nmr-watermark = "nmr_watermark.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["nmr_watermark*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

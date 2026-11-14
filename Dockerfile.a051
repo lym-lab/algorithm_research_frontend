@@ -1,0 +1,21 @@
+FROM node:24-alpine AS frontend
+WORKDIR /web
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY index.html vite.config.* ./
+COPY src ./src
+COPY public ./public
+RUN npm run build
+
+FROM python:3.10-slim
+WORKDIR /app
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch==2.6.0+cpu --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+COPY algorithms/group_a051_nmr_watermark/pyproject.toml ./
+COPY algorithms/group_a051_nmr_watermark/nmr_watermark ./nmr_watermark
+RUN pip install --no-cache-dir .
+COPY --from=frontend /web/dist /app/frontend
+ENV MPLCONFIGDIR=/app/outputs/.matplotlib GRADIO_ANALYTICS_ENABLED=False
+EXPOSE 7861
+HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7861/health', timeout=4)"
+CMD ["python", "-m", "nmr_watermark.service", "--host", "0.0.0.0", "--registry", "/app/weights/selected.json", "--output", "/app/outputs/tasks", "--frontend", "/app/frontend"]

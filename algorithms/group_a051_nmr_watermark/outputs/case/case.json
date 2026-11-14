@@ -1,0 +1,20 @@
+{
+  "sample": {
+    "path": ".\\data\\RWC-G\\RWC_G001.wav",
+    "track_id": "RWC_G001",
+    "start": 9259079,
+    "length": 48640
+  },
+  "frame": 48,
+  "seed": 2026,
+  "metrics": {
+    "MSE256": {
+      "ber": 0.0,
+      "nmr_db": -3.511532783508301
+    },
+    "NMR256": {
+      "ber": 0.0,
+      "nmr_db": -16.330080032348633
+    }
+  }
+}

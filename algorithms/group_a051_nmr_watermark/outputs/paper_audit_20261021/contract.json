@@ -1,0 +1,2434 @@
+{
+  "checked_at": "2026-10-30T13:02:00",
+  "scope": "CPU synthetic contract checks and read-only metadata; not paper performance",
+  "source_sha256": {
+    "nmr_watermark\\__init__.py": "b46e6bbbde68ce33ba7867d80007a0d7f3577900172611fab0ec3dd33eeff4d1",
+    "nmr_watermark\\app.py": "0a4b3d949c0969c0ce2fb02fff36deec5d901c9a1c028ae069eb5e542a796c9f",
+    "nmr_watermark\\audio.py": "535827387f7095f57281a4af40af16c930b66612fb71e27f5d8ddb515ab58bba",
+    "nmr_watermark\\cli.py": "9e971003a13e81ed240d4e13eac401013a3ccb5551c4001389012028532dc3dc",
+    "nmr_watermark\\data.py": "ae8de33395359c646fa37650267ab916672377bce894a80c3e7fdeb1991142c4",
+    "nmr_watermark\\evaluation.py": "c89edfcce5bcf82c2d98e89bc48166e707cf738158b4e80d62b4226f9d3423b0",
+    "nmr_watermark\\inference.py": "c79fea56ed9b7522350391d473c7d87b8aa7fdac8925389334564ee8257173b8",
+    "nmr_watermark\\live_progress.py": "2fef4c9bb9e616ca5d111e09ceee7cf29f2aefacf034a6a078c35c059e8530da",
+    "nmr_watermark\\model.py": "ae08eb0263b555b2d94689d0fbe439e50af9cea7163e8afa8e09b77d813b3097",
+    "nmr_watermark\\prefetch.py": "294fe61871c9863fc53d55901e9500fbd74b349902b122a7abb468757b5433d2",
+    "nmr_watermark\\psychoacoustics.py": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0",
+    "nmr_watermark\\service.py": "71f65be996388fc9e33801bbbcee5b8bc1e9074a59c900d22220a46beb719814",
+    "nmr_watermark\\training.py": "375e3dda24f2524c57b7ab73ebdb395c32695070746bb63ff0db5f23b7ee0246",
+    "nmr_watermark\\verify_weights.py": "9e85b44233622d52b09764fb199600643ce87038e89e0a1f429acd391e57bd6e"
+  },
+  "network": {
+    "256": {
+      "shapes": {
+        "embedder.encoder.0": [
+          1,
+          32,
+          64,
+          32
+        ],
+        "embedder.encoder.1": [
+          1,
+          64,
+          32,
+          16
+        ],
+        "embedder.encoder.2": [
+          1,
+          128,
+          16,
+          8
+        ],
+        "embedder.encoder.3": [
+          1,
+          256,
+          8,
+          4
+        ],
+        "embedder.message": [
+          1,
+          256,
+          8,
+          4
+        ],
+        "embedder.decoder.0": [
+          1,
+          128,
+          16,
+          8
+        ],
+        "embedder.decoder.1": [
+          1,
+          64,
+          32,
+          16
+        ],
+        "embedder.decoder.2": [
+          1,
+          32,
+          64,
+          32
+        ],
+        "embedder.decoder.3": [
+          1,
+          16,
+          128,
+          64
+        ],
+        "embedder.output": [
+          1,
+          2,
+          128,
+          64
+        ],
+        "extractor.layers.0": [
+          1,
+          32,
+          80,
+          48
+        ],
+        "extractor.layers.1": [
+          1,
+          64,
+          40,
+          24
+        ],
+        "extractor.layers.2": [
+          1,
+          128,
+          20,
+          12
+        ],
+        "extractor.output": [
+          1,
+          256
+        ]
+      },
+      "roundtrip_max_abs": 1.4901161193847656e-08,
+      "reanalyzed_stft_used": true
+    },
+    "512": {
+      "shapes": {
+        "embedder.encoder.0": [
+          1,
+          32,
+          64,
+          32
+        ],
+        "embedder.encoder.1": [
+          1,
+          64,
+          32,
+          16
+        ],
+        "embedder.encoder.2": [
+          1,
+          128,
+          16,
+          8
+        ],
+        "embedder.encoder.3": [
+          1,
+          256,
+          8,
+          4
+        ],
+        "embedder.message": [
+          1,
+          256,
+          8,
+          4
+        ],
+        "embedder.decoder.0": [
+          1,
+          128,
+          16,
+          8
+        ],
+        "embedder.decoder.1": [
+          1,
+          64,
+          32,
+          16
+        ],
+        "embedder.decoder.2": [
+          1,
+          32,
+          64,
+          32
+        ],
+        "embedder.decoder.3": [
+          1,
+          16,
+          128,
+          64
+        ],
+        "embedder.output": [
+          1,
+          2,
+          128,
+          64
+        ],
+        "extractor.layers.0": [
+          1,
+          32,
+          80,
+          48
+        ],
+        "extractor.layers.1": [
+          1,
+          64,
+          40,
+          24
+        ],
+        "extractor.layers.2": [
+          1,
+          128,
+          20,
+          12
+        ],
+        "extractor.output": [
+          1,
+          512
+        ]
+      },
+      "roundtrip_max_abs": 1.4901161193847656e-08,
+      "reanalyzed_stft_used": true
+    }
+  },
+  "frozen_core_matches": {
+    "model.py": true,
+    "psychoacoustics.py": true,
+    "training.py": true,
+    "data.py": true,
+    "live_progress.py": true,
+    "prefetch.py": true
+  },
+  "mapping": {
+    "shape": [
+      109,
+      513
+    ],
+    "unit_sum_columns": 415,
+    "zero_sum_columns": 96,
+    "partial_columns_zero_based": [
+      2,
+      418
+    ],
+    "partial_sums": [
+      0.6424036281179138,
+      0.4591836734693033
+    ],
+    "crop_bin_centers_hz": [
+      129.19921875,
+      5598.6328125
+    ],
+    "literal_all_columns_sum_one": false
+  },
+  "equations_2_3": {
+    "passed_given_current_U_and_gain": true,
+    "max_noise_abs_difference": 1.4210854715202004e-14,
+    "nmr_relative_difference": 0.0,
+    "limit": "Does not establish author calibration or U boundary equivalence"
+  },
+  "grid": {
+    "count": 60,
+    "unique": 60,
+    "mse_alphas": [
+      0.8,
+      0.9,
+      0.92,
+      0.95,
+      0.98
+    ],
+    "nmr_alphas": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ]
+  },
+  "data": {
+    "segments": {
+      "train": 261120,
+      "validation": 32640
+    },
+    "track_counts": {
+      "train": 10880,
+      "validation": 1360
+    },
+    "track_overlap": 0,
+    "all_tracks_have_24_segments": true,
+    "selected_below_literal_192000": [
+      {
+        "track": "010213",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "017697",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "017701",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "017702",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "017704",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "021931",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "021932",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "023063",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "026651",
+        "bitrate": 191902,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "027150",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "029744",
+        "bitrate": 191945,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "030733",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "030734",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "030739",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "031562",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "031565",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "031566",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "033017",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "033018",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "038679",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "043909",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "045137",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "047833",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "053376",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "054485",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "054488",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "054490",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "054491",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "054492",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "055756",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "055759",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "055768",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "055769",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "056048",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "056049",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "056053",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068247",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068592",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068741",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068742",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068744",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068745",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068747",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068816",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068817",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068818",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "068819",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "071858",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "072563",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "072608",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "072610",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "072611",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "072612",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "075214",
+        "bitrate": 191704,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "080290",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "080293",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "080294",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "083059",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "084009",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "084014",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "084159",
+        "bitrate": 191853,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "085867",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "088848",
+        "bitrate": 191931,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "090625",
+        "bitrate": 191817,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "091348",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "092504",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "092508",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "092516",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "092517",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "092520",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "092521",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093015",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093016",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093017",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093022",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093024",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093025",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093027",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093029",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093030",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093031",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093033",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093052",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093053",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093054",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093058",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093059",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093074",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093075",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093076",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093436",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093437",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093565",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093568",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093573",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093583",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093587",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093599",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093612",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "093613",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "095726",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096109",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096111",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096167",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096695",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096696",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096697",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096699",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096726",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096727",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096728",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096729",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096744",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096750",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096753",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096754",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "096756",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097205",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097206",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097211",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097213",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097216",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097586",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097588",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097589",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097590",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097883",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097884",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097885",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097886",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097896",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097899",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097958",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097959",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "097961",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098020",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098021",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098025",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098298",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098299",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098302",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098314",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098346",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098347",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098348",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098349",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098656",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098657",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098665",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098666",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098669",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098670",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "098679",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099361",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099362",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099364",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099370",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099371",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099373",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099374",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099375",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099392",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099395",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099411",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099412",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099414",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099415",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099416",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099417",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099418",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099419",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099438",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099440",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "099479",
+        "bitrate": 191852,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "099483",
+        "bitrate": 191993,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "099485",
+        "bitrate": 191741,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "099486",
+        "bitrate": 191797,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "101067",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101068",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101070",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101083",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101088",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101089",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101093",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101104",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101107",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101116",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101118",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101128",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101131",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101151",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101154",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101160",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101167",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101943",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101948",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "101949",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "102170",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104059",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104064",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104065",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104066",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104068",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104071",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104072",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104085",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104086",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104087",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104353",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104354",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104355",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104688",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104689",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "104691",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105081",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105086",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105094",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105096",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105098",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105102",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105116",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105117",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105685",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105713",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105715",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105716",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105717",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105718",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105887",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105897",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105905",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105907",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105909",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105910",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105911",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105916",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105920",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105956",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105958",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105960",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105962",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "105963",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106338",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106339",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106340",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106341",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106342",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106507",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106508",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106509",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106511",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106864",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106934",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106939",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106946",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106947",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106948",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106949",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106951",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106953",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106954",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106955",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "106956",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107073",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107077",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107084",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107089",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107090",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107202",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107208",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107248",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107249",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107250",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107567",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107745",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107747",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "107749",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108188",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108192",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108868",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108924",
+        "bitrate": 191590,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108964",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108965",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108966",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108967",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108969",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108988",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "108991",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109235",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109236",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109445",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109447",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109450",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109505",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109896",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109897",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109899",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109901",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109902",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109903",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109905",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "109906",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110159",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110161",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110163",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110164",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110166",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110169",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110171",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110172",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110384",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110418",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110425",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110426",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110437",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110439",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110440",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110441",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110856",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110858",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110860",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110862",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110863",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110924",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110926",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110927",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110928",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110932",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110933",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110935",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "110944",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111183",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111188",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111238",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111708",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111976",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111977",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111978",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111979",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111987",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111988",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111989",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111992",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111993",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111994",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111996",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111997",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "111999",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "112001",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "112976",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "112977",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "112978",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "113545",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "113548",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "113551",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "113552",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "113972",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "113973",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "114884",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "114936",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "114937",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "114941",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115263",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115267",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115271",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115273",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115725",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115738",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115742",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "115743",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116307",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116308",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116309",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116311",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116314",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116315",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116316",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116317",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116319",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116860",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116866",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116867",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "116873",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "117878",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "117880",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "117881",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "117884",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "117885",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "118084",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "118085",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "118223",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "118276",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "118277",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "121833",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "122671",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "123761",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "123762",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "124411",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "124426",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "124457",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "124459",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126041",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126043",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126047",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126175",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126176",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126178",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "126433",
+        "bitrate": 191996,
+        "bitrate_mode": "BitrateMode.VBR"
+      },
+      {
+        "track": "126590",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "127327",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "127328",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "127329",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "127330",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "127356",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "127359",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129272",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129275",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129402",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129403",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129407",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129963",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129964",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129965",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129969",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129970",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "129973",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "141413",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "141414",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "141415",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "145601",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "145604",
+        "bitrate": 191712,
+        "bitrate_mode": "BitrateMode.CBR"
+      },
+      {
+        "track": "147774",
+        "bitrate": 191793,
+        "bitrate_mode": "BitrateMode.VBR"
+      }
+    ],
+    "minimum_selected_bitrate": 191590,
+    "rwc": {
+      "segments": 3000,
+      "tracks": 100,
+      "per_track_counts": [
+        30
+      ]
+    }
+  },
+  "source_unchanged_during_check": true
+}

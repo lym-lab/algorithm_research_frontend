@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "spread_max_relative_error": 2.220446049250313e-15,
+  "note": "Spread checked at Kabal tabulated centers; production uses analytic Bark centers."
+}

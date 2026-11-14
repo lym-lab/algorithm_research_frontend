@@ -1,0 +1,22 @@
+ WAVE file: D:\李石屹\北京理工大学\大三\语音识别与合成\nmr-watermark\outputs\evaluation\MSE256\peaq_audio\2685_reference.wav
+   Number of samples : 52942 (1.103 s)
+   Sampling frequency: 48000
+   Number of channels: 1
+ WAVE file: D:\李石屹\北京理工大学\大三\语音识别与合成\nmr-watermark\outputs\evaluation\MSE256\peaq_audio\2685_marked.wav
+   Number of samples : 52942 (1.103 s)
+   Sampling frequency: 48000
+   Number of channels: 1
+PEAQ Data Boundaries: 0 (0.000 s) - 0 (0.000 s)
+Model Output Variables:
+   BandwidthRefB: 0
+  BandwidthTestB: 0
+      Total NMRB: NaN
+    WinModDiff1B: 0
+            ADBB: 0
+            EHSB: 0
+    AvgModDiff1B: 0
+    AvgModDiff2B: 0
+   RmsNoiseLoudB: 0
+           MFPDB: 0
+  RelDistFramesB: 0
+Objective Difference Grade: NaN

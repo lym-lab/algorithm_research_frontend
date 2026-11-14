@@ -1,0 +1,4744 @@
+{
+  "checked_at": "2026-10-30T13:03:12",
+  "queue_exactly_matches_60_frozen_candidates": true,
+  "training_source_sha256": "375e3dda24f2524c57b7ab73ebdb395c32695070746bb63ff0db5f23b7ee0246",
+  "runs": {
+    "mse256_s2026_a0.8": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00043632656943729816
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2026_a0.9": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00028378932813710907
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2026_a0.92": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00023415280213478527
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2026_a0.95": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00019409570341653593
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse256_s2026_a0.98": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00011757348167485165
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2027_a0.8": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 5,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "alphas": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 5,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0005062575161562064
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        97920.0,
+        97920.0
+      ],
+      "expected_steps_from_full_data": 97920,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 3
+    },
+    "mse256_s2027_a0.9": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0003629261388328707
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2027_a0.92": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0002556467693412902
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2027_a0.95": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 5,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "alphas": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 5,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00022103787998061948
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        97920.0,
+        97920.0
+      ],
+      "expected_steps_from_full_data": 97920,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 3
+    },
+    "mse256_s2027_a0.98": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 5,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "alphas": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 5,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0001522413127531763
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        97920.0,
+        97920.0
+      ],
+      "expected_steps_from_full_data": 97920,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 3
+    },
+    "mse256_s2028_a0.8": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.000400795136417454
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse256_s2028_a0.9": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00032190787103044224
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse256_s2028_a0.92": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.00024563884094188287
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse256_s2028_a0.95": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 10,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "alphas": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 10,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.000204534214115519
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        179520.0,
+        179520.0
+      ],
+      "expected_steps_from_full_data": 179520,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 8
+    },
+    "mse256_s2028_a0.98": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0001181701822953947
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse512_s2026_a0.8": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 5,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "alphas": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 5,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.003151220372905407
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        97920.0,
+        97920.0
+      ],
+      "expected_steps_from_full_data": 97920,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 3
+    },
+    "mse512_s2026_a0.9": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0013926833633198768
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse512_s2026_a0.92": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0009391921133261777
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse512_s2026_a0.95": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0009518322266362077
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse512_s2026_a0.98": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0004797091167882386
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse512_s2027_a0.8": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0033846400667885868
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse512_s2027_a0.9": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 5,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "alphas": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 5,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0022639955057849304
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        97920.0,
+        97920.0
+      ],
+      "expected_steps_from_full_data": 97920,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 3
+    },
+    "mse512_s2027_a0.92": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.001540376170790599
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse512_s2027_a0.95": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0011050723636621042
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse512_s2027_a0.98": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.000609645039909154
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse512_s2028_a0.8": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.8,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.002285912548484025
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse512_s2028_a0.9": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.9,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 6,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "alphas": [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 6,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0014355604288878157
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        114240.0,
+        114240.0
+      ],
+      "expected_steps_from_full_data": 114240,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 4
+    },
+    "mse512_s2028_a0.92": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.92,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 5,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "alphas": [
+        0.92,
+        0.92,
+        0.92,
+        0.92,
+        0.92
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 5,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.001223874948410929
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        97920.0,
+        97920.0
+      ],
+      "expected_steps_from_full_data": 97920,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 3
+    },
+    "mse512_s2028_a0.95": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.95,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95,
+        0.95
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0008806307919953457
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "mse512_s2028_a0.98": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.98,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "alphas": [
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98,
+        0.98
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 7,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0004464793180851106
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        130560.0,
+        130560.0
+      ],
+      "expected_steps_from_full_data": 130560,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 5
+    },
+    "nmr256_s2026_a0.1": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 8,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "alphas": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 10,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.005513353524250252
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        179520.0,
+        179520.0
+      ],
+      "expected_steps_from_full_data": 179520,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 8
+    },
+    "nmr256_s2026_a0.2": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 15,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "alphas": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 17,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.006519980650673639
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        293760.0,
+        293760.0
+      ],
+      "expected_steps_from_full_data": 293760,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 15
+    },
+    "nmr256_s2026_a0.3": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 15,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "alphas": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 17,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.008438462094065971
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        293760.0,
+        293760.0
+      ],
+      "expected_steps_from_full_data": 293760,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 15
+    },
+    "nmr256_s2026_a0.4": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 15,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "alphas": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 17,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.009552407102869349
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        293760.0,
+        293760.0
+      ],
+      "expected_steps_from_full_data": 293760,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 15
+    },
+    "nmr256_s2026_a0.5": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 15,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "alphas": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 17,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.010508174493260608
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        293760.0,
+        293760.0
+      ],
+      "expected_steps_from_full_data": 293760,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 15
+    },
+    "nmr256_s2027_a0.1": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 14,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "alphas": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 16,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.004237010989534468
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        277440.0,
+        277440.0
+      ],
+      "expected_steps_from_full_data": 277440,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 14
+    },
+    "nmr256_s2027_a0.2": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.006634547541433872
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    },
+    "nmr256_s2027_a0.3": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 14,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "alphas": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 16,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.008151820059363529
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        277440.0,
+        277440.0
+      ],
+      "expected_steps_from_full_data": 277440,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 14
+    },
+    "nmr256_s2027_a0.4": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 14,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "alphas": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 16,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.009458712755711567
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        277440.0,
+        277440.0
+      ],
+      "expected_steps_from_full_data": 277440,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 14
+    },
+    "nmr256_s2027_a0.5": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 14,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "alphas": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 16,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.010323938516689939
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        277440.0,
+        277440.0
+      ],
+      "expected_steps_from_full_data": 277440,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 14
+    },
+    "nmr256_s2028_a0.1": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0043931357691511875
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    },
+    "nmr256_s2028_a0.2": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.0065854111778796375
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    },
+    "nmr256_s2028_a0.3": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.008579978030677154
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    },
+    "nmr256_s2028_a0.4": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.009769437401601131
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    },
+    "nmr256_s2028_a0.5": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.01084305749836323
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    },
+    "nmr512_s2026_a0.1": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 8,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "alphas": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 10,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.012781620358902157
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        179520.0,
+        179520.0
+      ],
+      "expected_steps_from_full_data": 179520,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 8
+    },
+    "nmr512_s2026_a0.2": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 8,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "alphas": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 10,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.016059923119496042
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        179520.0,
+        179520.0
+      ],
+      "expected_steps_from_full_data": 179520,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 8
+    },
+    "nmr512_s2026_a0.3": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 8,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "alphas": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 10,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.019847994427854086
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        179520.0,
+        179520.0
+      ],
+      "expected_steps_from_full_data": 179520,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 8
+    },
+    "nmr512_s2026_a0.4": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 8,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "alphas": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 10,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.02361076022680922
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        179520.0,
+        179520.0
+      ],
+      "expected_steps_from_full_data": 179520,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 8
+    },
+    "nmr512_s2026_a0.5": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 18,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "alphas": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 20,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.022301522346542164
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        342720.0,
+        342720.0
+      ],
+      "expected_steps_from_full_data": 342720,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 18
+    },
+    "nmr512_s2027_a0.1": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 11,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "alphas": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 13,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.010130654567368693
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        228480.0,
+        228480.0
+      ],
+      "expected_steps_from_full_data": 228480,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 11
+    },
+    "nmr512_s2027_a0.2": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 11,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "alphas": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 13,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.013907488729512574
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        228480.0,
+        228480.0
+      ],
+      "expected_steps_from_full_data": 228480,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 11
+    },
+    "nmr512_s2027_a0.3": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 11,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "alphas": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 13,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.017814788166159654
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        228480.0,
+        228480.0
+      ],
+      "expected_steps_from_full_data": 228480,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 11
+    },
+    "nmr512_s2027_a0.4": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 7,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "alphas": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 9,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.024255053530100223
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        163200.0,
+        163200.0
+      ],
+      "expected_steps_from_full_data": 163200,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 7
+    },
+    "nmr512_s2027_a0.5": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 11,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "alphas": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 13,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.023669551965305763
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        228480.0,
+        228480.0
+      ],
+      "expected_steps_from_full_data": 228480,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 11
+    },
+    "nmr512_s2028_a0.1": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.1,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 9,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "alphas": [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 11,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.012025511754201908
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        195840.0,
+        195840.0
+      ],
+      "expected_steps_from_full_data": 195840,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 9
+    },
+    "nmr512_s2028_a0.2": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.2,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 9,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "alphas": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 11,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.01693694166172588
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        195840.0,
+        195840.0
+      ],
+      "expected_steps_from_full_data": 195840,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 9
+    },
+    "nmr512_s2028_a0.3": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.3,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 10,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "alphas": [
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3,
+        0.3
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 12,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.01921310338292125
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        212160.0,
+        212160.0
+      ],
+      "expected_steps_from_full_data": 212160,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 10
+    },
+    "nmr512_s2028_a0.4": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.4,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 10,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "alphas": [
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4,
+        0.4
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 12,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.022254696579230036
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        212160.0,
+        212160.0
+      ],
+      "expected_steps_from_full_data": 212160,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 10
+    },
+    "nmr512_s2028_a0.5": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.5,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 30,
+        "stft_normalized": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 13,
+      "epoch_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "alphas": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 15,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.02416432381370196
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        261120.0,
+        261120.0
+      ],
+      "expected_steps_from_full_data": 261120,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG",
+      "selected_epoch": 13
+    }
+  },
+  "warmups": {
+    "mse256_s2026": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 1,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 1,
+      "epoch_indices": [
+        0
+      ],
+      "alphas": [
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 0,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.0014393449932172456
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        16320.0,
+        16320.0
+      ],
+      "expected_steps_from_full_data": 16320,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "mse256_s2027": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 1,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 1,
+      "epoch_indices": [
+        0
+      ],
+      "alphas": [
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 0,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.0014529376170613949
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        16320.0,
+        16320.0
+      ],
+      "expected_steps_from_full_data": 16320,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "mse256_s2028": {
+      "config": {
+        "bits": 256,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 1,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 1,
+      "epoch_indices": [
+        0
+      ],
+      "alphas": [
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 0,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.0013113528522309007
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        16320.0,
+        16320.0
+      ],
+      "expected_steps_from_full_data": 16320,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "mse512_s2026": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2026,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 1,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 1,
+      "epoch_indices": [
+        0
+      ],
+      "alphas": [
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 0,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.07952778034058272
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        16320.0,
+        16320.0
+      ],
+      "expected_steps_from_full_data": 16320,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "mse512_s2027": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2027,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 1,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 1,
+      "epoch_indices": [
+        0
+      ],
+      "alphas": [
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 0,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.0859613777960048
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        16320.0,
+        16320.0
+      ],
+      "expected_steps_from_full_data": 16320,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "mse512_s2028": {
+      "config": {
+        "bits": 512,
+        "loss": "mse",
+        "seed": 2028,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 1,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 1,
+      "epoch_indices": [
+        0
+      ],
+      "alphas": [
+        0.5
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 0,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.08187476562737835
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        16320.0,
+        16320.0
+      ],
+      "expected_steps_from_full_data": 16320,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "nmr256_s2026": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 3,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 3,
+      "epoch_indices": [
+        0,
+        1,
+        2
+      ],
+      "alphas": [
+        0.0001,
+        0.01,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 2,
+        "complete": true,
+        "stale": 2,
+        "best_loss": 0.005123081790424847
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        48960.0,
+        48960.0
+      ],
+      "expected_steps_from_full_data": 48960,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "nmr256_s2027": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 3,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 3,
+      "epoch_indices": [
+        0,
+        1,
+        2
+      ],
+      "alphas": [
+        0.0001,
+        0.01,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 2,
+        "complete": true,
+        "stale": 1,
+        "best_loss": 0.00953482999694625
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        48960.0,
+        48960.0
+      ],
+      "expected_steps_from_full_data": 48960,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "nmr256_s2028": {
+      "config": {
+        "bits": 256,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 3,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 3,
+      "epoch_indices": [
+        0,
+        1,
+        2
+      ],
+      "alphas": [
+        0.0001,
+        0.01,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 2,
+        "complete": true,
+        "stale": 1,
+        "best_loss": 0.007564059150971326
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        48960.0,
+        48960.0
+      ],
+      "expected_steps_from_full_data": 48960,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "nmr512_s2026": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2026,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 3,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 3,
+      "epoch_indices": [
+        0,
+        1,
+        2
+      ],
+      "alphas": [
+        0.0001,
+        0.01,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 2,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.11526891738176345
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        48960.0,
+        48960.0
+      ],
+      "expected_steps_from_full_data": 48960,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "nmr512_s2027": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2027,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 3,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 3,
+      "epoch_indices": [
+        0,
+        1,
+        2
+      ],
+      "alphas": [
+        0.0001,
+        0.01,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 2,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.06149193917163739
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        48960.0,
+        48960.0
+      ],
+      "expected_steps_from_full_data": 48960,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    },
+    "nmr512_s2028": {
+      "config": {
+        "bits": 512,
+        "loss": "nmr",
+        "seed": 2028,
+        "alpha": 0.0,
+        "batch_size": 16,
+        "lr": 0.0001,
+        "epochs": 3,
+        "stft_normalized": true,
+        "warmup_only": true,
+        "train_hash": "fde65c0e685279fc2e0832626499f9de05767c1be0219e50b334bdff508c1c33",
+        "val_hash": "149ca06aa5682058643a0d2646bbb9a7715a37456fe31fa40dc3af398577bef6",
+        "psycho_hash": "5c0852d2150c0b4a7acc79b32f82b9c8b7172cc30adbd024b3832ece02ba41a0"
+      },
+      "logged_epochs": 3,
+      "epoch_indices": [
+        0,
+        1,
+        2
+      ],
+      "alphas": [
+        0.0001,
+        0.01,
+        0.1
+      ],
+      "errors": [],
+      "checkpoint": {
+        "epoch": 2,
+        "complete": true,
+        "stale": 0,
+        "best_loss": 0.08626387641564304
+      },
+      "optimizer": [
+        {
+          "lr": 0.0001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0,
+          "amsgrad": false
+        }
+      ],
+      "adam_step_range": [
+        48960.0,
+        48960.0
+      ],
+      "expected_steps_from_full_data": 48960,
+      "floating_model_dtypes": [
+        "torch.float32"
+      ],
+      "torch_rng_saved": true,
+      "resume_source": "last.pt contains model, optimizer, epoch, best, stale and torch RNG"
+    }
+  },
+  "completed": 60,
+  "errors": {},
+  "source_unchanged": true
+}

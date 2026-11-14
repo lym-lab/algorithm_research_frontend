@@ -1,0 +1,10 @@
+{
+  "transport": "Actual browser via course frontend; downloaded WAV re-uploaded through file chooser",
+  "model": "NMR256",
+  "embed_ber_after_save": 0.0,
+  "extract_ber": 0.0,
+  "blocks": 3,
+  "input_file": "input.wav",
+  "downloaded_file": "watermarked.wav",
+  "embed_seconds_from_frontend": 5.3
+}

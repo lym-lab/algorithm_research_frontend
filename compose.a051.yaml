@@ -1,0 +1,25 @@
+services:
+  a051:
+    image: a051-nmr:final
+    build:
+      context: .
+      dockerfile: Dockerfile.a051
+    ports:
+      - "127.0.0.1:7861:7861"
+    volumes:
+      - ./weights:/app/weights:ro
+      - ./outputs/cloud:/app/outputs
+    restart: unless-stopped
+  https:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile.a051:/etc/caddy/Caddyfile:ro
+      - ./outputs/caddy-data:/data
+      - ./outputs/caddy-config:/config
+    depends_on:
+      a051:
+        condition: service_healthy
+    restart: unless-stopped

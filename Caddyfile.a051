@@ -1,0 +1,6 @@
+a051.119-8-40-242.sslip.io {
+    tls {
+        ca https://acme-v02.api.letsencrypt.org/directory
+    }
+    reverse_proxy a051:7861
+}

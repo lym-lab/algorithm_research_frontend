@@ -1,0 +1,33 @@
+{
+  "origin": "https://a051.119-8-40-242.sslip.io",
+  "tls_verification": true,
+  "weights": [
+    {
+      "model": "MSE256",
+      "bytes": 58652526,
+      "registry_sha256": "10c2216fcd31975eb85b37dc189eb4a6942040a16ff73c800b75361d89124aa8",
+      "head_and_first_last_ranges_match": true
+    },
+    {
+      "model": "NMR256",
+      "bytes": 58652526,
+      "registry_sha256": "f60e78e4d0bd23016606d79e9687b86ed74aec4e6271d7413ab0771269ed9c62",
+      "head_and_first_last_ranges_match": true
+    },
+    {
+      "model": "MSE512",
+      "bytes": 96664430,
+      "registry_sha256": "a279709ef3514f9b49b4ea17cfa6baf300c31fb7ad4a6d471558025d897af90e",
+      "head_and_first_last_ranges_match": true
+    },
+    {
+      "model": "NMR512",
+      "bytes": 96664430,
+      "registry_sha256": "ebb48f07e8a5718bad29f34efd5327eecb5af30a14ad987f16372bdb5f486a40",
+      "head_and_first_last_ranges_match": true
+    }
+  ],
+  "cors_preflight": true,
+  "invalid_request_status": 400,
+  "download_scope": "Registry, HEAD lengths, and first/last 1024-byte HTTPS range downloads; full archive verified SHA256 on server before extraction."
+}
