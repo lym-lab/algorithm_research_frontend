@@ -20,6 +20,7 @@ def main():
     files += [p for p in Path('scripts').glob('*.py')
               if p.name not in {'build_report.py', 'report_body_docx.py'}]
     files += list(Path('scripts').glob('*.m'))
+    files.append(Path('scripts/progress_charts.js'))
     files += [Path('pyproject.toml'), Path('requirements-windows.lock')]
     files += [Path('docs') / name for name in [
         'reproduction.md', 'audit-20261021.md', 'deployment-and-troubleshooting.md',
@@ -29,6 +30,8 @@ def main():
     files += list(Path('outputs/final_analysis').glob('*'))
     files += [p for p in Path('outputs/case').rglob('*') if p.is_file() and p.suffix != '.wav']
     files += [Path('outputs/paper_audit_20261021') / name for name in ['contract.json', 'training_runtime.json']]
+    for folder in ['cloud_validation_20261101', 'cloud_reboot_validation_20261101']:
+        files += [p for p in (Path('outputs')/folder).glob('*.json') if p.name != 'reboot-availability.json']
     for name in ['MSE256', 'NMR256', 'MSE512', 'NMR512']:
         folder = Path('outputs/evaluation') / name
         files += [folder / file for file in ['metrics.csv', 'summary.json', 'peaq.csv'] if (folder/file).exists()]

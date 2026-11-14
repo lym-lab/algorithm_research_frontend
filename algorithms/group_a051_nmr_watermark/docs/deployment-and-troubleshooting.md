@@ -10,18 +10,20 @@
 
 1. 确认课程提供的实例类型、Linux架构、可用磁盘、CPU内存和网络规则。现有镜像面向x86 CPU；昇腾资源需要另行适配验证。
 2. 安装课程允许的Docker环境，放入项目代码及四权重，校验SHA256。
-3. 在项目目录运行 `docker compose up --build -d`，检查 `docker compose ps` 和 `docker compose logs --tail 100`。
-4. 检查 `/config` 健康端点，再按课程规则配置安全组及反向代理。不要将本地训练控制页7863或训练目录开放到互联网；云端只需演示推理服务。
+3. 在课程前端Fork仓库根目录把权重放入 `weights/`，运行 `node scripts/configure_a051.mjs https://a051.119-8-40-242.sslip.io/process`，再运行 `docker compose -f compose.a051.yaml up --build -d`。更换主机时同步修改 `Caddyfile.a051` 的域名和解析。Caddy证书申请需同意Let’s Encrypt订户协议。
+4. 检查 `/health` 健康端点，以及 `docker compose -f compose.a051.yaml ps` 和 `logs --tail 100`。后端只映射127.0.0.1:7861，公网由Caddy提供80/443。不要将本地训练控制页7863或训练目录开放到互联网；云端只需演示推理服务。
 5. 从另一台设备实际完成上传、嵌入、下载、重新上传和提取，保存时间、URL、版本、权重哈希、请求结果及截图。
-6. 重启服务后再验证一次模型能加载。只有上述真实操作完成，报告才写“华为云部署完成”。
+6. 确保Docker开机启动、容器为 `unless-stopped`，实际重启整台实例后再验证四模型。只有上述真实操作完成，才能称“华为云部署完成”。
 
-目前未做实际云端验收，也没有承诺购买资源。Dockerfile、compose和健康检查只是待验证部署材料。
+2026-11-01已实际验收：[在线方法](https://a051.119-8-40-242.sslip.io/#/methods/group_a051_nmr_watermark)、[健康接口](https://a051.119-8-40-242.sslip.io/health)。香港2核4GiB、Ubuntu22.04、CPU torch2.6.0+cpu，四模型完整权重包SHA256一致，公网四模型真实往返以及整机重启后四模型复测均通过；浏览器NMR256嵌入6.2秒、独立提取3.1秒且BER=0。固定1Mbps，付费实例到2026-12-30 23:59:59北京时间，自动续费关闭，现金支付0元。证据见 `outputs/cloud_validation_20261101` 与 `outputs/cloud_reboot_validation_20261101`；账单、账号截图和证书私钥不进入公开Git。
+
+首次镜像构建因CPU PyTorch索引缺少 `flit_core` 失败。实际修复为先更新pip、固定 `torch==2.6.0+cpu`，并给CPU索引添加官方PyPI作为额外来源。CloudShell大文件上传遇到WebSocket1006后改用16MiB分片，服务器合并后校验完整SHA256再解压。证书首次CAA查询超时，由同一Caddy任务自动重试后签发，未关闭TLS验证。
 
 ## 运行与恢复
 
 双击“打开训练进度.cmd”启动本地进度页。关机前点停止并等进程退出；继续按钮恢复完整epoch断点。未完成的一轮重跑。不要同时在命令行手动启动第二条run_full流水线。核心源文件的冻结哈希不一致时会阻止正式训练；不要为了继续运行而盲目覆盖冻结记录。
 
-正式推理使用 `python -m nmr_watermark.cli ui --registry weights/selected.json`。消息只能是规定长度二进制串；留空生成随机消息。完整FLOAT WAV保留尾部补零块，原始长度在JSON中。对齐条件失效时BER会升高，不能据此断言水印从未存在。
+课程接口使用 `python -m nmr_watermark.service --registry weights/selected.json --port 7862`；独立Gradio页面仍可用 `python -m nmr_watermark.cli ui --registry weights/selected.json`。消息只能是规定长度二进制串；嵌入留空生成随机消息，提取留空不计算BER。完整FLOAT WAV保留尾部补零块，原始长度在JSON中。对齐条件失效时BER会升高，不能据此断言水印从未存在。
 
 ## 常见问题
 

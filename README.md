@@ -12,7 +12,7 @@
 
 项目为音频嵌入256或512位二进制消息，再从保存后的音频独立提取。提供 MSE256、NMR256、MSE512、NMR512 四个从头正式训练的模型，比较频谱均方误差与听觉掩蔽损失对音质的影响。
 
-**当前验收状态（2026-10-30）：60候选训练和四模型选模通过检查；四模型RWC客观评价及本地前端完整处理流程已完成。华为云部署、权重公开下载地址和最终PR尚待云端验收。项目报告按本人要求暂不撰写。** 本组保留真实失败和复现差异，不声称得到与论文完全相同的数值。
+**当前验收状态（2026-11-01）：60候选训练和四模型选模通过检查；四模型RWC客观评价、本地及华为云HTTPS前端真实处理已完成。四模型公网嵌入、下载、重上传提取及整机重启后自动恢复均已实测通过。权重下载入口见下文；最终成果通过本组Fork分支提交。项目报告按本人要求暂不撰写。** 本组保留真实失败和复现差异，不声称得到与论文完全相同的数值。
 
 ## 2. 论文与代码来源
 
@@ -33,7 +33,7 @@
 |PEAQ|MATLAB参考实现逐模型尝试3000段；各有相同30段结果未定义，ODG比较共同有效2970段，不填补分数|[共同样本与排除清单](algorithms/group_a051_nmr_watermark/outputs/final_analysis/peaq_cohort.json)、各模型逐行CSV和原始诊断|
 |前端与HTTP|真实multipart上传、四模型选择、嵌入、浮点WAV下载、重新上传提取、可选已知消息BER、波形差值图|[方法配置](public/methods/group_a051_nmr_watermark.json)、[HTTP源码](algorithms/group_a051_nmr_watermark/nmr_watermark/service.py)、[四模型验证](public/samples/group_a051_nmr_watermark/validation.json)|
 |听评准备|七段正式模型材料和匿名收集工具已在本地生成|[生成与收集工具](algorithms/group_a051_nmr_watermark/scripts/prepare_listening.py)；尚未招募听者，不提供虚构主观分数|
-|华为云|部署配置已准备，等待登录及真实云主机验收|[Dockerfile](Dockerfile.a051)、[Compose](compose.a051.yaml)|
+|华为云|四模型HTTPS实际往返、浏览器全流程及整机重启后恢复通过|[云端验收记录](docs/a051/cloud-validation.json)、[Dockerfile](Dockerfile.a051)、[Compose](compose.a051.yaml)、[HTTPS配置](Caddyfile.a051)|
 
 ## 4. 输入、输出与参数
 
@@ -53,7 +53,7 @@
 
 ## 5. 环境与安装
 
-本地已验证：Windows、Python 3.10.8、PyTorch 2.6.0+cu124、RTX 4060 Laptop 8GB训练；推理服务使用CPU。前端Node.js 24.20.0、npm 11.19.0。依赖声明见[pyproject.toml](algorithms/group_a051_nmr_watermark/pyproject.toml)，训练环境版本记录见[Windows锁文件](algorithms/group_a051_nmr_watermark/requirements-windows.lock)。Linux云主机的实际验证另行记录。
+本地已验证：Windows、Python 3.10.8、PyTorch 2.6.0+cu124、RTX 4060 Laptop 8GB训练；推理服务使用CPU。前端Node.js 24.20.0、npm 11.19.0。依赖声明见[pyproject.toml](algorithms/group_a051_nmr_watermark/pyproject.toml)，训练环境版本记录见[Windows锁文件](algorithms/group_a051_nmr_watermark/requirements-windows.lock)。云端已验证Ubuntu 22.04、2核4GiB、CPU PyTorch 2.6.0+cpu、Docker 29.1.3、Compose 2.40.3；见[云端验收记录](docs/a051/cloud-validation.json)。
 
 ```bash
 git clone https://github.com/dthu7b8a-design/algorithm_research_frontend.git
@@ -67,7 +67,7 @@ pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -e .
 ```
 
-正式四模型已导出，总计约296 MiB，训练优化器不包含在推理权重中。权重公开下载入口等待华为云部署后补入，当前不能从仓库直接下载；权重不进入Git提交。下载后将四个`.pt`及`selected.json`置于算法目录`weights/`，执行：
+正式四模型已导出，总计约296 MiB，训练优化器不包含在推理权重中；权重不进入Git提交。公开下载：[MSE256](https://a051.119-8-40-242.sslip.io/weights/MSE256.pt)、[NMR256](https://a051.119-8-40-242.sslip.io/weights/NMR256.pt)、[MSE512](https://a051.119-8-40-242.sslip.io/weights/MSE512.pt)、[NMR512](https://a051.119-8-40-242.sslip.io/weights/NMR512.pt)、[SHA-256清单 selected.json](https://a051.119-8-40-242.sslip.io/weights/selected.json)。固定公网带宽1Mbps，全部权重理论传输时间约42分钟；支持HTTP Range。下载后将四个`.pt`及`selected.json`置于算法目录`weights/`，执行：
 
 ```bash
 python -m nmr_watermark.verify_weights weights/selected.json
@@ -89,18 +89,21 @@ python -m nmr_watermark.service --port 7862
 npm run dev
 ```
 
-打开终端显示的前端地址，选择“A051：NMR感知损失音频水印”。默认配置调用`http://127.0.0.1:7862/process`。点击“用样例试一试”，保持`embed`和`NMR256`，点击“开始处理”，试听并下载结果；再重新选择下载的`watermarked.wav`，切换`extract`，保留256位已知消息并运行，下载JSON检查BER。
+打开终端显示的前端地址，选择“A051：NMR感知损失音频水印”。提交配置默认调用已验证的公网HTTPS接口。本地运行服务时，先在仓库根目录执行 `node scripts/configure_a051.mjs http://127.0.0.1:7862/process`，再启动前端。点击“用样例试一试”，保持`embed`和`NMR256`，点击“开始处理”，试听并下载结果；再重新选择下载的`watermarked.wav`，切换`extract`，保留256位已知消息并运行，下载JSON检查BER。
 
 实际服务结果存于算法目录`outputs/service/<随机任务编号>/`；原上传副本解码后删除，结果保留24小时，在后续请求时清理过期任务。取消等待仅取消浏览器请求，服务器会完成当前计算；一次只执行一项推理任务。180秒音频的耗时与CPU有关，本机三秒样例的浏览器实际嵌入约5.3秒；不据此保证云端时延。
 
-云端整合构建命令在仓库根目录执行，先将正式权重放在根目录`weights/`：
+在线演示：[华为云A051方法](https://a051.119-8-40-242.sslip.io/#/methods/group_a051_nmr_watermark)，[健康接口](https://a051.119-8-40-242.sslip.io/health)。实例位于中国香港，已付费至2026-12-30 23:59:59（北京时间），自动续费关闭。通过代金券抵扣，现金支付0元。
+
+云端整合构建命令在仓库根目录执行，先将正式权重放在根目录`weights/`；Caddy会申请免费Let’s Encrypt证书，使用者须同意其订户协议；更换主机时同步修改域名及DNS：
 
 ```bash
+node scripts/configure_a051.mjs https://a051.119-8-40-242.sslip.io/process
 docker compose -f compose.a051.yaml up --build -d
 docker compose -f compose.a051.yaml logs -f
 ```
 
-镜像包含统一前端和CPU算法服务；部署前需把方法配置的`adapter.endpoint`改为真实服务的公开HTTP(S)地址再构建，HTTPS页面必须使用HTTPS接口。当前此命令配置已准备，尚未作为云端已验证事实。
+镜像包含统一前端和CPU算法服务，后端只映射到127.0.0.1:7861，Caddy开放80/443并持久化证书。两个容器使用 `unless-stopped`；Docker已设开机启动，整机重启后实际自动恢复并重新验证四模型。前端HTTPS与接口HTTPS同源。
 
 ## 7. 真实结果与案例
 
@@ -139,12 +142,15 @@ python -m scripts.validate_service
 
 论文没有公开所有实现细节。本组披露单位化STFT及MSE尺度、191500 bps筛选容差、U映射边界、预热排除与共享、固定验证消息和图文冲突等假设或差异，详见[原文逐项审计](algorithms/group_a051_nmr_watermark/docs/audit-20261021.md)。不能声称逐点等同作者实现；若改变训练相关假设，必须独立新实验，不能沿用现有权重冒充。
 
-不处理抗攻击、自动同步、纠错或水印存在性检测；重采样、压缩、裁剪和改变分块可能影响提取。没有真实主观听评分数；PEAQ不能代替人类评分。云端接口尚待实际验收，不把本地通过写成云端完成。
+不处理抗攻击、自动同步、纠错或水印存在性检测；重采样、压缩、裁剪和改变分块可能影响提取。没有真实主观听评分数；PEAQ不能代替人类评分。云端四模型HTTPS往返及重启后复测均已通过；浏览器NMR256实际下载后重新上传提取BER=0，三秒样例嵌入6.2秒、提取3.1秒。该耗时仅是本次案例，不保证长音频或并发时延。
 
 ## 9. 附加文档入口
 
-- [9分钟汇报PPT（云端状态待更新）](docs/a051/A051_9min_project_review_20261030.pptx)
-- [浏览器真实下载与重上传提取验收](docs/a051/browser-validation.json)
+- [9分钟汇报PPT（含已验收云端状态）](docs/a051/A051_9min_project_review_20261101.pptx)
+- [本地浏览器真实下载与重上传提取验收](docs/a051/browser-validation.json)
+- [云端四模型、HTTPS与整机重启后验收](docs/a051/cloud-validation.json)
+- [云端浏览器嵌入截图](docs/a051/cloud-embedded.jpg)、[下载重传后独立提取截图](docs/a051/cloud-extracted.jpg)
+- [云端逐模型请求与结果](algorithms/group_a051_nmr_watermark/outputs/cloud_validation_20261101/)、[整机重启后四模型复测](algorithms/group_a051_nmr_watermark/outputs/cloud_reboot_validation_20261101/)
 
 - [算法目录与源文件](algorithms/group_a051_nmr_watermark/README.md)
 - [复现规格与补充约定](algorithms/group_a051_nmr_watermark/docs/reproduction.md)
