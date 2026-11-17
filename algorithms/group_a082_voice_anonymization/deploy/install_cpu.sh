@@ -3,6 +3,11 @@
 #
 #   sudo bash deploy/install_cpu.sh /opt/a082 <directory holding the demo assets>
 #
+# NOTE: huggingface_hub is pinned to 0.25.2 on purpose. SpeechBrain 0.5.16 calls
+# hf_hub_download(use_auth_token=...), which huggingface_hub >= 0.26 removed; installing
+# the latest makes the speaker-similarity readout fail with
+#   TypeError: hf_hub_download() got an unexpected keyword argument 'use_auth_token'
+#
 # The assets directory must contain (copied from the GPU machine or the network drive):
 #   pool_demo/            matching sets of the demo targets (LibriTTS-R), built by a082.knnvc.pool
 #   piper/en_US-libritts_r-medium.onnx{,.json}
@@ -23,7 +28,7 @@ $PY -m venv "$DEST/venv"
 "$DEST/venv/bin/pip" install --upgrade pip
 "$DEST/venv/bin/pip" install --index-url https://download.pytorch.org/whl/cpu torch==2.0.1 torchaudio==2.0.2
 "$DEST/venv/bin/pip" install -e "$DEST/code" "numpy<2" soundfile pyyaml tqdm matplotlib fastapi uvicorn python-multipart \
-  speechbrain==0.5.16 piper-tts==1.8.0 \
+  speechbrain==0.5.16 "huggingface_hub==0.25.2" piper-tts==1.8.0 \
   "openai-whisper @ git+https://github.com/openai/whisper@86098128c0b4f24f0e2aa2994de830614b474227"
 
 cat > "$DEST/config.yaml" <<EOF
@@ -42,6 +47,7 @@ speaker_encoder_dir: $DEST/assets/spk_ecapa
 results_json: $DEST/assets/table1.json
 bonus_json: $DEST/assets/bonus.json
 samples_dir: $DEST/assets/samples
+similarity_threshold: 0.0   # 0 = 不画参考竖线；该模型的余弦尺度随目标说话人变化，固定阈值会误导
 EOF
 
 id -u a082 >/dev/null 2>&1 || useradd --system --home "$DEST" --shell /usr/sbin/nologin a082

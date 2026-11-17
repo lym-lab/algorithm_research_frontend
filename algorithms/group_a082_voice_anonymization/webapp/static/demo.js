@@ -122,8 +122,10 @@ async function run() {
     if (sim !== null) {
       $('simval').textContent = sim.toFixed(3);
       $('simfill').style.width = `${Math.max(0, Math.min(1, sim)) * 100}%`;
-      $('simmark').style.left = `${state.threshold * 100}%`;
-      $('simnote').textContent = `竖线：${state.threshold}，SpeechBrain 这个模型判定"同一说话人"的默认阈值。原声对原声为 1。`;
+      $('simmark').hidden = !(state.threshold > 0);
+      if (state.threshold > 0) $('simmark').style.left = `${state.threshold * 100}%`;
+      $('simnote').textContent =
+        '数值越低越不像同一个人：同一段音频自比为 1.00；匿名化后通常落在 0.1–0.4，具体取决于抽到的目标说话人。';
     }
     $('details').replaceChildren(...detailRows(r));
     $('spec-orig').src = `api/result/${r.id}/orig.png`;

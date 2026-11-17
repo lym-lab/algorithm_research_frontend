@@ -146,6 +146,13 @@ class AnonService:
             src = self.cfg.get("speaker_encoder", "speechbrain/spkrec-ecapa-voxceleb")
             self._spk = EncoderClassifier.from_hparams(source=src, savedir=self.cfg.get("speaker_encoder_dir", "cache/spk_ecapa"),
                                                        run_opts={"device": self.device})
-        ea = self._spk.encode_batch(a.reshape(1, -1)).reshape(-1)
-        eb = self._spk.encode_batch(b.reshape(1, -1)).reshape(-1)
+        # normalize=True applies the model's mean-var centring. Without it the cosines are
+        # inflated (a genuinely different voice scores ~0.40), which makes the 0.25
+        # "same speaker" threshold in the UI meaningless.
+        try:
+            ea = self._spk.encode_batch(a.reshape(1, -1), normalize=True).reshape(-1)
+            eb = self._spk.encode_batch(b.reshape(1, -1), normalize=True).reshape(-1)
+        except AttributeError:   # hyperparams without mean_var_norm: fall back to raw embeddings
+            ea = self._spk.encode_batch(a.reshape(1, -1)).reshape(-1)
+            eb = self._spk.encode_batch(b.reshape(1, -1)).reshape(-1)
         return float(torch.nn.functional.cosine_similarity(ea, eb, dim=0))

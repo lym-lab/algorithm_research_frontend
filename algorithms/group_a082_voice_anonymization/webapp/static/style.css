@@ -9,7 +9,7 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--ground); color: var(--ink);
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', system-ui, sans-serif; }
+  font-family: 'IBM Plex Sans', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif; }
 a { color: var(--orig); } a:hover { color: #143F70; }
 button, input { font: inherit; color: inherit; }
 .mono { font-family: var(--mono); }
