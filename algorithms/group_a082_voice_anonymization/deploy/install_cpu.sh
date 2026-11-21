@@ -14,10 +14,19 @@
 #   wc/wc5.pt ... wc8.pt   (optional) WavLM-conversion checkpoints
 #   table1.json, bonus.json (optional) results for the results page
 #   samples/*.wav          (optional) example clips, public data only (no IEMOCAP)
+#   SHA256SUMS             checksums of all of the above (`sha256sum -c` format); the install stops on a mismatch
 set -euo pipefail
 DEST=${1:?usage: install_cpu.sh <install dir> <assets dir>}
 ASSETS=${2:?usage: install_cpu.sh <install dir> <assets dir>}
 CODE=$(cd "$(dirname "$0")/.." && pwd)
+
+# The assets come with a SHA256SUMS file; refuse to install anything that does not match it (a wrong or
+# truncated checkpoint otherwise only shows up as wrong audio). SKIP_ASSET_CHECK=1 skips this on purpose.
+if [ "${SKIP_ASSET_CHECK:-0}" != 1 ]; then
+  [ -f "$ASSETS/SHA256SUMS" ] || { echo "no $ASSETS/SHA256SUMS: use the asset package from the network drive"; exit 1; }
+  (cd "$ASSETS" && sha256sum --quiet -c SHA256SUMS) || { echo "asset check failed: re-download the files listed above"; exit 1; }
+  echo "assets match SHA256SUMS"
+fi
 
 apt-get update -y && apt-get install -y python3.11 python3.11-venv ffmpeg || apt-get install -y python3 python3-venv ffmpeg
 PY=$(command -v python3.11 || command -v python3)
