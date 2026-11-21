@@ -1,4 +1,4 @@
-# Small experiment: wc6 settings, 5k steps from scratch, to check the loss before the real run
+# Small experiment: wc6 settings, 5k steps from scratch, to check the adversarial loss before the real run
 name: g22
 steps: 5000
 adv: true

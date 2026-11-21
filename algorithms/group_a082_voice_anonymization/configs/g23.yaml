@@ -1,4 +1,4 @@
-# Small experiment: wc7 settings, 5k steps from scratch, to check the loss before the real run
+# Small experiment: wc7 settings, 5k steps from scratch, to check the CTC loss before the real run
 name: g23
 steps: 5000
 ctc: true

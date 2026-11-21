@@ -4,7 +4,7 @@
 #
 #   bash scripts/train_node_setup.sh <work dir>      # use the same <work dir> path as on the main machine
 #
-# Copy these first (from the local machine: gh and wc_bundle):
+# Copy these first (from the download cache and the wc bundle prepared on the main machine):
 #   <work dir>/vpc2024/.data.zip               (the framework's data.zip, 10 MB)
 #   wc_bundle.tar, unpacked with `python scripts/wc_bundle.py unpack wc_bundle.tar <work dir>` (target speaker,
 #   speaker classifier, wc5 checkpoint, wc/target_manifest.json)
