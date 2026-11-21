@@ -110,14 +110,14 @@ done
 python -m a082.wavlm_conv.train prepare-target --manifest $W/pool_vox1.json --pool $W/cache/pool_vox1 --out $W/wc/target.pt
 python -m a082.wavlm_conv.train pretrain-spk --vpc-root $R --out $W/wc/spk.pt
 python -m a082.wavlm_conv.train train --config configs/wc5.yaml --vpc-root $R --target $W/wc/target.pt \
-       --manifest $W/pool_vox1.json --out $W/wc/wc5
+       --manifest $W/pool_vox1.json --out $W/wc/wc5 --amp
 for v in 6 7 8; do
   python -m a082.wavlm_conv.train train --config configs/wc$v.yaml --vpc-root $R --target $W/wc/target.pt \
-         --manifest $W/pool_vox1.json --spk $W/wc/spk.pt --init $W/wc/wc5/last.pt --out $W/wc/wc$v
+         --manifest $W/pool_vox1.json --spk $W/wc/spk.pt --init $W/wc/wc5/last.pt --out $W/wc/wc$v --amp
 done
 ```
 
-训练每 5000 步保存一次 `last.pt`，中断后用同一条命令续训。训练完成后按上面的 `infer` 与评测命令运行（`--ckpt $W/wc/wc$v/last.pt`）。
+`--amp` 用 fp16 混合精度（说话人分类器保持 fp32），速度约为 fp32 的 2.4 倍；表 1 第 6–8 行的模型都是这样训练的。第 6–8 行的配置里有 `schedule_offset: 100000`，学习率调度接着第 5 行的第 100k 步走、不重新预热；不要去掉这一项，否则峰值学习率会高出 2–5 倍，结果与表 1 不同。训练每 5000 步保存一次 `last.pt`，中断后用同一条命令续训。训练完成后按上面的 `infer` 与评测命令运行（`--ckpt $W/wc/wc$v/last.pt`）。
 
 ## 7. 扩展实验
 
