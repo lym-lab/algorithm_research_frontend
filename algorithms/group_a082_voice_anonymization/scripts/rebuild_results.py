@@ -67,7 +67,33 @@ EXTRA_ROWS = [
     ("8 control  wrong LR schedule, fp32 (superseded run)", "_wc8_lrwarm"),
 ]
 
-TOL = 2.0   # "ok" if within this many points of the paper
+TOL = 2.0   # fallback: "ok" if within this many points of the paper
+
+# Per-row tolerances, copied from a082/eval/targets.py so that this script stays standard-library only.
+# Rows 6-8 are judged qualitatively against our own rows 5 and 7 (QUALITATIVE below), as in the report.
+TOLERANCE = {
+    "0": {"EER": 0.05, "UAR": 0.05, "WER": 0.05},
+    "1": {"EER": 1.5, "UAR": 2.0, "WER": 0.3},
+    "2": {"EER": 1.5, "UAR": 2.0, "WER": 0.3},
+    "3": {"EER": 4.0, "UAR": 3.0, "WER": 2.0},
+    "4": {"eer_min": 45.0, "UAR": 2.0, "WER": 0.4},
+    "mix p=0.2": {"EER": 3.0, "UAR": 2.0, "WER": 0.3},
+    "mix p=0.325": {"EER": 3.0, "UAR": 2.0, "WER": 0.3},
+    "mix p=0.4": {"EER": 3.0, "UAR": 2.0, "WER": 0.3},
+    "5": {"EER": 3.0, "UAR": 3.0, "WER": 1.0},
+}
+
+
+def qualitative(label: str, m: dict, rows: dict) -> str | None:
+    """Row 6: EER and WER above our row 5; row 7: EER above row 5 and WER >= 6; row 8: EER not below
+    row 7 and WER within 1.0 of row 7 (a082/eval/targets.py)."""
+    ref = {"6": "5", "7": "5", "8": "7"}.get(label)
+    base = rows.get(ref)
+    if not ref or not base or None in (m.get("EER_avg"), m.get("WER_avg"), base.get("EER_avg"), base.get("WER_avg")):
+        return None
+    e, w, be, bw = m["EER_avg"], m["WER_avg"], base["EER_avg"], base["WER_avg"]
+    ok = {"6": e > be and w > bw, "7": e > be and w >= 6.0, "8": e >= be and abs(w - bw) <= 1.0}[label]
+    return f"qualitative check vs row {ref}: {'pass' if ok else 'fail'}"
 
 
 def scan(paths: list[Path]) -> dict[str, dict]:
@@ -104,11 +130,13 @@ def fmt(v, nd=3):
     return "—" if v is None else f"{v:.{nd}f}"
 
 
-def verdict(actual, paper):
+def verdict(actual, paper, tol=TOL, eer_min=None):
     if actual is None or paper is None:
         return "not measured"
+    if eer_min is not None:
+        return "ok" if actual >= eer_min else f"below {eer_min:g}"
     d = actual - paper
-    return "ok" if abs(d) <= TOL else f"off by {d:+.2f}"
+    return "ok" if abs(d) <= tol + 1e-9 else f"off by {d:+.2f}"
 
 
 def main(argv=None) -> int:
@@ -127,13 +155,22 @@ def main(argv=None) -> int:
              "WER (ours) | WER (paper) | verdict |",
              "|---|---|---:|---:|---:|---:|---:|---:|---|"]
     rows_json = []
+    by_label = {label: data.get(sfx, {}) for label, sfx, *_ in MAIN_ROWS}
     for label, sfx, pe, pu, pw in MAIN_ROWS:
         m = data.get(sfx, {})
         eer, uar, wer = m.get("EER_avg"), m.get("UAR_avg"), m.get("WER_avg")
         if eer is None:
             v = "not measured"
+        elif label in ("6", "7", "8"):
+            q = qualitative(label, m, by_label)
+            off = [f"{k} {x - p:+.2f}" for k, x, p in (("EER", eer, pe), ("UAR", uar, pu), ("WER", wer, pw))
+                   if x is not None]
+            v = f"{q}; vs paper {', '.join(off)}" if q else "not measured"
         else:
-            off = [x for x in (verdict(eer, pe), verdict(uar, pu), verdict(wer, pw)) if x != "ok"]
+            t = TOLERANCE.get(label, {})
+            off = [x for x in (verdict(eer, pe, t.get("EER", args.tol), t.get("eer_min")),
+                               verdict(uar, pu, t.get("UAR", args.tol)), verdict(wer, pw, t.get("WER", args.tol)))
+                   if x != "ok"]
             v = "; ".join(off) if off else "ok"
         lines.append(f"| {label} | `{sfx}` | {fmt(eer)} | {fmt(pe,2)} | {fmt(uar)} | "
                      f"{fmt(pu,2)} | {fmt(wer)} | {fmt(pw,2)} | {v} |")
