@@ -63,6 +63,8 @@ EXTRA_ROWS = [
     ("ID4 + Opus 12k", "_tts_opus12k"),
     ("mix p=0.4 + Opus 12k", "_mix0p4_opus12k"),
     ("ID0 + Opus 12k", "_orig_opus12k"),
+    ("7 control  wrong LR schedule (superseded run)", "_wc7_lrwarm"),
+    ("8 control  wrong LR schedule, fp32 (superseded run)", "_wc8_lrwarm"),
 ]
 
 TOL = 2.0   # "ok" if within this many points of the paper

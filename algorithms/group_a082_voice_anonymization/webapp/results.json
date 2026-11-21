@@ -209,13 +209,13 @@
    "WER": 10.16
   },
   "ours": {
-   "EER": 8.033,
-   "UAR": 46.234,
+   "EER": 8.782,
+   "UAR": 46.806,
    "WER": 2.696
   },
   "verdict": {
-   "EER": "off by -5.70",
-   "UAR": "ok",
+   "EER": "off by -4.95",
+   "UAR": "off by +3.25",
    "WER": "off by -7.46"
   }
  },
@@ -229,14 +229,14 @@
    "WER": 10.83
   },
   "ours": {
-   "EER": 12.758,
-   "UAR": 46.62,
-   "WER": 2.728
+   "EER": 11.446,
+   "UAR": 46.231,
+   "WER": 2.7
   },
   "verdict": {
    "EER": "ok",
-   "UAR": "off by +3.12",
-   "WER": "off by -8.10"
+   "UAR": "ok",
+   "WER": "off by -8.13"
   }
  }
 ]

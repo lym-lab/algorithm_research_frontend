@@ -54,20 +54,42 @@ def systems_figure(signals: dict, sr: int = SR, seconds: float | None = None) ->
     return fig
 
 
-def privacy_utility_figure(rows: dict, thresholds=(10, 20, 30, 40), offsets: dict | None = None) -> plt.Figure:
+def privacy_utility_figure(rows: dict, thresholds=(10, 20, 30, 40), offsets: dict | None = None,
+                           wer_zoom: tuple | None = None, zoom_offsets: dict | None = None) -> plt.Figure:
     """EER against UAR and against WER for every system (label -> (EER, UAR, WER)), with the VPC 2024
-    minimum-privacy lines. `offsets`: label -> (dx, dy) in points for labels that would overlap."""
+    minimum-privacy lines. `offsets`: label -> (dx, dy) in points for labels that would overlap, or
+    label -> {1: (dx, dy), 2: (dx, dy)} for different offsets in the UAR (1) and WER (2) panels.
+    `wer_zoom`: (x0, x1, y0, y1) of a magnified inset in the WER panel for points that crowd together,
+    labelled with `zoom_offsets` (label -> (dx, dy))."""
     fig, axes = plt.subplots(1, 2, figsize=(11, 4.2), constrained_layout=True, sharey=True)
     for ax, k, name in ((axes[0], 1, "UAR (%)"), (axes[1], 2, "WER (%)")):
         for t in thresholds:
             ax.axhline(t, color="0.75", lw=0.8, ls="--")
         for i, (label, v) in enumerate(rows.items()):
             ax.plot(v[k], v[0], "o", color=f"C{i % 10}")
-            ax.annotate(label, (v[k], v[0]), textcoords="offset points", xytext=(offsets or {}).get(label, (4, 3)),
-                        fontsize=8)
+            if k == 2 and wer_zoom and wer_zoom[0] <= v[2] <= wer_zoom[1] and wer_zoom[2] <= v[0] <= wer_zoom[3]:
+                continue  # labelled in the inset
+            off = (offsets or {}).get(label, (4, 3))
+            if isinstance(off, dict):
+                off = off.get(k, (4, 3))
+            ax.annotate(label, (v[k], v[0]), textcoords="offset points", xytext=off, fontsize=8)
         ax.set_xlabel(name)
         ax.grid(alpha=0.3)
     axes[0].set_ylabel("EER, average of 4 subsets (%)")
+    if wer_zoom:
+        x0, x1, y0, y1 = wer_zoom
+        ins = axes[1].inset_axes([0.45, 0.53, 0.52, 0.44])
+        for t in thresholds:
+            if y0 <= t <= y1:
+                ins.axhline(t, color="0.75", lw=0.8, ls="--")
+        for i, (label, v) in enumerate(rows.items()):
+            if x0 <= v[2] <= x1 and y0 <= v[0] <= y1:
+                ins.plot(v[2], v[0], "o", color=f"C{i % 10}")
+                ins.annotate(label, (v[2], v[0]), textcoords="offset points",
+                             xytext=(zoom_offsets or {}).get(label, (5, -3)), fontsize=8)
+        ins.set_xlim(x0, x1); ins.set_ylim(y0, y1)
+        ins.tick_params(labelsize=7); ins.grid(alpha=0.3)
+        axes[1].indicate_inset_zoom(ins, edgecolor="0.5")
     return fig
 
 
