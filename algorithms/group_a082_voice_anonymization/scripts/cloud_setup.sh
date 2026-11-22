@@ -34,7 +34,8 @@
 #                                       system disk, so that a saved machine image carries the environment);
 #                                       its data/, exp/ and corpora/ are then links into <work dir>, which keeps
 #                                       all corpora, outputs and results on the data disk (default <work>/vpc2024)
-#   DEMO_DATA=skip                      skip LibriTTS-R (only the web demo needs it)
+#   DEMO_DATA=skip                      skip LibriTTS-R (an optional demo target pool; the deployed demo uses
+#                                       6 LibriSpeech test-clean speakers, downloaded with the evaluation data)
 #   GPU_CHECK=skip                      set up on a machine without a GPU (e.g. a cheap CPU server whose data disk
 #                                       then moves to the GPU server); run the script once more on the GPU server,
 #                                       which only repeats the quick steps and the GPU check
@@ -251,7 +252,7 @@ if [ -n "$P_VOX" ]; then
   wait $P_VOX || { echo "VoxCeleb failed: logs/dl_vox.log"; exit 1; }
 fi
 
-# 7. public demo targets: LibriTTS-R test-clean (CC BY 4.0)
+# 7. optional public demo targets: LibriTTS-R test-clean (CC BY 4.0)
 if [ "${DEMO_DATA:-yes}" != skip ] && [ ! -d "$C/LibriTTS_R/test-clean" ]; then
   fetch "$OPENSLR/resources/141/test_clean.tar.gz" "$C/test_clean.tar.gz"
   tar -xzf "$C/test_clean.tar.gz" -C "$C" && rm "$C/test_clean.tar.gz"

@@ -38,7 +38,7 @@ HF_ENDPOINT=https://hf-mirror.com bash scripts/cloud_setup.sh $W 2>&1 | tee setu
 - PyTorch 用同一版本 2.0.1 的 CUDA 11.8 构建：CUDA 11.7 构建在 RTX 40 系显卡上调用 cuFFT 会报 `CUFFT_INTERNAL_ERROR`；
 - 框架的依赖只写了版本下限，直接安装会装上 2026 年的大版本（NumPy 2、pandas 3、transformers 5）而无法运行，脚本把它们固定在 2024 年的版本（见脚本中的 `PINS`）。
 
-可选的环境变量（详见脚本开头）：服务器访问 GitHub 很慢时，可以在别处下载脚本列出的几个文件，放进一个目录，用 `GH_ASSETS=<目录>` 指定；服务器上有平台预设的代理而它很慢时，用 `PROXY=off`；不需要网页演示时，用 `DEMO_DATA=skip` 跳过 LibriTTS-R。
+可选的环境变量（详见脚本开头）：服务器访问 GitHub 很慢时，可以在别处下载脚本列出的几个文件，放进一个目录，用 `GH_ASSETS=<目录>` 指定；服务器上有平台预设的代理而它很慢时，用 `PROXY=off`；用 `DEMO_DATA=skip` 跳过 LibriTTS-R（网页演示的目标池改用 LibriSpeech test-clean，它随评测数据下载，所以一般可以跳过）。
 
 ## 2. 正确性检查与测速（约 1–1.5 h）
 
@@ -136,13 +136,14 @@ done
 python -m a082.eval.vpc report --vpc-root $R --out results/table1.md --json results/table1.json --fig4 results/fig4.png
 ```
 
-`results/table1.md` 逐行列出我们的结果、论文的数字和判定；`results/fig4.png` 是混合比例与 EER、UAR 的关系图。网页演示读取 `results/table1.json`，其目标说话人池用 LibriTTS-R 建：
+`results/table1.md` 逐行列出我们的结果、论文的数字和判定；`results/fig4.png` 是混合比例与 EER、UAR 的关系图。网页演示读取 `results/table1.json`，其目标说话人池用 LibriSpeech test-clean 的 6 个说话人（1089、1188、121、1995、2961、4507）建（网盘里已有建好的 `pool_demo/`）：
 
 ```bash
-python -m a082.knnvc.pool scan-tree $W/corpora/LibriTTS_R/test-clean $W/pool_demo.json
+python -m a082.knnvc.pool scan-tree $W/corpora/LibriSpeech/test-clean $W/pool_demo_all.json --ext .flac
+python -c "import json; m=json.load(open('$W/pool_demo_all.json')); json.dump({k: m[k] for k in ('1089','1188','121','1995','2961','4507')}, open('$W/pool_demo.json','w'))"
 python -m a082.knnvc.pool build $W/pool_demo.json $W/cache/pool_demo
 ```
 
 ## 数据许可
 
-VoxCeleb 与 IEMOCAP 的原始音频和匿名化后的音频都不随本项目分发；网盘只有模型权重、网页演示用的 LibriTTS-R 目标池（CC BY 4.0）和 LibriSpeech test-clean 的几句样例。
+VoxCeleb 与 IEMOCAP 的原始音频和匿名化后的音频都不随本项目分发；网盘只有模型权重、网页演示用的目标池（LibriSpeech test-clean 的 6 个说话人，CC BY 4.0）和 LibriSpeech test-clean 的几句样例。
