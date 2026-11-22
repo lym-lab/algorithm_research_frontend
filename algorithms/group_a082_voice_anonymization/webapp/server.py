@@ -10,7 +10,7 @@ API
     GET  /api/results                       Table 1 rows (paper, ours where measured) and the admixture comparison
     GET  /api/samples, /samples/<file>      optional example clips (config `samples_dir`)
     POST /process                           the course platform's adapter (lym-lab/algorithm_research_frontend):
-                                            form: audio (file), method_id, parameters (JSON: system, seed, p);
+                                            form: audio (file), method_id, parameters (JSON: system, seed, mix_p);
                                             answers {"message", "artifacts": [...]} or {"error"}; CORS allowed
     GET  /api/result/{id}/report.json       the details of a /process result
 """
@@ -126,9 +126,9 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
             if not isinstance(par, dict):
                 raise HTTPException(400, "parameters 必须是 JSON 对象")
             try:
-                p = float(par.get("p", 0.4))
+                p = float(par.get("mix_p", 0.4))  # the platform needs names of 2+ characters
             except (TypeError, ValueError):
-                raise HTTPException(400, "p 必须是 0 到 1 之间的数")
+                raise HTTPException(400, "mix_p 必须是 0 到 1 之间的数")
             out = run(audio_file.file.read(), str(par.get("system", "knn1")), str(par.get("seed", "")), p,
                       bool(cfg.get("speaker_encoder", True)))
         except HTTPException as e:

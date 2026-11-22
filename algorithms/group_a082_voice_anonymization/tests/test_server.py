@@ -61,7 +61,7 @@ def test_platform_process_contract():
     c = client()
     r = c.post("/process", files={"audio": ("my clip.wav", wav_bytes(), "audio/wav")},
                data={"method_id": "group_a082_voice_anonymization",
-                     "parameters": '{"system": "knn1", "seed": "abc", "p": 0.4}'},
+                     "parameters": '{"system": "knn1", "seed": "abc", "mix_p": 0.4}'},
                headers={"Origin": "http://localhost:5173"})
     assert r.status_code == 200, r.text
     assert r.headers["access-control-allow-origin"] == "*"
@@ -80,7 +80,7 @@ def test_platform_process_errors_are_json_with_cors():
     h = {"Origin": "http://localhost:5173"}
     for data, files in [({"parameters": '{"system": "wc5"}'}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
                         ({"parameters": "not json"}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
-                        ({"parameters": '{"system": "knn1", "p": 2}'}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
+                        ({"parameters": '{"system": "knn1", "mix_p": 2}'}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
                         ({"parameters": "{}"}, {"audio": ("a.wav", b"not audio", "audio/wav")}),
                         ({"parameters": "{}"}, None)]:
         r = c.post("/process", data=data, files=files, headers=h)
