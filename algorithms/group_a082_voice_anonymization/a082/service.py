@@ -83,7 +83,11 @@ class AnonService:
             from .knnvc.anonymize import KnnSystem
             from .knnvc.pool import Pool
             if self._pool is None:
-                self._pool = Pool(self.cfg["pool"], device=self.device, min_frames=self.cfg.get("pool_min_frames", 3000))
+                # On CPU both tiers of Pool are host memory: keep one float32 copy of at most two sets
+                # (1M uses two at once). Caching every demo speaker twice took ~1.1 GB of an 8 GB server.
+                limits = {"keep": 2, "keep_cpu": 0} if self.device == "cpu" else {}
+                self._pool = Pool(self.cfg["pool"], device=self.device,
+                                  min_frames=self.cfg.get("pool_min_frames", 3000), **limits)
             wavlm, hifigan = self._base()
             cfg = yaml.safe_load((CONFIGS / f"{key}.yaml").read_text())
             self._knn[key] = KnnSystem(cfg, self._pool, wavlm, hifigan, self.device)

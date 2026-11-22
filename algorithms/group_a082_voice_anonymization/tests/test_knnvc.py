@@ -103,3 +103,16 @@ def test_pool_device_tier_is_bounded_in_bytes(tmp_path, monkeypatch):
     for s in p.speakers:
         p.get(s)
     assert list(p._dev) == ["s2", "s3"] and len(p._cpu) == 4
+
+
+def test_service_pool_on_cpu_keeps_two_sets_once(tmp_path):
+    from a082.service import AnonService
+    for i in range(4):
+        torch.save(torch.zeros(1000, 1024), tmp_path / f"s{i}.pt")
+        (tmp_path / f"s{i}.frames").write_text("1000")
+    svc = AnonService({"device": "cpu", "pool": str(tmp_path), "pool_min_frames": 1})
+    svc._wavlm = svc._hifigan = object()  # _knn_system only needs them to exist
+    p = svc._knn_system("knn1").pool
+    for s in p.speakers:
+        p.get(s)
+    assert list(p._dev) == ["s2", "s3"] and len(p._cpu) == 0
