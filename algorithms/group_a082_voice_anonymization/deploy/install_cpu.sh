@@ -15,6 +15,8 @@
 #   table1.json, bonus.json (optional) results for the results page
 #   samples/*.wav          (optional) example clips, public data only (no IEMOCAP)
 #   SHA256SUMS             checksums of all of the above (`sha256sum -c` format); the install stops on a mismatch
+#
+# WHISPER_MODEL=medium.en makes the cascade use the paper's ASR model (about 3 GB more RAM; 8 GB servers only).
 set -euo pipefail
 DEST=${1:?usage: install_cpu.sh <install dir> <assets dir>}
 ASSETS=${2:?usage: install_cpu.sh <install dir> <assets dir>}
@@ -45,7 +47,7 @@ device: cpu
 pool: $DEST/assets/pool_demo
 pool_min_frames: 3000
 piper_model: $DEST/assets/piper/en_US-libritts_r-medium.onnx
-whisper_model: medium.en
+whisper_model: ${WHISPER_MODEL:-base.en}   # medium.en (the paper's, ~3 GB in fp32) does not fit next to WavLM in 4 GB RAM
 wavlm_conv:
   wc5: $DEST/assets/wc/wc5.pt
   wc6: $DEST/assets/wc/wc6.pt

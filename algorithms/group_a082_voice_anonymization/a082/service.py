@@ -97,6 +97,9 @@ class AnonService:
 
     def _wc_model(self, key: str):
         if key not in self._wc:
+            # Keep one converter in memory: four of them (~0.3 GB each) next to WavLM and Whisper
+            # push a 4 GB server into swap; reloading one takes a second or two.
+            self._wc.clear()
             from .wavlm_conv.model import WavLMConverter
             ck = torch.load(self.cfg["wavlm_conv"][key], map_location="cpu")
             m = WavLMConverter(**ck["cfg"].get("model", {})).to(self.device).eval()
