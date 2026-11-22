@@ -1,6 +1,6 @@
 # Copy to config.yaml and fill in the paths (see a082/service.py).
 device: null                      # null = cuda if available, else cpu
-pool: cache/pool_librittsr_demo   # matching sets of public demo speakers (LibriTTS-R, CC BY 4.0)
+pool: cache/pool_demo            # matching sets of public demo speakers (LibriSpeech test-clean, CC BY 4.0)
 pool_min_frames: 3000             # 1 min of speech is enough for a demo target
 piper_model: cache/piper/en_US-libritts_r-medium.onnx
 whisper_model: medium.en          # the paper's model; base.en is much faster on CPU

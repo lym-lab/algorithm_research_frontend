@@ -9,7 +9,7 @@
 #   TypeError: hf_hub_download() got an unexpected keyword argument 'use_auth_token'
 #
 # The assets directory must contain (copied from the GPU machine or the network drive):
-#   pool_demo/            matching sets of the demo targets (LibriTTS-R), built by a082.knnvc.pool
+#   pool_demo/            matching sets of the demo targets (6 LibriSpeech test-clean speakers), built by a082.knnvc.pool
 #   piper/en_US-libritts_r-medium.onnx{,.json}
 #   wc/wc5.pt ... wc8.pt   (optional) WavLM-conversion checkpoints
 #   table1.json, bonus.json (optional) results for the results page
