@@ -54,3 +54,37 @@ def test_results_paper_only_and_static_pages():
     assert len(rows) == 12 and rows[1]["paper"]["EER"] == 7.95 and rows[1]["ours"] is None
     for page in ("/", "/results.html", "/method.html", "/style.css", "/demo.js"):
         assert c.get(page).status_code == 200, page
+
+
+def test_platform_process_contract():
+    """POST /process as the course platform sends it: file field, method_id, parameters as a JSON string."""
+    c = client()
+    r = c.post("/process", files={"audio": ("my clip.wav", wav_bytes(), "audio/wav")},
+               data={"method_id": "group_a082_voice_anonymization",
+                     "parameters": '{"system": "knn1", "seed": "abc", "p": 0.4}'},
+               headers={"Origin": "http://localhost:5173"})
+    assert r.status_code == 200, r.text
+    assert r.headers["access-control-allow-origin"] == "*"
+    j = r.json()
+    assert "相似度 0.123" in j["message"]
+    kinds = [a["kind"] for a in j["artifacts"]]
+    assert kinds == ["audio", "image", "image", "json"] and all(a["url"].startswith("/api/result/") for a in j["artifacts"])
+    for a in j["artifacts"]:
+        assert c.get(a["url"]).status_code == 200, a["url"]
+    rep = c.get(j["artifacts"][3]["url"]).json()
+    assert rep["seed"] == "abc" and rep["system"] == "knn1"
+
+
+def test_platform_process_errors_are_json_with_cors():
+    c = client()
+    h = {"Origin": "http://localhost:5173"}
+    for data, files in [({"parameters": '{"system": "wc5"}'}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
+                        ({"parameters": "not json"}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
+                        ({"parameters": '{"system": "knn1", "p": 2}'}, {"audio": ("a.wav", wav_bytes(), "audio/wav")}),
+                        ({"parameters": "{}"}, {"audio": ("a.wav", b"not audio", "audio/wav")}),
+                        ({"parameters": "{}"}, None)]:
+        r = c.post("/process", data=data, files=files, headers=h)
+        assert r.status_code == 400, (data, r.text)
+        assert isinstance(r.json()["error"], str) and r.headers["access-control-allow-origin"] == "*"
+    pre = c.options("/process", headers={**h, "Access-Control-Request-Method": "POST"})
+    assert pre.status_code == 200

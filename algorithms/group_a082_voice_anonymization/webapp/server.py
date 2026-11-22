@@ -9,6 +9,10 @@ API
     GET  /api/result/{id}/{orig|anon}.png   log-mel spectrogram, both on the same colour scale
     GET  /api/results                       Table 1 rows (paper, ours where measured) and the admixture comparison
     GET  /api/samples, /samples/<file>      optional example clips (config `samples_dir`)
+    POST /process                           the course platform's adapter (lym-lab/algorithm_research_frontend):
+                                            form: audio (file), method_id, parameters (JSON: system, seed, p);
+                                            answers {"message", "artifacts": [...]} or {"error"}; CORS allowed
+    GET  /api/result/{id}/report.json       the details of a /process result
 """
 from __future__ import annotations
 
@@ -27,6 +31,7 @@ import torch
 import uvicorn
 import yaml
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
@@ -59,6 +64,8 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
     lock = threading.Lock()  # one model instance: serialise inference
     results: OrderedDict[str, dict] = OrderedDict()
     app = FastAPI(title="A082 speaker anonymization")
+    # The course platform calls /process from the browser on another origin; no cookies are involved.
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"])
 
     @app.get("/api/systems")
     def systems():
@@ -71,13 +78,13 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
         return {"groups": groups, "similarity": bool(cfg.get("speaker_encoder", True)),
                 "threshold": cfg.get("similarity_threshold", 0.25), "max_seconds": MAX_SECONDS}
 
-    @app.post("/api/anonymize")
-    def anonymize(audio_file: UploadFile = File(..., alias="audio"), system: str = Form(...),
-                  seed: str = Form(""), p: float = Form(0.4), similarity: bool = Form(True)):
+    def run(raw: bytes, system: str, seed: str, p: float, similarity: bool) -> dict:
         if system not in service.systems():
             raise HTTPException(400, f"unknown or unavailable system {system!r}")
+        if not 0.0 <= p <= 1.0:
+            raise HTTPException(400, "p must be between 0 and 1")
         try:
-            data, sr = sf.read(io.BytesIO(audio_file.file.read()), dtype="float32", always_2d=True)
+            data, sr = sf.read(io.BytesIO(raw), dtype="float32", always_2d=True)
         except Exception as e:  # noqa: BLE001
             raise HTTPException(400, f"cannot read audio: {e}")
         wav = audio.resample(torch.from_numpy(data.mean(axis=1))[None], sr)
@@ -92,13 +99,55 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
             elapsed = time.time() - t0
             sim = service.speaker_similarity(wav, res.wav) if similarity else None
         rid = secrets.token_hex(8)
-        results[rid] = {"orig": wav, "anon": res.wav, "scale": viz.shared_scale(wav, res.wav)}
+        out = {"id": rid, "seed": seed, "system": res.system, "system_name": UI[res.system][1],
+               "requested": system, "details": res.details, "similarity": sim,
+               "seconds_in": round(wav.shape[-1] / audio.SR, 2), "seconds_out": round(res.wav.shape[-1] / audio.SR, 2),
+               "elapsed": round(elapsed, 2)}
+        results[rid] = {"orig": wav, "anon": res.wav, "scale": viz.shared_scale(wav, res.wav), "report": out}
         while len(results) > KEEP:
             results.popitem(last=False)
-        return {"id": rid, "seed": seed, "system": res.system, "system_name": UI[res.system][1],
-                "requested": system, "details": res.details, "similarity": sim,
-                "seconds_in": round(wav.shape[-1] / audio.SR, 2), "seconds_out": round(res.wav.shape[-1] / audio.SR, 2),
-                "elapsed": round(elapsed, 2)}
+        return out
+
+    @app.post("/api/anonymize")
+    def anonymize(audio_file: UploadFile = File(..., alias="audio"), system: str = Form(...),
+                  seed: str = Form(""), p: float = Form(0.4), similarity: bool = Form(True)):
+        return run(audio_file.file.read(), system, seed, p, similarity)
+
+    @app.post("/process")
+    def process(audio_file: UploadFile = File(None, alias="audio"), parameters: str = Form("{}")):
+        """Platform adapter: errors are {"error": ...} and never escape (CORS headers stay on every answer)."""
+        try:
+            if audio_file is None:
+                raise HTTPException(400, "缺少音频文件（字段 audio）")
+            try:
+                par = json.loads(parameters or "{}")
+            except json.JSONDecodeError:
+                raise HTTPException(400, "parameters 不是合法的 JSON")
+            if not isinstance(par, dict):
+                raise HTTPException(400, "parameters 必须是 JSON 对象")
+            try:
+                p = float(par.get("p", 0.4))
+            except (TypeError, ValueError):
+                raise HTTPException(400, "p 必须是 0 到 1 之间的数")
+            out = run(audio_file.file.read(), str(par.get("system", "knn1")), str(par.get("seed", "")), p,
+                      bool(cfg.get("speaker_encoder", True)))
+        except HTTPException as e:
+            return JSONResponse({"error": str(e.detail)}, status_code=e.status_code)
+        except Exception as e:  # noqa: BLE001
+            return JSONResponse({"error": f"{type(e).__name__}: {e}"}, status_code=500)
+        rid, name = out["id"], UI[out["system"]][1]
+        msg = f"系统 {UI[out['system']][0]}（{name}）处理完成，用时 {out['elapsed']} s"
+        if out["similarity"] is not None:
+            msg += f"；匿名化前后说话人相似度 {out['similarity']:.3f}"
+        return {"message": msg, "artifacts": [
+            {"kind": "audio", "label": "匿名化语音", "filename": f"anon_{out['system']}_{out['seed']}.wav",
+             "url": f"/api/result/{rid}/anon.wav"},
+            {"kind": "image", "label": "原始语音的对数梅尔谱", "filename": "orig.png", "url": f"/api/result/{rid}/orig.png"},
+            {"kind": "image", "label": "匿名化语音的对数梅尔谱（同一色标）", "filename": "anon.png",
+             "url": f"/api/result/{rid}/anon.png"},
+            {"kind": "json", "label": "处理记录（系统、目标、相似度、用时）", "filename": "report.json",
+             "url": f"/api/result/{rid}/report.json"},
+        ]}
 
     def _get(rid: str, which: str):
         if rid not in results or which not in ("orig", "anon"):
@@ -111,6 +160,10 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
         buf = io.BytesIO()
         sf.write(buf, r[which].reshape(-1).clamp(-1, 1).numpy(), audio.SR, format="WAV", subtype="PCM_16")
         return Response(buf.getvalue(), media_type="audio/wav")
+
+    @app.get("/api/result/{rid}/report.json")
+    def result_report(rid: str):
+        return _get(rid, "orig")["report"]
 
     @app.get("/api/result/{rid}/{which}.png")
     def result_png(rid: str, which: str):
