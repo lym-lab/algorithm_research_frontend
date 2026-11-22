@@ -63,5 +63,6 @@ id -u a082 >/dev/null 2>&1 || useradd --system --home "$DEST" --shell /usr/sbin/
 chown -R a082:a082 "$DEST"
 sed "s#@DEST@#$DEST#g" "$CODE/deploy/a082-web.service" > /etc/systemd/system/a082-web.service
 systemctl daemon-reload
-systemctl enable --now a082-web
+systemctl enable a082-web
+systemctl restart a082-web   # `enable --now` would leave an already running service on the old code
 echo "installed; check with: systemctl status a082-web; curl -s localhost:8000/api/systems"
