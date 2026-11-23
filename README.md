@@ -87,7 +87,7 @@
 cd algorithms/group_a082_voice_anonymization
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install --index-url https://download.pytorch.org/whl/cpu torch==2.0.1 torchaudio==2.0.2
-pip install -e . "numpy<2" soundfile pyyaml tqdm matplotlib fastapi uvicorn python-multipart pytest \
+pip install -e . "numpy<2" soundfile pyyaml tqdm matplotlib fastapi uvicorn python-multipart pytest httpx2 \
     speechbrain==0.5.16 "huggingface_hub==0.25.2" piper-tts==1.8.0 \
     "openai-whisper @ git+https://github.com/openai/whisper@86098128c0b4f24f0e2aa2994de830614b474227"
 pytest -q tests          # 不需要权重，约 1 分钟
@@ -119,7 +119,7 @@ npm run dev
 
 浏览器打开终端打印的地址（默认 `http://127.0.0.1:5173`），在"方法集合"里选择分类"主动防御"或搜索"说话人匿名化"，进入本方法。
 
-**3. 第一次运行。** 在方法详情里选第一个样例"系统 1 kNN-VC"，点"用样例试一试"（载入样例音频和参数 `system = knn1`、`seed = a082`），再点"开始处理"。约 10–20 秒后得到 4 个结果：匿名化语音、两张梅尔谱、处理记录。用同一种子得到的匿名化语音应与样例输出相同，处理记录中目标说话人为 `1089`。之后可以上传自己的英语录音，换成系统 3（隐私更强）或系统 8 对比。
+**3. 第一次运行。** 在方法详情里选第一个样例"系统 1 kNN-VC"，点"用样例试一试"（载入样例音频和参数 `system = knn1`、`seed = a082`），再点"开始处理"。约 10–20 秒后得到 4 个结果：匿名化语音、两张梅尔谱、处理记录。处理记录中目标说话人为 `1089`；用部署的服务时，匿名化语音与样例输出逐点相同，在其他机器上运行时波形可能因浮点运算差异略有不同。之后可以上传自己的英语录音，换成系统 3（隐私更强）或系统 8 对比。
 
 **4. 结果与清理。** 结果在页面上预览，用下载按钮保存（平台另外提供本次参数记录的下载）。服务器只在内存中保留最近 32 个结果，不写磁盘，无需清理；本机服务用 Ctrl+C 停止即可。
 

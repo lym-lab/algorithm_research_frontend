@@ -103,7 +103,7 @@ Python 3.11、PyTorch 2.0.1，与 VPC 2024 框架相同。Linux 或 Windows 均�
 
 ```bash
 pip install torch==2.0.1 torchaudio==2.0.2          # 只有 CPU 时加 --index-url https://download.pytorch.org/whl/cpu
-pip install -e . "numpy<2" soundfile pyyaml tqdm matplotlib jiwer huggingface_hub fastapi uvicorn python-multipart pytest
+pip install -e . "numpy<2" soundfile pyyaml tqdm matplotlib jiwer huggingface_hub fastapi uvicorn python-multipart pytest httpx2   # httpx2 是新版 Starlette 测试客户端的依赖
 pip install "openai-whisper @ git+https://github.com/openai/whisper@86098128c0b4f24f0e2aa2994de830614b474227" piper-tts==1.8.0 speechbrain==0.5.16
 pytest -q tests                                    # 不需要任何权重，约一分钟
 ```

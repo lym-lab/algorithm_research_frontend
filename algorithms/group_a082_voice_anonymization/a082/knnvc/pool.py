@@ -156,7 +156,7 @@ def main(argv=None) -> None:
     a = sub.add_parser("scan-voxceleb"); a.add_argument("root"); a.add_argument("manifest"); a.add_argument("--ext", default=".wav")
     a = sub.add_parser("scan-tree"); a.add_argument("root"); a.add_argument("manifest"); a.add_argument("--ext", default=".wav")
     a = sub.add_parser("build"); a.add_argument("manifest"); a.add_argument("cache")
-    a.add_argument("--device", default="cuda"); a.add_argument("--shard", default="0/1"); a.add_argument("--wavlm")
+    a.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); a.add_argument("--shard", default="0/1"); a.add_argument("--wavlm")
     a.add_argument("--max-frames", type=int, default=MAX_FRAMES, help="frames per speaker (50 per s); 0 = no limit")
     args = ap.parse_args(argv)
     if args.cmd == "scan-voxceleb":
