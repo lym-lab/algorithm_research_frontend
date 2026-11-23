@@ -56,6 +56,7 @@ UI = {  # number, name, one-line description, as in the design
     "wc8": ("8", "+ 两者", "对抗与离散同时使用"),
 }
 MAX_SECONDS = 30
+MAX_UPLOAD_MB = 20   # same as max_mb in the platform's method file
 KEEP = 32
 
 
@@ -77,6 +78,13 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
                 groups.append({"name": name, "items": items})
         return {"groups": groups, "similarity": bool(cfg.get("speaker_encoder", True)),
                 "threshold": cfg.get("similarity_threshold", 0.25), "max_seconds": MAX_SECONDS}
+
+    def read_upload(f: UploadFile) -> bytes:
+        limit = int(MAX_UPLOAD_MB * 2**20)
+        raw = f.file.read(limit + 1)   # bounded: never hold more than the limit in memory
+        if len(raw) > limit:
+            raise HTTPException(413, f"file larger than {MAX_UPLOAD_MB} MB")
+        return raw
 
     def run(raw: bytes, system: str, seed: str, p: float, similarity: bool) -> dict:
         if system not in service.systems():
@@ -111,7 +119,7 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
     @app.post("/api/anonymize")
     def anonymize(audio_file: UploadFile = File(..., alias="audio"), system: str = Form(...),
                   seed: str = Form(""), p: float = Form(0.4), similarity: bool = Form(True)):
-        return run(audio_file.file.read(), system, seed, p, similarity)
+        return run(read_upload(audio_file), system, seed, p, similarity)
 
     @app.post("/process")
     def process(audio_file: UploadFile = File(None, alias="audio"), parameters: str = Form("{}")):
@@ -129,7 +137,7 @@ def create_app(cfg: dict, service: AnonService | None = None) -> FastAPI:
                 p = float(par.get("mix_p", 0.4))  # the platform needs names of 2+ characters
             except (TypeError, ValueError):
                 raise HTTPException(400, "mix_p 必须是 0 到 1 之间的数")
-            out = run(audio_file.file.read(), str(par.get("system", "knn1")), str(par.get("seed", "")), p,
+            out = run(read_upload(audio_file), str(par.get("system", "knn1")), str(par.get("seed", "")), p,
                       bool(cfg.get("speaker_encoder", True)))
         except HTTPException as e:
             return JSONResponse({"error": str(e.detail)}, status_code=e.status_code)

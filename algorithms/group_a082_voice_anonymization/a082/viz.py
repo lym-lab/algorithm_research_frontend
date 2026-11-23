@@ -97,14 +97,17 @@ def spectrogram_png(wav: torch.Tensor, vmin: float, vmax: float, sr: int = SR,
                     width_px: int = 640, height_px: int = 200) -> bytes:
     """Log-mel spectrogram as a bare PNG (no axes) on a fixed colour scale, for the web page."""
     import io
+
+    from matplotlib.figure import Figure
     spec = log_mel(wav, sr)
-    fig = plt.figure(figsize=(width_px / 100, height_px / 100), dpi=100)
+    # A bare Figure, not pyplot: the server draws the two images of one result in parallel request threads,
+    # and pyplot's global figure registry is not thread-safe.
+    fig = Figure(figsize=(width_px / 100, height_px / 100), dpi=100)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.imshow(spec, origin="lower", aspect="auto", vmin=vmin, vmax=vmax, cmap="magma")
     ax.set_axis_off()
     buf = io.BytesIO()
     fig.savefig(buf, format="png")
-    plt.close(fig)
     return buf.getvalue()
 
 

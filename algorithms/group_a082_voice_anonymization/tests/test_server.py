@@ -88,3 +88,23 @@ def test_platform_process_errors_are_json_with_cors():
         assert isinstance(r.json()["error"], str) and r.headers["access-control-allow-origin"] == "*"
     pre = c.options("/process", headers={**h, "Access-Control-Request-Method": "POST"})
     assert pre.status_code == 200
+
+
+def test_upload_size_limit(monkeypatch):
+    import webapp.server as srv
+    monkeypatch.setattr(srv, "MAX_UPLOAD_MB", 0.01)  # ~10 kB; a 1 s 16-bit clip is 32 kB
+    c = client()
+    r = c.post("/process", data={"parameters": "{}"}, files={"audio": ("a.wav", wav_bytes(), "audio/wav")})
+    assert r.status_code == 413 and "MB" in r.json()["error"]
+
+
+def test_spectrograms_drawn_in_parallel():
+    from concurrent.futures import ThreadPoolExecutor
+    c = client()
+    rid = c.post("/process", data={"parameters": '{"system": "knn1"}'},
+                 files={"audio": ("a.wav", wav_bytes(3.0), "audio/wav")}).json()["artifacts"][1]["url"].split("/")[3]
+    urls = [f"/api/result/{rid}/{w}.png" for w in ("orig", "anon")] * 8
+    with ThreadPoolExecutor(8) as ex:
+        pngs = list(ex.map(lambda u: c.get(u).content, urls))
+    assert all(p[:8] == b"\x89PNG\r\n\x1a\n" for p in pngs)
+    assert len(set(pngs[0::2])) == 1 and len(set(pngs[1::2])) == 1  # identical, not corrupted
