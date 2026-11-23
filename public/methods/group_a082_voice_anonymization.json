@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0",
+  "id": "group_a082_voice_anonymization",
+  "title": "说话人匿名化（HLTCOE JHU VoicePrivacy 2024 方案复现）",
+  "english": "Speaker Anonymization: HLTCOE JHU Submission to the VoicePrivacy Challenge 2024",
+  "category": "主动防御",
+  "summary": "去掉语音中“是谁在说”的信息，同时保留说话内容：kNN-VC 及其变体、Whisper→Piper 级联、两者随机混合、自己训练的 WavLM 转换模型，共 10 个系统可选。",
+  "description": "复现 Li Xinyuan et al., HLTCOE JHU Submission to the Voice Privacy Challenge 2024, Proc. SPSC 2024, pp. 61–66（doi:10.21437/SPSC.2024-11，arXiv:2409.08913）表 1 的全部系统，并按 VoicePrivacy 2024 官方协议评测（EER 越高越难认出说话人，WER 越低内容保留越好，UAR 越高情感保留越好）。上传一段英语语音，选择系统，得到匿名化语音、原始与匿名化语音在同一色标下的对数梅尔谱，以及一份处理记录（实际使用的系统、目标说话人、随机种子、用时，和公开说话人验证模型 ECAPA-TDNN 给出的匿名化前后余弦相似度，越接近 0 越不像原说话人）。适用范围：英语语音，时长 0.5–30 秒；模型在 LibriSpeech 上训练和评测，噪声大、非英语或带音乐的录音效果未经验证。演示用的目标说话人是 LibriSpeech test-clean 的 6 个说话人，不是论文评测用的 VoxCeleb 目标池，所以网页结果与论文表 1 的数字不能直接比较；表 1 的复现结果见本组 README。服务器为 2 vCPU 的 CPU 机器，一段 9 秒的语音 kNN-VC 约 6–8 秒，WavLM 转换约 8–10 秒，级联约 30 秒（与论文相同，用 Whisper medium.en 转写）；服务重启后第一次调用要加载模型，多等 20–40 秒；同一时间只处理一个请求，其他请求排队。取消等待只中断网页请求，服务器上已开始的处理会做完；结果只保存在服务器内存中，最多保留最近 32 个，不写入磁盘。",
+  "team": "第A082组（刘心铭、邱子骞）",
+  "version": "1.0.0",
+  "runtime": "华为云 ECS · 2 vCPU / 8 GB · CPU 推理",
+  "inputs": [
+    {
+      "name": "audio",
+      "label": "原始语音（英语，0.5–30 秒）",
+      "kind": "audio",
+      "accept": ["audio/wav", "audio/x-wav", "audio/wave", "audio/flac", "audio/x-flac"],
+      "required": true,
+      "max_mb": 20
+    }
+  ],
+  "parameters": [
+    {
+      "name": "system",
+      "label": "匿名化系统（论文表 1 编号）",
+      "type": "select",
+      "default": "knn1",
+      "required": true,
+      "options": [
+        { "value": "knn1", "label": "1 kNN-VC：k = 4 近邻替换，每句随机取一个目标说话人" },
+        { "value": "knn1m", "label": "1M 多目标池化：两个目标的近邻结果逐帧加权平均" },
+        { "value": "knn2", "label": "2 + 长度扰动：语速随机拉伸 0.8–1.2 倍" },
+        { "value": "knn3", "label": "3 + 长度扰动 + 特征加噪：隐私更强、可懂度下降" },
+        { "value": "tts", "label": "4 Whisper → Piper 级联：先转写再用 904 个合成音色之一读出" },
+        { "value": "mix", "label": "1+4 随机混合：每句以概率 p 用级联，否则用 kNN-VC" },
+        { "value": "wc5", "label": "5 WavLM 转换（基础）：所有句子转到同一个目标" },
+        { "value": "wc6", "label": "6 + 说话人对抗训练" },
+        { "value": "wc7", "label": "7 + 离散目标（k-means 单元上的 CTC 损失）" },
+        { "value": "wc8", "label": "8 + 对抗与离散目标" }
+      ],
+      "help": "1–4 与 1+4 每句随机选目标说话人；5–8 是自己训练的模型，所有输入都转到同一个目标说话人。"
+    },
+    {
+      "name": "seed",
+      "label": "随机种子",
+      "type": "text",
+      "max_length": 64,
+      "required": false,
+      "help": "相当于句子编号：相同种子得到相同的随机选择（目标说话人、长度因子、噪声、合成音色、混合抽签）。留空则随机生成，处理记录里会写出实际使用的种子。系统 5–8 不受种子影响。"
+    },
+    {
+      "name": "mix_p",
+      "label": "混合概率 p（只对 1+4 有效）",
+      "type": "number",
+      "default": 0.4,
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "required": false,
+      "help": "选择 1+4 时，这句话以概率 p 交给级联、否则交给 kNN-VC；论文用 0.2、0.325、0.4。"
+    }
+  ],
+  "examples": [
+    {
+      "title": "系统 1 kNN-VC",
+      "description": "LibriSpeech test-clean 的一句（说话人 1580，9 秒）。目标说话人 1089；内容和语调保留，音色换成目标。ECAPA 相似度 0.169。",
+      "input": { "src": "samples/group_a082_voice_anonymization/input_1580-141084-0004.wav", "kind": "audio", "label": "原始语音" },
+      "output": { "src": "samples/group_a082_voice_anonymization/output_knn1.wav", "kind": "audio", "label": "匿名化语音（系统 1）" },
+      "parameters": { "system": "knn1", "seed": "a082" }
+    },
+    {
+      "title": "系统 3 + 长度扰动 + 特征加噪",
+      "description": "同一句。语速拉伸为 0.867 倍（输出 7.8 秒），特征上加噪：隐私更强（相似度 0.032），但可懂度下降，论文与我们的 WER 都在 11–12%。",
+      "input": { "src": "samples/group_a082_voice_anonymization/input_1580-141084-0004.wav", "kind": "audio", "label": "原始语音" },
+      "output": { "src": "samples/group_a082_voice_anonymization/output_knn3.wav", "kind": "audio", "label": "匿名化语音（系统 3）" },
+      "parameters": { "system": "knn3", "seed": "a082" }
+    },
+    {
+      "title": "系统 4 Whisper → Piper 级联",
+      "description": "同一句。先转写成文字，再用合成音色读出：说话人信息几乎全部去掉，但语调和情感也随之丢失。Whisper 的转写与参考文本一字不差，由 Piper 第 772 号音色读出；ECAPA 相似度 0.108。",
+      "input": { "src": "samples/group_a082_voice_anonymization/input_1580-141084-0004.wav", "kind": "audio", "label": "原始语音" },
+      "output": { "src": "samples/group_a082_voice_anonymization/output_tts.wav", "kind": "audio", "label": "匿名化语音（系统 4）" },
+      "parameters": { "system": "tts", "seed": "a082" }
+    },
+    {
+      "title": "系统 6 WavLM 转换 + 说话人对抗",
+      "description": "同一句，转到所有输入共用的一个目标说话人（VoxCeleb id10986）。ECAPA 相似度 0.151。系统 5–8 不受种子影响。",
+      "input": { "src": "samples/group_a082_voice_anonymization/input_1580-141084-0004.wav", "kind": "audio", "label": "原始语音" },
+      "output": { "src": "samples/group_a082_voice_anonymization/output_wc6.wav", "kind": "audio", "label": "匿名化语音（系统 6）" },
+      "parameters": { "system": "wc6" }
+    },
+    {
+      "title": "系统 8 WavLM 转换 + 对抗与离散目标",
+      "description": "同一句，同一个目标说话人。ECAPA 相似度 0.136。我们的模型没有出现论文中离散目标带来的可懂度下降，原因见本组 README。",
+      "input": { "src": "samples/group_a082_voice_anonymization/input_1580-141084-0004.wav", "kind": "audio", "label": "原始语音" },
+      "output": { "src": "samples/group_a082_voice_anonymization/output_wc8.wav", "kind": "audio", "label": "匿名化语音（系统 8）" },
+      "parameters": { "system": "wc8" }
+    }
+  ],
+  "adapter": {
+    "type": "http",
+    "endpoint": "http://119.3.187.247:8000/process"
+  }
+}
