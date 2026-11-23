@@ -68,3 +68,9 @@ systemctl daemon-reload
 systemctl enable a082-web
 systemctl restart a082-web   # `enable --now` would leave an already running service on the old code
 echo "installed; check with: systemctl status a082-web; curl -s localhost:8000/api/systems"
+# With medium.en the process peaks at about 6.7 GiB (measured on 8 GB). Some cloud images ship vm.swappiness=0:
+# the kernel then kills the service at a peak instead of moving idle model pages to swap (seen on 11-23).
+if [ "$(cat /proc/sys/vm/swappiness)" = 0 ] && [ -n "$(swapon --noheadings)" ]; then
+  echo "WARNING: vm.swappiness is 0, so the swap is not used and memory peaks kill the service."
+  echo "         Set it to 10: put 'vm.swappiness = 10' in /etc/sysctl.conf, then run: sysctl -p"
+fi
