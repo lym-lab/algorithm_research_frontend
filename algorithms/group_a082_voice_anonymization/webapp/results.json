@@ -1,0 +1,242 @@
+[
+ {
+  "row": "0",
+  "suffix": "_orig",
+  "name": "原始语音",
+  "paper": {
+   "EER": 5.16,
+   "UAR": 70.07,
+   "WER": 1.83
+  },
+  "ours": {
+   "EER": 5.155,
+   "UAR": 70.071,
+   "WER": 1.825
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "1",
+  "suffix": "_knn1",
+  "name": "kNN-VC",
+  "paper": {
+   "EER": 7.95,
+   "UAR": 56.7,
+   "WER": 3.16
+  },
+  "ours": {
+   "EER": 12.241,
+   "UAR": 55.136,
+   "WER": 2.699
+  },
+  "verdict": {
+   "EER": "off by +4.29",
+   "UAR": "ok",
+   "WER": "off by -0.46"
+  }
+ },
+ {
+  "row": "2",
+  "suffix": "_knn2",
+  "name": "+ 长度扰动",
+  "paper": {
+   "EER": 8.08,
+   "UAR": 56.29,
+   "WER": 3.33
+  },
+  "ours": {
+   "EER": 12.589,
+   "UAR": 55.226,
+   "WER": 2.814
+  },
+  "verdict": {
+   "EER": "off by +4.51",
+   "UAR": "ok",
+   "WER": "off by -0.52"
+  }
+ },
+ {
+  "row": "3",
+  "suffix": "_knn3d18",
+  "name": "+ 长度扰动 + 特征加噪",
+  "paper": {
+   "EER": 20.58,
+   "UAR": 43.26,
+   "WER": 11.0
+  },
+  "ours": {
+   "EER": 21.113,
+   "UAR": 44.34,
+   "WER": 11.898
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "4",
+  "suffix": "_tts",
+  "name": "Whisper → Piper 级联",
+  "paper": {
+   "EER": 48.25,
+   "UAR": 30.35,
+   "WER": 3.75
+  },
+  "ours": {
+   "EER": 48.497,
+   "UAR": 30.825,
+   "WER": 3.96
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "mix0.2",
+  "suffix": "_mix0p2",
+  "name": "混合 p = 0.2",
+  "paper": {
+   "EER": 21.91,
+   "UAR": 51.71,
+   "WER": 3.31
+  },
+  "ours": {
+   "EER": 23.481,
+   "UAR": 49.87,
+   "WER": 2.955
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "off by -0.35"
+  }
+ },
+ {
+  "row": "mix0.325",
+  "suffix": "_mix0p325",
+  "name": "混合 p = 0.325",
+  "paper": {
+   "EER": 33.91,
+   "UAR": 49.04,
+   "WER": 3.43
+  },
+  "ours": {
+   "EER": 35.682,
+   "UAR": 46.752,
+   "WER": 3.138
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "off by -2.29",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "mix0.4",
+  "suffix": "_mix0p4",
+  "name": "混合 p = 0.4",
+  "paper": {
+   "EER": 40.81,
+   "UAR": 47.09,
+   "WER": 3.33
+  },
+  "ours": {
+   "EER": 40.527,
+   "UAR": 44.883,
+   "WER": 3.245
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "off by -2.21",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "5",
+  "suffix": "_wc5",
+  "name": "WavLM 转换（基础）",
+  "paper": {
+   "EER": 8.54,
+   "UAR": 54.75,
+   "WER": 3.01
+  },
+  "ours": {
+   "EER": 7.04,
+   "UAR": 52.837,
+   "WER": 2.525
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "6",
+  "suffix": "_wc6",
+  "name": "+ 说话人对抗",
+  "paper": {
+   "EER": 11.6,
+   "UAR": 50.62,
+   "WER": 4.23
+  },
+  "ours": {
+   "EER": 12.834,
+   "UAR": 50.631,
+   "WER": 2.643
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "ok"
+  }
+ },
+ {
+  "row": "7",
+  "suffix": "_wc7",
+  "name": "+ 离散目标",
+  "paper": {
+   "EER": 13.73,
+   "UAR": 43.56,
+   "WER": 10.16
+  },
+  "ours": {
+   "EER": 8.782,
+   "UAR": 46.806,
+   "WER": 2.696
+  },
+  "verdict": {
+   "EER": "off by -4.95",
+   "UAR": "off by +3.25",
+   "WER": "off by -7.46"
+  }
+ },
+ {
+  "row": "8",
+  "suffix": "_wc8",
+  "name": "+ 两者",
+  "paper": {
+   "EER": 13.88,
+   "UAR": 43.5,
+   "WER": 10.83
+  },
+  "ours": {
+   "EER": 11.446,
+   "UAR": 46.231,
+   "WER": 2.7
+  },
+  "verdict": {
+   "EER": "ok",
+   "UAR": "ok",
+   "WER": "off by -8.13"
+  }
+ }
+]

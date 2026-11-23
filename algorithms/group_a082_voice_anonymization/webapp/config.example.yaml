@@ -1,0 +1,13 @@
+# Copy to config.yaml and fill in the paths (see a082/service.py).
+device: null                      # null = cuda if available, else cpu
+pool: cache/pool_demo            # matching sets of public demo speakers (LibriSpeech test-clean, CC BY 4.0)
+pool_min_frames: 3000             # 1 min of speech is enough for a demo target
+piper_model: cache/piper/en_US-libritts_r-medium.onnx
+whisper_model: medium.en          # the paper's model; base.en is much faster on CPU
+wavlm_conv:                       # optional; rows 5-8 appear when the checkpoint exists
+  wc5: checkpoints/wc5.pt
+  wc6: checkpoints/wc6.pt
+  wc7: checkpoints/wc7.pt
+  wc8: checkpoints/wc8.pt
+speaker_encoder: speechbrain/spkrec-ecapa-voxceleb
+speaker_encoder_dir: cache/spk_ecapa

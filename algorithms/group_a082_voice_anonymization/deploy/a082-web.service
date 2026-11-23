@@ -1,0 +1,22 @@
+[Unit]
+Description=A082 speaker anonymization web demo
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=a082
+WorkingDirectory=@DEST@/code
+Environment=HF_ENDPOINT=https://hf-mirror.com
+Environment=TORCH_HOME=@DEST@/assets/torch HF_HOME=@DEST@/assets/hf XDG_CACHE_HOME=@DEST@/assets/cache OMP_NUM_THREADS=4
+# Requests run in a thread pool; without a cap glibc gives each thread its own heap and freed model memory
+# is not reused across them, so the process keeps growing.
+Environment=MALLOC_ARENA_MAX=2
+ExecStart=@DEST@/venv/bin/python webapp/server.py --config @DEST@/config.yaml --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

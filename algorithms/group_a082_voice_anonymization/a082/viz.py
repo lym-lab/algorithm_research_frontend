@@ -1,0 +1,143 @@
+"""Figures shared by the web demo and the report: waveform and spectrogram of original vs anonymized speech."""
+from __future__ import annotations
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torchaudio
+
+from .audio import SR
+
+
+def log_mel(wav: torch.Tensor, sr: int = SR, n_mels: int = 80) -> np.ndarray:
+    mel = torchaudio.transforms.MelSpectrogram(sr, n_fft=1024, win_length=1024, hop_length=160, n_mels=n_mels)(
+        wav.reshape(1, -1).float())
+    return torch.log10(mel.clamp_min(1e-5))[0].numpy()
+
+
+def compare_figure(orig: torch.Tensor, anon: torch.Tensor, sr: int = SR,
+                   titles=("Original", "Anonymized")) -> plt.Figure:
+    """2 x 2 grid: waveform (top) and log-mel spectrogram (bottom) for each signal, same scales."""
+    fig, ax = plt.subplots(2, 2, figsize=(11, 5), sharey="row", constrained_layout=True)
+    specs = [log_mel(w, sr) for w in (orig, anon)]
+    vmin, vmax = min(s.min() for s in specs), max(s.max() for s in specs)
+    for j, (w, spec, title) in enumerate(zip((orig, anon), specs, titles)):
+        x = w.reshape(-1).numpy()
+        t = np.arange(len(x)) / sr
+        ax[0, j].plot(t, x, lw=0.4, color="#2b6cb0")
+        ax[0, j].set_title(title)
+        ax[0, j].set_xlim(0, t[-1] if len(t) else 1)
+        ax[0, j].set_ylim(-1, 1)
+        ax[1, j].imshow(spec, origin="lower", aspect="auto", vmin=vmin, vmax=vmax, cmap="magma",
+                        extent=(0, len(x) / sr, 0, spec.shape[0]))
+        ax[1, j].set_xlabel("time (s)")
+    ax[0, 0].set_ylabel("amplitude")
+    ax[1, 0].set_ylabel("mel bin")
+    return fig
+
+
+def systems_figure(signals: dict, sr: int = SR, seconds: float | None = None) -> plt.Figure:
+    """One log-mel spectrogram per system (title -> waveform), stacked, on one colour scale."""
+    ws = {k: (w.reshape(-1)[: int(seconds * sr)] if seconds else w.reshape(-1)) for k, w in signals.items()}
+    specs = {k: log_mel(w, sr) for k, w in ws.items()}
+    vmin, vmax = min(s.min() for s in specs.values()), max(s.max() for s in specs.values())
+    fig, axes = plt.subplots(len(specs), 1, figsize=(9, 1.45 * len(specs)), sharex=True, constrained_layout=True)
+    for ax, (title, spec) in zip(np.atleast_1d(axes), specs.items()):
+        ax.imshow(spec, origin="lower", aspect="auto", vmin=vmin, vmax=vmax, cmap="magma",
+                  extent=(0, len(ws[title]) / sr, 0, spec.shape[0]))
+        ax.set_ylabel("mel", fontsize=8)
+        ax.set_title(title, fontsize=9, loc="left")
+    np.atleast_1d(axes)[-1].set_xlabel("time (s)")
+    return fig
+
+
+def privacy_utility_figure(rows: dict, thresholds=(10, 20, 30, 40), offsets: dict | None = None,
+                           wer_zoom: tuple | None = None, zoom_offsets: dict | None = None) -> plt.Figure:
+    """EER against UAR and against WER for every system (label -> (EER, UAR, WER)), with the VPC 2024
+    minimum-privacy lines. `offsets`: label -> (dx, dy) in points for labels that would overlap, or
+    label -> {1: (dx, dy), 2: (dx, dy)} for different offsets in the UAR (1) and WER (2) panels.
+    `wer_zoom`: (x0, x1, y0, y1) of a magnified inset in the WER panel for points that crowd together,
+    labelled with `zoom_offsets` (label -> (dx, dy))."""
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.2), constrained_layout=True, sharey=True)
+    for ax, k, name in ((axes[0], 1, "UAR (%)"), (axes[1], 2, "WER (%)")):
+        for t in thresholds:
+            ax.axhline(t, color="0.75", lw=0.8, ls="--")
+        for i, (label, v) in enumerate(rows.items()):
+            ax.plot(v[k], v[0], "o", color=f"C{i % 10}")
+            if k == 2 and wer_zoom and wer_zoom[0] <= v[2] <= wer_zoom[1] and wer_zoom[2] <= v[0] <= wer_zoom[3]:
+                continue  # labelled in the inset
+            off = (offsets or {}).get(label, (4, 3))
+            if isinstance(off, dict):
+                off = off.get(k, (4, 3))
+            ax.annotate(label, (v[k], v[0]), textcoords="offset points", xytext=off, fontsize=8)
+        ax.set_xlabel(name)
+        ax.grid(alpha=0.3)
+    axes[0].set_ylabel("EER, average of 4 subsets (%)")
+    if wer_zoom:
+        x0, x1, y0, y1 = wer_zoom
+        ins = axes[1].inset_axes([0.45, 0.53, 0.52, 0.44])
+        for t in thresholds:
+            if y0 <= t <= y1:
+                ins.axhline(t, color="0.75", lw=0.8, ls="--")
+        for i, (label, v) in enumerate(rows.items()):
+            if x0 <= v[2] <= x1 and y0 <= v[0] <= y1:
+                ins.plot(v[2], v[0], "o", color=f"C{i % 10}")
+                ins.annotate(label, (v[2], v[0]), textcoords="offset points",
+                             xytext=(zoom_offsets or {}).get(label, (5, -3)), fontsize=8)
+        ins.set_xlim(x0, x1); ins.set_ylim(y0, y1)
+        ins.tick_params(labelsize=7); ins.grid(alpha=0.3)
+        axes[1].indicate_inset_zoom(ins, edgecolor="0.5")
+    return fig
+
+
+def spectrogram_png(wav: torch.Tensor, vmin: float, vmax: float, sr: int = SR,
+                    width_px: int = 640, height_px: int = 200) -> bytes:
+    """Log-mel spectrogram as a bare PNG (no axes) on a fixed colour scale, for the web page."""
+    import io
+
+    from matplotlib.figure import Figure
+    spec = log_mel(wav, sr)
+    # A bare Figure, not pyplot: the server draws the two images of one result in parallel request threads,
+    # and pyplot's global figure registry is not thread-safe.
+    fig = Figure(figsize=(width_px / 100, height_px / 100), dpi=100)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.imshow(spec, origin="lower", aspect="auto", vmin=vmin, vmax=vmax, cmap="magma")
+    ax.set_axis_off()
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png")
+    return buf.getvalue()
+
+
+def shared_scale(*wavs: torch.Tensor, sr: int = SR) -> tuple[float, float]:
+    specs = [log_mel(w, sr) for w in wavs]
+    return float(min(s.min() for s in specs)), float(max(s.max() for s in specs))
+
+
+def tradeoff_figure(points: dict, anchors: dict | None = None, paper: dict | None = None, ax=None,
+                    uar_label: str = "UAR (%)") -> plt.Figure:
+    """Fig. 4 of the paper: EER on libri-dev-f against UAR, one point per admixture probability.
+
+    `points`: p -> (EER, UAR); `anchors`: label -> (EER, UAR) for the pure systems (rows 1 and 4);
+    `paper`: label -> (EER, UAR) of the paper's points, drawn hollow; `ax`: draw into an existing axes.
+    """
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(5.5, 4), constrained_layout=True)
+    else:
+        fig = ax.figure
+    ps = sorted(points)
+    ax.plot([points[p][1] for p in ps], [points[p][0] for p in ps], "o-", label="admixture")
+    for p in ps:
+        ax.annotate(f"{p:g}", (points[p][1], points[p][0]), textcoords="offset points", xytext=(4, 4), fontsize=8)
+    for i, (label, (eer, uar)) in enumerate((anchors or {}).items()):
+        ax.plot(uar, eer, "s", color=f"C{i + 1}", label=label)
+    if paper:
+        ax.plot([u for _, u in paper.values()], [e for e, _ in paper.values()], "o", mfc="none", mec="k",
+                label="paper (Table 1)")
+    ax.set_xlabel(uar_label)
+    ax.set_ylabel("EER, libri-dev-f (%)")
+    ax.grid(alpha=0.3)
+    ax.legend()
+    return fig

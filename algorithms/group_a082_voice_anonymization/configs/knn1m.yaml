@@ -1,0 +1,9 @@
+# Extra row "1M": multi-set pooling, M = 2, weights ~ Dirichlet(1, 1) fixed per utterance
+suffix: _knn1m
+k: 4
+n_targets: 2
+dirichlet: true
+length_range: null
+noise: null
+loudness_lufs: -16.0
+prematched: true

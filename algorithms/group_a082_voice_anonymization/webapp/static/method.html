@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方法与系统 · 说话人匿名化</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="bar">
+  <div class="brand"><b>说话人匿名化</b><span>VoicePrivacy 2024 · HLTCOE JHU 方案复现</span></div>
+  <nav aria-label="页面">
+    <a href="index.html">在线演示</a>
+    <a href="results.html">复现结果</a>
+    <a href="method.html" aria-current="page">方法与系统</a>
+  </nav>
+</div></header>
+
+<main style="gap: 28px">
+  <section style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+    <div class="intro" style="max-width: 760px">
+      <h1>四类系统，各自怎么换掉说话人</h1>
+      <p>实线框是我们自己实现的部分，虚线框是只加载公开预训练权重的组件。</p>
+    </div>
+    <div class="legend">
+      <span><i style="width: 22px; height: 14px; border: 2px solid var(--orig); border-radius: 4px; background: var(--orig-soft); display: inline-block"></i>自己实现</span>
+      <span><i style="width: 22px; height: 14px; border: 1.5px dashed var(--na); border-radius: 4px; background: #FFF; display: inline-block"></i>预训练组件</span>
+    </div>
+  </section>
+  <div id="flows" style="display: flex; flex-direction: column; gap: 28px"></div>
+</main>
+<script>
+const FLOWS = [
+  { ids: '1 · 1M · 2 · 3', color: '#1F5FA8', title: 'kNN-VC 及其变体', lede: '在自监督特征空间里，把每一帧换成目标说话人最像的几帧',
+    steps: [['io', '输入语音', '16 kHz'], ['pre', 'WavLM-Large', '取第 6 层特征，每帧 20 ms'],
+      ['own', '长度扰动', '系统 2、3：特征序列线性插值 0.8–1.2 倍'],
+      ['own', 'kNN 匹配', '余弦距离，k = 4；随机 VoxCeleb 目标；1M 两个目标加权'],
+      ['own', '特征加噪', '系统 3：均匀噪声 δ = 18，加在匹配集上'], ['pre', 'HiFi-GAN', '预匹配版声码器'],
+      ['io', '匿名语音', '响度归一到 −16 LUFS']],
+    foot: '目标说话人每句随机抽取；同一句在系统 1、2、3 中抽到同一个目标，便于对照。' },
+  { ids: '4', color: '#C25B12', title: 'Whisper → Piper 级联', lede: '只留下文字，声音全部重新合成',
+    steps: [['io', '输入语音', ''], ['pre', 'Whisper medium.en', '默认参数转写'], ['io', '文本', '空转写输出 0.5 s 静音'],
+      ['pre', 'Piper（VITS）', 'LibriTTS-R 904 个音色，每句随机一个'], ['own', '重采样与编排', '22.05 → 16 kHz，按句种子'],
+      ['io', '匿名语音', '']],
+    foot: '隐私最强（EER 接近 50%），但情感与韵律也一并丢掉，UAR 最低。' },
+  { ids: '1+4', color: '#C25B12', title: '随机混合', lede: '每句话掷一次硬币，决定用哪套系统',
+    steps: [['io', '一句话', ''], ['own', '按句抽签', '概率 p 选级联，否则选 kNN-VC；各 p 共用同一次抽签'],
+      ['own', '组装数据集', '直接链接两套系统已有的输出，不重新匿名化'], ['io', '匿名语音', '']],
+    foot: '论文提交了 p = 0.2、0.325、0.4；图 4 另扫描了 0.1–0.5。' },
+  { ids: '5 · 6 · 7 · 8', color: '#6B4FA0', title: 'WavLM 转换模型', lede: '把 kNN-VC 蒸馏成一个前馈网络，所有人都转成同一个目标',
+    steps: [['pre', 'WavLM-Large', '第 6 层特征'], ['own', '前馈 Transformer', '4 层编码 + 6 层解码，维度 512，带 PostNet'],
+      ['own', '训练目标', 'kNN-VC 输出（L1 + L2）+ 目标重建'], ['own', '+ 说话人对抗', '系统 6、8：ECAPA 分类器交替更新'],
+      ['own', '+ 离散 CTC', '系统 7、8：k-means 100 个单元'], ['pre', 'HiFi-GAN', '预匹配版声码器']],
+    foot: '训练数据为 LibriSpeech train-clean-360，特征与 kNN 目标在 GPU 上即时计算，不落盘。' },
+];
+const ARROW = '<svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><path d="M1 7h18M14 2l6 5-6 5" fill="none" stroke="#5A6876" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const esc = (s) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+document.getElementById('flows').innerHTML = FLOWS.map(f => `
+  <section class="panel" style="gap: 14px; padding: 22px 24px">
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px">
+      <span class="tag" style="background: ${f.color}">${esc(f.ids)}</span>
+      <h2 class="title">${esc(f.title)}</h2>
+      <span style="font-size: 14px; color: var(--ink-2)">${esc(f.lede)}</span>
+    </div>
+    <div class="flow">${f.steps.map(([k, n, note], i) => `
+      <div class="step"><div class="box ${k}"><b>${esc(n)}</b>${note ? `<span>${esc(note)}</span>` : ''}</div>${i < f.steps.length - 1 ? ARROW : ''}</div>`).join('')}
+    </div>
+    <p class="note" style="font-size: 13px">${esc(f.foot)}</p>
+  </section>`).join('');
+</script>
+</body>
+</html>

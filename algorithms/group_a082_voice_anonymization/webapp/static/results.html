@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>复现结果 · 说话人匿名化</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="bar">
+  <div class="brand"><b>说话人匿名化</b><span>VoicePrivacy 2024 · HLTCOE JHU 方案复现</span></div>
+  <nav aria-label="页面">
+    <a href="index.html">在线演示</a>
+    <a href="results.html" aria-current="page">复现结果</a>
+    <a href="method.html">方法与系统</a>
+  </nav>
+</div></header>
+
+<main>
+  <section class="intro">
+    <h1>与论文表 1 逐项对照</h1>
+    <p>按 VoicePrivacy 2024 官方协议评测。EER（越高越隐私）是攻击者用匿名化数据重训说话人识别后的等错误率，取 LibriSpeech dev/test 男女 4 个子集的平均；UAR（越高越保留情感）在 IEMOCAP 上测；WER（越低越保留内容）在 LibriSpeech 上测。</p>
+  </section>
+
+  <section class="panel" aria-labelledby="t1" style="gap: 16px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+      <h2 id="t1" class="title">表 1：论文 vs 我们</h2>
+      <div class="legend">
+        <span><i class="dot" style="background: var(--ok)"></i>在容差内</span>
+        <span><i class="dot" style="background: var(--warn)"></i>超出容差</span>
+        <span><i class="dot" style="background: var(--na)"></i>待测</span>
+      </div>
+    </div>
+    <div class="tablebox">
+      <table class="t1">
+        <thead><tr>
+          <th scope="col">ID</th><th scope="col">系统</th>
+          <th scope="col" class="num">EER 论文</th><th scope="col" class="num">EER 我们</th>
+          <th scope="col" class="num">UAR 论文</th><th scope="col" class="num">UAR 我们</th>
+          <th scope="col" class="num">WER 论文</th><th scope="col" class="num">WER 我们</th>
+          <th scope="col">判定</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="note">容差依据：官方用同一批匿名化音频重训攻击者后，EER 与论文相差 0.06–0.37 个百分点（4 子集平均）；UAR、WER 在音频确定后没有随机性。各系统的具体容差见报告。</p>
+  </section>
+
+  <section class="panel" aria-labelledby="f4" style="gap: 16px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+      <h2 id="f4" class="title">隐私与效用的权衡（EER 对 UAR）</h2>
+      <div class="seg" role="group" aria-label="显示哪组数据">
+        <button type="button" data-view="paper" aria-pressed="true">论文</button>
+        <button type="button" data-view="ours" aria-pressed="false">我们</button>
+        <button type="button" data-view="both" aria-pressed="false">叠加</button>
+      </div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 24px">
+      <div style="flex: 3 1 560px; min-width: 0; display: flex; gap: 8px">
+        <div class="ylab">UAR（%）→ 效用</div>
+        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+          <div id="plot" class="plot" role="img" aria-label="各系统的 EER 与 UAR 散点图"></div>
+          <div class="xticks"><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span></div>
+          <div style="text-align: center; font-size: 13px; color: var(--ink-2)">EER（%，4 子集平均）→ 隐私</div>
+        </div>
+      </div>
+      <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2)">
+        <div class="legend" style="flex-direction: column; gap: 6px">
+          <span><i class="dot" style="background: var(--orig); width: 12px; height: 12px; border-radius: 6px"></i>kNN-VC 系（1–3）</span>
+          <span><i class="dot" style="background: var(--anon); width: 12px; height: 12px; border-radius: 6px"></i>级联与混合（4、混合）</span>
+          <span><i class="dot" style="background: var(--wc); width: 12px; height: 12px; border-radius: 6px"></i>WavLM 转换（5–8）</span>
+          <span><i class="dot" style="background: var(--ink); width: 12px; height: 12px; border-radius: 6px"></i>原始语音（0）</span>
+          <span><i class="dot" style="background: #FFF; border: 2.5px solid var(--ink-2); width: 12px; height: 12px; border-radius: 6px"></i>空心：我们的结果</span>
+        </div>
+        <p style="margin: 0">右上角最好：隐私高、情感保留多。混合系统落在 kNN-VC 与级联连线的上方，这就是论文的核心结论。</p>
+        <p class="note">图中为表 1 的平均值；论文图 4 的横轴是 libri-dev-f 的 EER，与此不同。</p>
+        <p class="note" id="nodata" hidden>我们的评测结果还没有出来。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="poison" style="gap: 16px">
+    <h2 id="poison" class="title">混合系统的 EER 为什么"超出预期"</h2>
+    <p style="margin: 0; font-size: 14.5px; line-height: 1.65; color: var(--ink-2); max-width: 900px">如果混合只是把两个系统按比例平均，EER 应接近线性插值。论文的实际值明显更高：攻击者的训练数据里混着两种截然不同的匿名化语音，训出的说话人识别器变差（"投毒"）。加分部分检验：攻击者先把两类语音分开再训练，这个优势还剩多少。</p>
+    <div id="mix" style="display: flex; flex-direction: column; gap: 14px"></div>
+    <p class="note">条长按 EER 0–50% 画。线性插值 = (1−p)·EER(kNN-VC) + p·EER(级联)。</p>
+  </section>
+</main>
+<script src="results.js"></script>
+</body>
+</html>

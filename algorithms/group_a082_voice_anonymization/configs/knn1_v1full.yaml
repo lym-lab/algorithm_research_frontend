@@ -1,0 +1,9 @@
+# Target-pool control: ID 1 with each speaker's whole VoxCeleb1 audio as matching set,
+# no 10-minute cap (author's code allows ~64 min). Run with --pool <cache of `pool build --max-frames 0`>.
+suffix: _knn1v1full
+k: 4
+n_targets: 1
+length_range: null
+noise: null
+loudness_lufs: -16.0
+prematched: true

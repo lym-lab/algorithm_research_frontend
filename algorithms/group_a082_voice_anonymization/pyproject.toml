@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a082"
+version = "0.1.0"
+description = "Reproduction of the HLTCOE JHU submission to the VoicePrivacy Challenge 2024"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+include = ["a082*", "third_party*"]
+
+[tool.setuptools.package-data]
+"third_party.knnvc.hifigan" = ["*.json"]

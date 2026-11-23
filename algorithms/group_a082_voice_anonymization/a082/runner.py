@@ -1,0 +1,81 @@
+"""The loop every anonymizer shares: for each VPC data set, convert each utterance and write
+`data/<set><suffix>/wav/<utt>.wav`; skip finished files (restartable); split work into shards.
+
+An anonymizer supplies `convert(utt, wav[1, T] at 16 kHz) -> wav[1, T'] at 16 kHz` and, optionally,
+`order(utts) -> utts` to group utterances that share expensive state (e.g. a matching set).
+"""
+from __future__ import annotations
+
+import logging
+from pathlib import Path
+from typing import Callable, Iterable
+
+import torch
+from tqdm import tqdm
+
+from . import audio, kaldi
+
+log = logging.getLogger(__name__)
+
+
+def resolve_sets(spec: str) -> list[str]:
+    """all | eval | libri (the six LibriSpeech evaluation sets) | comma-separated names."""
+    presets = {"all": kaldi.ALL_SETS, "eval": kaldi.EVAL_SETS, "libri": kaldi.LIBRI_SETS}
+    return list(presets[spec]) if spec in presets else spec.split(",")
+
+
+def available_sets(vpc_root: Path, sets: Iterable[str], source_suffix: str = "") -> list[str]:
+    """Drop sets whose source audio is not present (with a warning), e.g. IEMOCAP when it was not prepared."""
+    data = Path(vpc_root) / "data"
+    keep = []
+    for name in sets:
+        if kaldi.audio_available(data / f"{name}{source_suffix}", vpc_root):
+            keep.append(name)
+        else:
+            log.warning("skipping %s: its audio is not available", name)
+            print(f"skipping {name}{source_suffix}: audio not available")
+    return keep
+
+
+def parse_shard(spec: str) -> tuple[int, int]:
+    i, n = map(int, spec.split("/"))
+    if not 0 <= i < n:
+        raise ValueError(f"shard {spec}")
+    return i, n
+
+
+def anonymize_sets(vpc_root: Path, sets: Iterable[str], suffix: str,
+                   convert: Callable[[str, torch.Tensor], torch.Tensor] | None,
+                   order: Callable[[list[str]], list[str]] | None = None,
+                   shard=(0, 1), finalize_only: bool = False, source_suffix: str = "") -> None:
+    """`source_suffix` reads the input audio from data/<set><source_suffix> instead of the original set
+    (chaining two systems, e.g. kNN-VC on the cascade's output); metadata always come from the original."""
+    data = Path(vpc_root) / "data"
+    sets = available_sets(vpc_root, sets, source_suffix)
+    if not finalize_only:
+        for name in sets:
+            src, out = data / name, data / f"{name}{suffix}"
+            kaldi.prepare_output_dir(src, out)
+            scp = kaldi.read_kaldi(data / f"{name}{source_suffix}" / "wav.scp")
+            utts = sorted(scp)[shard[0]::shard[1]]
+            todo = [u for u in utts if not kaldi.wav_path(out, u).exists()]
+            if order is not None:
+                todo = order(todo)
+            for u in tqdm(todo, desc=f"{name}{suffix} [{shard[0]}/{shard[1]}]"):
+                wav, sr = audio.load_scp_entry(scp[u], root=vpc_root)
+                wav = audio.resample(wav, sr)
+                audio.save_wav16(kaldi.wav_path(out, u), convert(u, wav))
+    if finalize_only or shard[1] == 1:
+        for name in sets:
+            kaldi.finalize_output_dir(data / name, data / f"{name}{suffix}")
+
+
+def add_common_args(ap) -> None:
+    ap.add_argument("--vpc-root", required=True, type=Path)
+    ap.add_argument("--sets", default="all", help="all | eval | libri | comma-separated set names; "
+                    "sets without audio (e.g. IEMOCAP not prepared) are skipped")
+    ap.add_argument("--shard", default="0/1", help="i/n: this process handles every n-th utterance from i")
+    ap.add_argument("--device", default="cuda")
+    ap.add_argument("--source-suffix", default="", help="read input audio from data/<set><suffix> (system chaining)")
+    ap.add_argument("--finalize-only", action="store_true",
+                    help="after all shards finished: check completeness, write wav.scp and utt2dur")

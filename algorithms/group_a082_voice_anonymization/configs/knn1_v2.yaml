@@ -1,0 +1,9 @@
+# Target-pool control: ID 1 with a VoxCeleb2 target pool (1251 speakers of vox2_aac_1, the
+# author's code uses VoxCeleb2 dev), matching sets capped at 10 minutes as in ID 1.
+suffix: _knn1v2
+k: 4
+n_targets: 1
+length_range: null
+noise: null
+loudness_lufs: -16.0
+prematched: true

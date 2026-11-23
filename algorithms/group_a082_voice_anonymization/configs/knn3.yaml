@@ -1,0 +1,10 @@
+# Table 1 ID 3: + length perturbation + uniform feature noise.
+# Default: noise on the matching set, delta = 32. Calibrate on dev (where in {matching, query},
+# delta in {16, 32}) before the full run.
+suffix: _knn3
+k: 4
+n_targets: 1
+length_range: [0.8, 1.2]
+noise: {where: matching, delta: 32.0}
+loudness_lufs: -16.0
+prematched: true
