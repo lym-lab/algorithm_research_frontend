@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from .config import Config, DEFAULT_CONFIG
+from .config import Config, DEFAULT_CONFIG, PRIMITIVE_POLYNOMIAL
 from .vad import vad
 from .transform import extract_features, reconstruct_with_modified_s3
 from .msequence import generate_m_sequence, make_key
@@ -101,7 +101,7 @@ def embed(audio: np.ndarray,
     # ---- m 序列（纠错同步序列）与嵌入密钥 ----
     # L 取 ceil(log2(n+1))；要求一个完整 m 序列周期 2^L-1 不短于 n。
     L = cfg.L if (1 << cfg.L) - 1 >= n else int(np.ceil(np.log2(n + 1)))
-    taps = cfg.lfsr_taps if L == cfg.L else cfg.PRIMITIVE_POLYNOMIAL.get(L)
+    taps = cfg.lfsr_taps if L == cfg.L else PRIMITIVE_POLYNOMIAL.get(L)
     if taps is None or (1 << L) - 1 < n:
         raise ValueError(f"unsupported n={n}: need m-sequence length >= n")
     m_seq = generate_m_sequence(L, taps)

@@ -17,7 +17,7 @@
 - 论文：*LightGBM-Based Audio Watermarking Robust to Recapturing and Hybrid Attacks*
 - 作者开源 baseline：[IEEE TIFS 2025 论文](https://doi.org/10.1109/TIFS.2025.3559408)（DOI: 10.1109/TIFS.2025.3559408）
 - 本组算法源码：`algorithms/group_n057_lraw_watermark/`
-- 模型权重：`author_trained.pkl`，约 3.6 MB；百度网盘：https://pan.baidu.com/s/10fK98eCWkWq6c-WzWkVCtQ?pwd=5jnh（提取码：`5jnh`）；仓库源码放置到 `algorithms/group_n057_lraw_watermark/assets/author_trained.pkl`，服务器部署对应 `/opt/LRAW-reproduction/assets/author_trained.pkl`
+- 模型权重：`author_trained.pkl`，约 3.6 MB；[百度网盘下载](https://pan.baidu.com/s/10fK98eCWkWq6c-WzWkVCtQ?pwd=5jnh)（提取码：`5jnh`）；仓库源码放置到 `algorithms/group_n057_lraw_watermark/assets/author_trained.pkl`，服务器部署对应 `/opt/LRAW-reproduction/assets/author_trained.pkl`
 - 第三方许可证：按作者开源协议保留；本组只做课程复现，不再分发作者数据集
 
 ## 3. 本组实现内容

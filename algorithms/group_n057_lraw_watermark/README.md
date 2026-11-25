@@ -1,7 +1,7 @@
 ﻿# LRAW 算法源码
 
 - 方法 ID：`group_n057_lraw_watermark`
-- 模型权重：`author_trained.pkl`（百度网盘：`https://pan.baidu.com/s/10fK98eCWkWq6c-WzWkVCtQ?pwd=5jnh`），放到 `assets/author_trained.pkl`
+- 模型权重：`author_trained.pkl`，[百度网盘下载](https://pan.baidu.com/s/10fK98eCWkWq6c-WzWkVCtQ?pwd=5jnh)（提取码：`5jnh`），放到 `assets/author_trained.pkl`
 - 训练数据：`dataset.xlsx` 不入库，来源见根 README
 - 安装：
 
