@@ -1,0 +1,24 @@
+# LRAW 复现项目依赖
+# 安装：python -m pip install -r requirements.txt
+# 说明：核心组必须装；其余为可选，不装不影响嵌入/提取/恢复/攻击主流程。
+
+# === 核心运行（嵌入 / 提取 / 恢复 / 攻击 / 指标）===
+numpy>=1.26
+scipy>=1.11
+pywavelets>=1.4          # DWT
+lightgbm>=4.0            # LightGBM 分类器
+scikit-learn>=1.3
+soundfile>=0.12          # 音频读写
+lameenc>=1.9             # MP3 压缩攻击 mp3c 内存编解码（纯 wheel；缺失时脚本自动 skip 不中断）
+joblib>=1.3
+
+# === 训练复现（可选；仅 scripts/train_model.py 需要）===
+pandas>=2.0                          # 读取 dataset.xlsx
+openpyxl>=3.1                        # pandas 读取 .xlsx 的引擎（缺则 read_excel 报错）
+bayesian-optimization>=1.4           # PyPI 包名为 bayesian-optimization，import 名是 bayes_opt；仅 --bayes 贝叶斯搜索用到
+
+# === 前端（可选；仅 webui/app.py 需要）===
+flask>=3.0
+
+# === ODG 客观音质（可选；平台若无对应 wheel 可跳过，不影响主流程）===
+# peaqb>=1.0

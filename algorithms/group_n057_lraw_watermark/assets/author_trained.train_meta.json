@@ -1,0 +1,33 @@
+{
+  "metrics": {
+    "accuracy": 0.9970269589317209,
+    "precision": 0.9960412119981729,
+    "recall": 0.9979659293160438,
+    "f1": 0.9970026417394839
+  },
+  "params": {
+    "colsample_bytree": 0.8218,
+    "learning_rate": 0.2332,
+    "max_depth": 9,
+    "min_child_samples": 20,
+    "min_child_weight": 0.4957,
+    "n_estimators": 519,
+    "num_leaves": 70,
+    "reg_alpha": 0.6304,
+    "reg_lambda": 3.487,
+    "subsample": 0.7411,
+    "boosting": "gbdt",
+    "objective": "binary"
+  },
+  "dataset": {
+    "input": "assets/dataset.xlsx",
+    "rows": 396899,
+    "feature_cols": "iloc[:,0:5] (5 个归一化奇异值)",
+    "label_col": "iloc[:,6]",
+    "n_pos": 198450,
+    "n_neg": 198449,
+    "train_rows": 357209,
+    "val_rows": 39690,
+    "note": "train_test_split(test_size=0.1, rs=42)；训练集正 178785 / 负 178424"
+  }
+}

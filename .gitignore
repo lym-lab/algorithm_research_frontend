@@ -13,3 +13,6 @@ models/
 *.pt
 *.pth
 *.safetensors
+*.pkl
+*.xlsx
+*.zip
