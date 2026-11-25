@@ -325,7 +325,9 @@ def process():
 
         best = None
         for name, cand, prob in cands:
-            bc = blind_recover(cand, emb["key"], emb["L"], emb["taps"])
+            # 把 LightGBM 的“判 1 概率”一并交给盲恢复，使用 c=2p-1 做软判决；
+            # 候选的 prob 与 cand 始终来自同一套提取结果或同一套对齐结果。
+            bc = blind_recover(cand, emb["key"], emb["L"], emb["taps"], probs=prob)
             if best is None or (bc["z"], bc["agreement"]) > (best[2]["z"], best[2]["agreement"]):
                 best = (name, cand, bc)
         cand_name, cand_bits, bc = best
