@@ -3,7 +3,7 @@
 
 用法（在 LRAW-reproduction 根目录）：
     pip install -r requirements.txt gunicorn matplotlib
-    gunicorn --worker-class gthread -w 1 --threads 4 -b 0.0.0.0:8000 platform_service:app
+    gunicorn --worker-class gthread -w 1 --threads 4 --timeout 600 -b 0.0.0.0:8000 platform_service:app
 
 环境变量：
     LRAW_MODEL_PATH  模型路径，默认 assets/author_trained.pkl
@@ -137,10 +137,22 @@ def make_waveform_png(path: Path, host: np.ndarray, wm: np.ndarray, attacked: np
     import matplotlib.pyplot as plt
     n = min(host.size, wm.size, attacked.size)
     t = np.arange(n) / cfg.sr
+    # 长音频（例如 4 分钟 ≈ 1100 万样本）不能把每个采样点都塞给 matplotlib：
+    # 三面板各画 1100 万点会占用大量内存且拖慢请求。这里等间隔抽到
+    # 4000 点展示波形轮廓；完整数据仍在 watermarked.wav / attacked.wav。
+    max_plot_points = 4000
+    if n > max_plot_points:
+        idx = np.linspace(0, n - 1, max_plot_points, dtype=np.int64)
+        t = t[idx]
+        series = [np.asarray(y, dtype=np.float64).ravel()[:n][idx]
+                  for y in (host, wm, attacked)]
+    else:
+        series = [np.asarray(y, dtype=np.float64).ravel()[:n]
+                  for y in (host, wm, attacked)]
     fig, axes = plt.subplots(3, 1, figsize=(10, 6), sharex=True)
     for ax, y, title in zip(
         axes,
-        [host[:n], wm[:n], attacked[:n]],
+        series,
         ["Host audio", "Watermarked", "Attacked"],
     ):
         ax.plot(t, y, linewidth=0.5)

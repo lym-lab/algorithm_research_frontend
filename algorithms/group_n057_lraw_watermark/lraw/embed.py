@@ -134,7 +134,8 @@ def embed(audio: np.ndarray,
             s3_tilde = (s[1] + b * s[2]) / (b + 1.0)
         # 改 s3 后逆 SVD/IGBT/IDWT 重建时域段；其余奇异值与细节系数保持不变
         seg_out, _ = reconstruct_with_modified_s3(
-            seg, s3_tilde, cfg.wavelet, cfg.dwt_levels, cfg.svd_rows, cfg.svd_cols)
+            seg, s3_tilde, cfg.wavelet, cfg.dwt_levels, cfg.svd_rows, cfg.svd_cols,
+            feats=feats)
         out_segs[i] = seg_out
 
     audio_wm = out_segs.reshape(-1)

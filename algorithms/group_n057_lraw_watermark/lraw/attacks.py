@@ -295,13 +295,28 @@ def _codec_delay(y, x, max_lag: int = 4096):
     n = min(x.size, y.size)
     if n < max_lag * 2:
         return y
-    seg = min(n, 4 * 4096)                       # 用前 4 段做估计，够稳且快
-    cor = signal.correlate(y[:seg], x[:seg], mode="full", method="fft")
-    lag = int(np.argmax(cor) - (seg - 1))        # 正数 = y 滞后于 x
-    peak = float(cor.max() / (np.sqrt(np.sum(x[:seg] ** 2) * np.sum(y[:seg] ** 2)) + 1e-20))
-    if peak < 0.5 or abs(lag) > max_lag:          # 相关性太弱时不做猜测
+    # 不能只看开头 4 段：真实歌曲常以弱起/淡入开头，前 0.37 s 相关性可能
+    # 只有 0.29（低于阈值），于是整首 4 分钟音频都不补偿延迟，所有 400
+    # 样本段错位，BER 直接 ~50%。改为在整段音频上取 5 个均匀窗口，
+    # 选相关峰最高的窗口估滞后；弱起歌曲也能在副歌等强能量段估准。
+    probe = min(n, 4 * 4096)
+    starts = np.linspace(0, max(0, n - probe), 5, dtype=np.int64)
+    best_lag = 0
+    best_peak = -1.0
+    for start in starts:
+        xs = x[start:start + probe]
+        ys = y[start:start + probe]
+        if xs.size < max_lag * 2:
+            continue
+        cor = signal.correlate(ys, xs, mode="full", method="fft")
+        lag = int(np.argmax(cor) - (xs.size - 1))   # 正数 = y 滞后于 x
+        peak = float(cor.max() / (
+            np.sqrt(np.sum(xs ** 2) * np.sum(ys ** 2)) + 1e-20))
+        if peak > best_peak:
+            best_peak, best_lag = peak, lag
+    if best_peak < 0.5 or abs(best_lag) > max_lag:  # 相关性太弱时不做猜测
         return y
-    return y[lag:] if lag > 0 else y
+    return y[best_lag:] if best_lag > 0 else y
 
 
 def _mp3c(x, sr, bitrate: int = 64):

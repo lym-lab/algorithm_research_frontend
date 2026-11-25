@@ -10,7 +10,7 @@
 | 方法 ID | `group_n057_lraw_watermark` |
 | 本组仓库与提交分支 | `https://github.com/chimuhuakai/algorithm_research_frontend/tree/group_n057_submission` |
 
-本组复现论文的发送端 DWT-GBT-SVD 水印嵌入、LightGBM 逐段 0/1 提取、m 序列滑窗重建，并补齐真实接收方口径的盲恢复。平台侧提供一条同步 `POST /process` 接口：上传 12 秒音频后，返回含水印音频、攻击后音频、恢复结果摘要、恢复报告 JSON 和波形对比图。
+本组复现论文的发送端 DWT-GBT-SVD 水印嵌入、LightGBM 逐段 0/1 提取、m 序列滑窗重建，并补齐真实接收方口径的盲恢复。平台侧提供一条同步 `POST /process` 接口：上传 3 秒以上音频（演示样例为 12 秒）后，返回含水印音频、攻击后音频、恢复结果摘要、恢复报告 JSON 和波形对比图。
 
 ## 2. 论文与代码来源
 
@@ -78,7 +78,7 @@ pip install gunicorn matplotlib
 cd /opt/LRAW-reproduction
 source .venv/bin/activate
 PUBLIC_BASE_URL=http://121.36.39.138:8000 \
-  gunicorn --worker-class gthread -w 1 --threads 4 -b 0.0.0.0:8000 platform_service:app
+  gunicorn --worker-class gthread -w 1 --threads 4 --timeout 600 -b 0.0.0.0:8000 platform_service:app
 ```
 
 1. 健康检查：
@@ -114,12 +114,13 @@ npm run dev
 ## 8. 验证与已知限制
 
 - 华为云已实测：`/health` 返回 200；`/process` 的 MP3C 64 档返回 5 个 artifacts（含恢复结果摘要和波形对比）；`report.json` 为 `locked=true`、盲 BER=0；`OPTIONS /process` 返回 204 且 CORS 头正常。本机 Flask test client 也验证了 `tsm_0.9`、`lsc_0.5` 等档位。
+- 长音频回归：本机用 4:15 的 MP3 全链路测试，`n_bits=28174`、`L=15`；MP3C 64 档 `raw_ber=0.081`、`locked=true`、盲 BER=0、`text_match=true`，接口总耗时约 6.5 s。另用 12.7 分钟音频验证了 `n_bits=84522`、`L=17` 的扩展分支，干净链路盲 BER=0。
 - 公开接口：`http://121.36.39.138:8000`，验收期间保持运行；如更换 IP 需同步修改方法配置的 `endpoint`。
 - 限制 1：PSM 改变音高，s3 的条件分布收敛，d′ 从 0.77 降到 0.07，盲 BER 约 50%，属方法层边界，不应当作调参失败。
 - 限制 2：重录是数字信道模型，不是 JBL GO ESSENTIAL + iPhone 12 的物理实测；真实房间混响与非线性的影响未覆盖。
 - 限制 3：裁剪采用“保留前缀”语义；任意起点裁剪需要额外时间轴同步，不在当前主表内。
 - 限制 4：论文未公开 VAD 阈值，攻击前后各做一次 VAD 仍难与发送端掩码严格一致；删除型 VAD 直接替换后，干净回环 BER 也会接近 50%。
-- 限制 5：平台同步接口按单请求处理，12 秒音频约 10–12 秒；不支持异步轮询；并发高时需加 worker 或队列。
+- 限制 5：平台同步接口按单请求处理；本机实测 4:15 MP3C 64 档约 6.5 s，4:15 混合重录+ECSP 约 28 s，12.7 分钟音频的干净链路约 15 s；不支持异步轮询，并发高时需加 worker 或队列。Gunicorn 默认 30 s worker timeout 不够覆盖极长音频，部署时需显式加 `--timeout 600`。
 - 限制 6：当前云端接口是 HTTP。前端用本地 `http://localhost:5173` 打开时正常；如果前端页面是 HTTPS，浏览器会拦截 HTTP 接口，需要把接口也升级到 HTTPS。
 - 取消行为：浏览器取消等待只会断开连接，服务端任务可能继续跑完；结果目录 24 小时后清理。
 

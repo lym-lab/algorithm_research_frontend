@@ -15,16 +15,21 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 
 import numpy as np
 import pywt
 
 
+@lru_cache(maxsize=8)
 def _path_graph_eigenbasis(n: int) -> np.ndarray:
     """路径图（相邻节点相连、边权为 1）拉普拉斯 L = D - A 的特征向量。
 
     返回 E（nxn）：第 i 行为第 i 个特征向量（按特征值升序），已正交归一。
     路径图拉普拉斯特征向量在数学上即 DCT-II 型基函数。
+
+    该基只与段长 n 有关（默认固定为 100），缓存后长音频逐段处理
+    不会为每个 400 样本段重复构造/分解 100×100 拉普拉斯矩阵。
     """
     lap = np.zeros((n, n))
     for i in range(n):
@@ -35,6 +40,7 @@ def _path_graph_eigenbasis(n: int) -> np.ndarray:
             lap[i, i + 1] = -1
     vals, vecs = np.linalg.eigh(lap)          # vecs 列为特征向量
     return vecs.T                             # E 以特征向量为行
+
 
 
 def _sing_val_norm(s: np.ndarray, mode: str = "max") -> np.ndarray:
@@ -137,14 +143,19 @@ def reconstruct_with_modified_s3(segment: np.ndarray,
                                  wavelet: str = "db4",
                                  dwt_levels: int = 2,
                                  svd_rows: int = 5,
-                                 svd_cols: int = 20) -> tuple:
+                                 svd_cols: int = 20,
+                                 feats: SegmentFeatures | None = None) -> tuple:
     """快捷入口：对原始段做特征提取 -> 替换 s3 -> 重建时域段。
 
     返回 (重建后的音频段, 特征对象)。与 extract_features 使用同一套参数，
     保证嵌入/提取两侧的特征完全对齐。
+
+    feats：调用方若已对同一段做过 extract_features，可直接传入复用，
+    避免嵌入循环里对每段重复做一次 DWT + SVD；不传时保持原行为。
     """
     # 正向提取一次，拿到 U / Vt / E 等分解分量，用于“只改 s3 再重建”。
-    feats = extract_features(segment, wavelet, dwt_levels, svd_rows, svd_cols)
+    if feats is None:
+        feats = extract_features(segment, wavelet, dwt_levels, svd_rows, svd_cols)
     s_mod = feats.S.copy()
     s_mod[2] = s3_tilde                       # 仅替换第 3 个奇异值（索引 2），其余 s1/s2/s4/s5 不动
     # SVD 逆合成：Ỹ = U · diag(s̃) · Vᵀ，得到修改后的 5×20 矩阵

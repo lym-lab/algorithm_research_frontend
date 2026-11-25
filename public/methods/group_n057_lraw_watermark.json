@@ -4,7 +4,7 @@
   "title": "LRAW 音频水印嵌入与盲恢复",
   "english": "LRAW Audio Watermarking",
   "category": "内容水印",
-  "summary": "对 3 秒以上音频（演示用 12 秒）嵌入不可感知水印，并在 MP3 压缩、变速、裁剪、数字重录等信道后做只持密钥的盲恢复；输出含水印音频、攻击后音频、恢复结果摘要、恢复报告与波形对比。",
+  "summary": "对 3 秒以上音频（演示样例 12 秒）嵌入不可感知水印，并在 MP3 压缩、变速、裁剪、数字重录等信道后做只持密钥的盲恢复；已回归 4:15 长音频，输出含水印音频、攻击后音频、恢复结果摘要、恢复报告与波形对比。",
   "description": "复现论文 LightGBM-Based Audio Watermarking Robust to Recapturing and Hybrid Attacks（LRAW）。发送端对分段音频做 DWT-GBT-SVD，把归一化奇异值映射为水印比特；接收端用 LightGBM 逐段判 0/1，再用 m 序列相位搜索做盲恢复，只使用 K、L、taps，不借原始水印真值 W。平台提供 31 档主矩阵攻击，外加干净信道和 MP3C 128 kbps：8 种 CSP（GNA/MP3C/AM/RS/LPF/MF/RQ/CP）、TSM/PSM 各 0.8/0.9/1.1/1.2、LSC 保留 20%/50%/70%/80%/90%、数字重录 0.5/1/2/3/5/10/13 m，以及重录 1 m 叠加 ECSP/TSM/PSM 的三种混合攻击。适用 3 秒以上、44.1 kHz 单声道音频；水印文本仅支持 ASCII，最多 40 字符。效果限制：PSM 改变音高，s3 条件分布收敛，BER 约 50%，属方法层边界；重录是数字信道模型（距离衰减、扬声器低通、环境噪声、速率失配、房间混响），不是 JBL GO ESSENTIAL + iPhone 12 的物理实测；裁剪采用保留前缀语义，任意起点裁剪仍需额外时间轴同步。",
   "team": "第N057组",
   "version": "1.0.0",

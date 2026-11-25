@@ -87,14 +87,24 @@ def blind_recover(W_tilde: np.ndarray,
     # 注意：这里只搜 M 的相位，不额外搜内容时间轴起点（K 仍从 0 对齐），
     # 因此主要覆盖保留前缀的裁剪、等时长攻击与重采样对齐后的场景；
     # 若攻击从音频中间任意起点裁剪，需再做时间轴同步（见文档边界说明）。
-    # 每个相位只用 m 个观测位打分；O(n·m)，n≈1323 时仍是毫秒级。
-    idx = np.arange(m)
-    scores = np.empty(n, dtype=np.float64)
-    for d in range(n):
-        # 候选水印 = K ⊕ 候选 M；软权重 c 对应的是“提取出的 W̃”，
-        # 因此必须和候选 W 比，不能直接和 M 比（否则干净信道也会失锁）。
-        cand_w = np.bitwise_xor(K[:m], M_full[(idx + d) % P])
-        scores[d] = float(np.mean(c * (2.0 * cand_w - 1.0)))
+    #
+    # 打分式：
+    #   score[d] = mean_i c_i * (-1)^(K_i xor M[(i+d) mod P])
+    #            = mean_i [c_i * (-1)^K_i] * (-1)^M[(i+d) mod P]
+    # 后一式是“带符号权重 s”与 m 序列符号序列 b 的圆相关，可用 FFT
+    # 一次算完所有相位，避免原先 O(n·m) 的双重循环；4 分钟音频
+    # （n≈28k）会从数亿次 Python 循环降到毫秒级。
+    # 候选水印 = K ⊕ 候选 M；软权重 c 对应的是“提取出的 W̃”，
+    # 因此必须和候选 W 比，不能直接和 M 比（否则干净信道也会失锁）。
+    # 注意符号约定：本代码用 q(x)=2x-1（0→-1，1→+1），因此
+    # q(K xor M) = -q(K)q(M)，需在 s 中补一个负号才能与 b=q(M) 对齐。
+    s = -c * (2.0 * K[:m] - 1.0)
+    s_pad = np.zeros(P, dtype=np.float64)
+    s_pad[:m] = s
+    b = 2.0 * M_full.astype(np.float64) - 1.0
+    scores = np.fft.ifft(
+        np.fft.fft(b) * np.conj(np.fft.fft(s_pad))
+    ).real[:n] / float(m)
     order = np.argsort(-scores)
     best_d = int(order[0])
     best_score = float(scores[best_d])
