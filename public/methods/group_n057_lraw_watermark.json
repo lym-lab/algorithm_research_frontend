@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "id": "group_n057_lraw_watermark",
+  "title": "LRAW 音频水印嵌入与盲恢复",
+  "english": "LRAW Audio Watermarking",
+  "category": "内容水印",
+  "summary": "对 3 秒以上音频（演示样例 12 秒）嵌入不可感知水印，并在 MP3 压缩、变速、裁剪、数字重录等信道后做只持密钥的盲恢复；已回归 4:15 长音频，输出含水印音频、攻击后音频、恢复结果摘要、恢复报告与波形对比。",
+  "description": "复现论文 LightGBM-Based Audio Watermarking Robust to Recapturing and Hybrid Attacks（LRAW）。发送端对分段音频做 DWT-GBT-SVD，把归一化奇异值映射为水印比特；接收端用 LightGBM 逐段判 0/1，再用 m 序列相位搜索做盲恢复，只使用 K、L、taps，不借原始水印真值 W。平台提供 31 档主矩阵攻击，外加干净信道和 MP3C 128 kbps：8 种 CSP（GNA/MP3C/AM/RS/LPF/MF/RQ/CP）、TSM/PSM 各 0.8/0.9/1.1/1.2、LSC 保留 20%/50%/70%/80%/90%、数字重录 0.5/1/2/3/5/10/13 m，以及重录 1 m 叠加 ECSP/TSM/PSM 的三种混合攻击。适用 3 秒以上、44.1 kHz 单声道音频；水印文本仅支持 ASCII，最多 40 字符。效果限制：PSM 改变音高，s3 条件分布收敛，BER 约 50%，属方法层边界；重录是数字信道模型（距离衰减、扬声器低通、环境噪声、速率失配、房间混响），不是 JBL GO ESSENTIAL + iPhone 12 的物理实测；裁剪采用保留前缀语义，任意起点裁剪仍需额外时间轴同步。",
+  "team": "第N057组",
+  "version": "1.0.0",
+  "runtime": "算法服务 · CPU",
+  "inputs": [
+    {
+      "name": "input_file",
+      "label": "宿主音频",
+      "kind": "audio",
+      "accept": ["audio/wav", "audio/x-wav", "audio/mpeg", "audio/flac"],
+      "required": true,
+      "max_mb": 20
+    }
+  ],
+  "parameters": [
+    {
+      "name": "attack_preset",
+      "label": "信道攻击档位",
+      "type": "select",
+      "default": "mp3c_64",
+      "required": true,
+      "help": "固定档位避免一个参数同时承载 kbps、倍率和米数；平台演示建议先用 mp3c_64，再试 tsm_0.9 和 lsc_0.5。",
+      "options": [
+        { "value": "none", "label": "无攻击（干净信道）" },
+        { "value": "gna", "label": "GNA 高斯噪声 25 dB" },
+        { "value": "mp3c_64", "label": "MP3C 64 kbps" },
+        { "value": "mp3c_128", "label": "MP3C 128 kbps" },
+        { "value": "am", "label": "AM 幅度衰减 0.8×" },
+        { "value": "rs", "label": "RS 重采样 22.05 kHz" },
+        { "value": "lpf", "label": "LPF 低通 8 kHz / 4 阶" },
+        { "value": "mf", "label": "MF 中值滤波 3 点" },
+        { "value": "rq", "label": "RQ 再量化 8 bit" },
+        { "value": "cp", "label": "CP 随机裁剪置零 5×2000 点" },
+        { "value": "tsm_0.8", "label": "TSM 0.8× 纯变速" },
+        { "value": "tsm_0.9", "label": "TSM 0.9× 纯变速" },
+        { "value": "tsm_1.1", "label": "TSM 1.1× 纯变速" },
+        { "value": "tsm_1.2", "label": "TSM 1.2× 纯变速" },
+        { "value": "psm_0.8", "label": "PSM 0.8× 相位声码器" },
+        { "value": "psm_0.9", "label": "PSM 0.9× 相位声码器（方法边界）" },
+        { "value": "psm_1.1", "label": "PSM 1.1× 相位声码器（方法边界）" },
+        { "value": "psm_1.2", "label": "PSM 1.2× 相位声码器（方法边界）" },
+        { "value": "lsc_0.2", "label": "LSC 保留前缀 20%" },
+        { "value": "lsc_0.5", "label": "LSC 保留前缀 50%" },
+        { "value": "lsc_0.7", "label": "LSC 保留前缀 70%" },
+        { "value": "lsc_0.8", "label": "LSC 保留前缀 80%" },
+        { "value": "lsc_0.9", "label": "LSC 保留前缀 90%" },
+        { "value": "recapture_0.5m", "label": "数字重录 0.5 m" },
+        { "value": "recapture_1m", "label": "数字重录 1 m" },
+        { "value": "recapture_2m", "label": "数字重录 2 m" },
+        { "value": "recapture_3m", "label": "数字重录 3 m" },
+        { "value": "recapture_5m", "label": "数字重录 5 m" },
+        { "value": "recapture_10m", "label": "数字重录 10 m" },
+        { "value": "recapture_13m", "label": "数字重录 13 m" },
+        { "value": "hybrid_recap1m+ecsp", "label": "混合：重录 1 m + ECSP（8 种 CSP 串行）" },
+        { "value": "hybrid_recap1m+tsm", "label": "混合：重录 1 m + TSM 0.9×" },
+        { "value": "hybrid_recap1m+psm", "label": "混合：重录 1 m + PSM 0.9×" }
+      ]
+    },
+    {
+      "name": "repeat",
+      "label": "重复度 k",
+      "type": "select",
+      "default": "1",
+      "required": true,
+      "help": "同一比特连续写入 k 段，k 越大越稳但容量越低；论文主结果按 k=1 报告。",
+      "options": [
+        { "value": "1", "label": "1（论文口径）" },
+        { "value": "3", "label": "3" },
+        { "value": "5", "label": "5" }
+      ]
+    },
+    {
+      "name": "message",
+      "label": "水印文本",
+      "type": "text",
+      "default": "LRAW2026",
+      "max_length": 40,
+      "required": false,
+      "help": "仅 ASCII，最多 40 字符；留空则写入随机比特。默认 8 字符，12 秒音频约 165 字符容量。"
+    }
+  ],
+  "examples": [
+    {
+      "title": "12 秒音乐 2 + MP3C 64 kbps",
+      "description": "观察 MP3 压缩后盲恢复是否仍锁定；重点看 report.json 中 locked=true、ber=0。",
+      "input": {
+        "src": "samples/group_n057_lraw_watermark/music2.wav",
+        "kind": "audio",
+        "label": "音乐样本 2"
+      },
+      "output": {
+        "src": "samples/group_n057_lraw_watermark/music2_mp3c64_attacked.wav",
+        "kind": "audio",
+        "label": "MP3C 64 kbps 攻击后音频"
+      },
+      "parameters": { "attack_preset": "mp3c_64", "repeat": "1", "message": "LRAW2026" }
+    },
+    {
+      "title": "12 秒语音 + TSM 0.9×",
+      "description": "观察纯变速后按已知时长归一，再逐段提取；重点看 report.json 中 candidate=raw、locked=true。",
+      "input": {
+        "src": "samples/group_n057_lraw_watermark/speech_01.wav",
+        "kind": "audio",
+        "label": "原始语音"
+      },
+      "output": {
+        "src": "samples/group_n057_lraw_watermark/speech_01_tsm09_attacked.wav",
+        "kind": "audio",
+        "label": "TSM 0.9× 攻击后音频"
+      },
+      "parameters": { "attack_preset": "tsm_0.9", "repeat": "1", "message": "LRAW2026" }
+    }
+  ],
+  "adapter": {
+    "type": "http",
+    "endpoint": "http://121.36.39.138:8000/process"
+  }
+}
